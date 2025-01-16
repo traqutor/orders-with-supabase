@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
-export default async function SettingsPage() {
+export default async function CustomersPage() {
   const supabase = await createClient();
 
   const {

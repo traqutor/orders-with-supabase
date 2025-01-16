@@ -1,5 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { LabelsForm } from '@/app/(protected)/settings/labels-form';
+import { Fragment } from 'react';
+
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -12,25 +15,11 @@ export default async function SettingsPage() {
     return redirect('/sign-in');
   }
 
-  const data = await supabase.from('customers').select();
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
+    <Fragment>
+      <LabelsForm />
+    </Fragment>
 
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Settings</h2>
-        <pre className="text-xs font-mono p-6 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      </div>
-
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </div>
-
-    </div>
   );
 }

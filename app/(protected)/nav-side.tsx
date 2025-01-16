@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Logo from '@/components/logo';
 import { NavItem } from '@/app/(protected)/nav-item';
-import { LineChart, Package, Settings, ShoppingCart, Users2, Calendar1Icon } from 'lucide-react';
+import { LineChart, Settings, ShoppingCart, Users2, Calendar1Icon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function NavSide() {

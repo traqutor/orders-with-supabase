@@ -1,44 +1,52 @@
-import FetchDataSteps from '@/components/tutorial/fetch-data-steps';
-import { createClient } from '@/utils/supabase/server';
-import { InfoIcon } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { File } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { OrdersTable } from './orders-table';
+import { getOrders } from '@/lib/db/orders';
+import DialogDemo from '@/app/(protected)/orders/order-create-dialog';
 
-export default async function ProtectedPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/sign-in');
+export default async function OrdersPage(
+  props: {
+    searchParams: Promise<{ q: string; offset: string }>;
   }
-
-  const data = await supabase.from('customers').select();
+) {
+  const searchParams = await props.searchParams;
+  const search = searchParams.q ?? '';
+  const offset = searchParams.offset ?? 0;
+  const { orders, newOffset, totalOrdersCounter } = await getOrders(
+    search,
+    Number(offset)
+  );
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
+    <Tabs defaultValue="all">
+      <div className="flex items-center">
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="draft">Draft</TabsTrigger>
+          <TabsTrigger value="archived" className="hidden sm:flex">
+            Archived
+          </TabsTrigger>
+        </TabsList>
+        <div className="ml-auto flex items-center gap-2 pr-2">
+          <Button size="sm" variant="outline" className="h-8 gap-1">
+            <File className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Export
+            </span>
+          </Button>
+          <DialogDemo />
+
         </div>
       </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Orders</h2>
-        <pre className="text-xs font-mono p-6 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      </div>
-
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </div>
-
-    </div>
+      <TabsContent value="all">
+        <OrdersTable
+          orders={orders}
+          offset={newOffset ?? 0}
+          totalProducts={totalOrdersCounter}
+        />
+      </TabsContent>
+    </Tabs>
   );
 }

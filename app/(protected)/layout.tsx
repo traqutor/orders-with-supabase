@@ -1,7 +1,6 @@
 import Providers from './providers';
 import { NavSide } from '@/app/(protected)/nav-side';
 import Link from 'next/link';
-import HeaderAuth from '@/components/header-auth';
 import { NavMobile } from '@/app/(protected)/nav-mobile';
 import { HeaderUser } from '@/app/(protected)/header-user';
 
@@ -20,7 +19,7 @@ export default function protectedLayout({
             className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <NavMobile />
             <div className="w-full flex justify-between items-center p-3 px-5 text-sm">
-              <div className=" gap-5 items-center font-semibold hidden md:flex">
+              <div className=" gap-5 items-center  font-semibold hidden md:flex">
                 <Link href={'/'}>Zamówienia</Link>
               </div>
               <HeaderUser />

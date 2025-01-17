@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/types_db';
-import DialogDemo from '@/app/(protected)/orders/order-create-dialog';
+
 
 export function OrdersTable({
                               orders,

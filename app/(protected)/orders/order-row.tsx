@@ -30,7 +30,7 @@ export function OrderRow(order: Tables<'orders'>) {
           width="64"
         />
       </TableCell>
-      <TableCell className="font-medium">{order.subject}</TableCell>
+      <TableCell className="font-medium">{order.title}</TableCell>
       <TableCell>
         <Badge variant="outline" className="capitalize">
           {order.status_id}

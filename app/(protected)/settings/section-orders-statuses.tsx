@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
 import * as Form from '@/components/ui/form';
-import { Action, useActions } from '@/hooks/db/useActions';
 import { OrderStatus, useOrdersStatuses } from '@/hooks/db/useOrdersStatuses';
 import { COLOR_OPTIONS } from '@/lib/utils';
 

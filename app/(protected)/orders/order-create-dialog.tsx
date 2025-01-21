@@ -9,8 +9,6 @@ import { createClient } from '@/utils/supabase/client';
 import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
 
-const wait = () => new Promise((resolve) => setTimeout(resolve, 5000));
-
 const postOrder = async (order: any) => {
   const db = createClient();
 

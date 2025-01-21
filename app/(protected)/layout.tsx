@@ -2,7 +2,6 @@ import Providers from './providers';
 import { NavSide } from '@/app/(protected)/nav-side';
 import { NavMobile } from '@/app/(protected)/nav-mobile';
 import { HeaderUser } from '@/app/(protected)/header-user';
-import * as Form from '@/components/ui/form';
 import React from 'react';
 import { OmniSearch } from '@/app/(protected)/omniSearch';
 

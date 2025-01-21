@@ -29,4 +29,4 @@ export function OmniSearch() {
     />
 
   </Form.Root>);
-};
+}

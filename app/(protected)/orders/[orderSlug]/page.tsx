@@ -1,9 +1,12 @@
-import { OrdersTable } from './orders-table';
-import { getOrders } from '@/lib/db/orders';
+import { getOrdersWithStatus } from '@/lib/db/orders';
+import { OrdersTable } from '@/app/(protected)/orders/orders-table';
+import React from 'react';
 
 export default async function OrdersPage(
   props: {
     searchParams: Promise<{ q: string; offset: string }>;
+    children: React.ReactNode;
+    params: Promise<{ orderSlug: string }>;
   }
 ) {
 
@@ -12,9 +15,12 @@ export default async function OrdersPage(
   const offset = searchParams.offset ?? 0;
 
 
-  const { orders, newOffset, totalOrdersCounter } = await getOrders(
+  const { orderSlug } = await props.params;
+
+  const { orders, newOffset, totalOrdersCounter } = await getOrdersWithStatus(
     search,
-    Number(offset)
+    Number(offset),
+    orderSlug
   );
 
   return (

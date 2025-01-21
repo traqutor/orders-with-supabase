@@ -14,6 +14,7 @@ export const getUserProfileQuery = cache(async (supabase: SupabaseClient): Promi
   return profile;
 });
 
+
 export const getListQuery = cache(async (supabase: SupabaseClient, tableName: TableName): Promise<Tables<TableName>[]> => {
   const { data, error } = await supabase.from(tableName).select(`*`);
   if (error) throw new Error(`Get list of ${tableName} error:`, error);
@@ -38,7 +39,7 @@ export const upsertRowQuery = async (supabase: SupabaseClient, tableName: TableN
   return data;
 };
 
-export const deleteOrderQuery = async (supabase: SupabaseClient, tableName: TableName, payload: Tables<TableName>) => {
+export const deleteRowQuery = async (supabase: SupabaseClient, tableName: TableName, payload: Tables<TableName>) => {
   const { error } = await supabase.from(tableName).delete().eq('id', payload.id);
   if (error) throw new Error(`Delete Order error:`, error);
   return true;

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/types_db';
+import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 
 
 export function OrdersTable({
@@ -18,23 +19,24 @@ export function OrdersTable({
   offset: number;
   totalProducts: number;
 }) {
-  let router = useRouter();
-  let productsPerPage = 5;
+  const router = useRouter();
+  const productsPerPage = PRODUCTS_PER_PAGE;
 
   function prevPage() {
     router.back();
   }
 
   function nextPage() {
-    router.push(`/?offset=${offset}`, { scroll: false });
+    const path = `?offset=${offset}`
+    router.push(path, { scroll: false });
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Orders</CardTitle>
+        <CardTitle>Lista zamówień</CardTitle>
         <CardDescription>
-          Manage your orders and view their sales performance.
+          Zarządzaj swoimi zamówieniami i przeglądaj wyniki sprzedaży.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -44,16 +46,15 @@ export function OrdersTable({
               <TableHead className="hidden w-[100px] sm:table-cell">
                 <span className="sr-only">Image</span>
               </TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead>Tytuł</TableHead>
+              <TableHead>Klient</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Price</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Total Sales
-              </TableHead>
-              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">Z dnia</TableHead>
+              <TableHead className="hidden md:table-cell">Akcje</TableHead>
               <TableHead>
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">Menu</span>
               </TableHead>
+
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,7 +89,7 @@ export function OrdersTable({
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset + productsPerPage > totalProducts}
+              disabled={offset > totalProducts}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />

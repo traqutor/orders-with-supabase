@@ -52,6 +52,19 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        tomato: {
+          100: '#FFF8F7',
+          200: '#FEEBE7',
+          300: '#FFDCD3',
+          400: '#FFCDC2',
+          500: '#FFB5A3',
+          600: '#FF9D85',
+          700: '#FF8A6D',
+          800: '#DD4425',
+          900: '#D13415',
+          950: '#5C271F',
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

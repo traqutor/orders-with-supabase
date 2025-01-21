@@ -1,7 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { LabelsForm } from '@/app/(protected)/settings/labels-form';
+import { SectionLabels } from '@/app/(protected)/settings/section-labels';
 import { Fragment } from 'react';
+import { SectionActions } from '@/app/(protected)/settings/section-actions';
+import { SectionOrdersStatuses } from '@/app/(protected)/settings/section-orders-statuses';
 
 
 export default async function SettingsPage() {
@@ -18,7 +20,9 @@ export default async function SettingsPage() {
 
   return (
     <Fragment>
-      <LabelsForm />
+      <SectionOrdersStatuses />
+      <SectionActions />
+      <SectionLabels />
     </Fragment>
 
   );

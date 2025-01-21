@@ -1,16 +1,18 @@
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
+import { DateTime } from 'luxon';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Tables } from '@/types_db';
+import Package from '@/components/package';
+import { Pill } from '@/components/ui/pill';
+import React from 'react';
+import Link from 'next/link';
 
 
 export function OrderRow(order: Tables<'orders'>) {
@@ -22,24 +24,28 @@ export function OrderRow(order: Tables<'orders'>) {
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        <Image
-          alt="Product image"
-          className="aspect-square rounded-md object-cover"
-          height="64"
-          src="/image.png"
-          width="64"
-        />
+        <Link href={`/order/${order.id}`}>
+          <Package className="text-green-600 hover:text-green-900" />
+        </Link>
       </TableCell>
       <TableCell className="font-medium">{order.title}</TableCell>
+      <TableCell className="font-medium">{order.customers.name}</TableCell>
       <TableCell>
-        <Badge variant="outline" className="capitalize">
-          {order.status_id}
-        </Badge>
+        <Pill
+          key={order.orders_statuses.id}
+          variant={order.orders_statuses.color_hex || 'default' as any}
+          title={order.orders_statuses.title || ''} />
       </TableCell>
-      <TableCell className="hidden md:table-cell">{`$${order.nip}`}</TableCell>
-      <TableCell className="hidden md:table-cell">{order.email}</TableCell>
       <TableCell className="hidden md:table-cell">
-        Available At
+        {DateTime.fromISO(order.created_at).toFormat('dd-mm-yyyy')}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {order.orders_actions.map(action => (
+          <Pill
+            key={action.id}
+            variant={action.actions.color_hex || 'default' as any}
+            title={action.actions.title || ''} />
+        ))}
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -50,11 +56,12 @@ export function OrderRow(order: Tables<'orders'>) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <Link href={`/order/${order.id}`}>
+              <DropdownMenuItem>Otwórz</DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>
               <form action={() => deleteOrderRecord(order)}>
-                <button type="submit">Delete</button>
+                <button type="submit">Usuń</button>
               </form>
             </DropdownMenuItem>
           </DropdownMenuContent>

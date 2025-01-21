@@ -14,8 +14,7 @@ export function useLabels() {
     getLabels();
 
     return () => {
-      console.log('cleanup');
-
+      console.log('Labels clean up', labels);
     };
   }, []);
 

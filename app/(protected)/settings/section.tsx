@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export function SettingsSection({
+export function Section({
                                   title, description,
                                   children
                                 }: Readonly<{
@@ -12,27 +12,16 @@ export function SettingsSection({
 }>) {
 
   return (
-
     <Card>
-      <div className="md:grid md:grid-cols-4 md:gap-6">
-        <div className="md:col-span-1">
-          <div className="px-4 sm:px-0 sticky top-0">
-            <CardHeader>
-              <CardTitle>{title}</CardTitle>
-              <CardDescription>
-                {description}
-              </CardDescription>
-            </CardHeader>
-          </div>
-        </div>
-        <CardContent>
-
-          {children}
-
-        </CardContent>
-      </div>
-
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {children}
+      </CardContent>
     </Card>
-
   );
 }

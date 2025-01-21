@@ -55,7 +55,7 @@ const OrderCreateDialog = () => {
         <Button size="sm" className="h-8 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Order
+              Dodaj Zamówienie
             </span>
         </Button>
       </Dialog.Trigger>
@@ -64,10 +64,10 @@ const OrderCreateDialog = () => {
         <Dialog.Content
           className="bg-card fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Add order
+            Dodaj Zamówienie
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[15px] leading-normal text-mauve11 ">
-            Put the Customer and a title.
+            Wybierz klienta i wprowadź tytuł zamówienia
           </Dialog.Description>
 
           <Form.Root
@@ -75,41 +75,41 @@ const OrderCreateDialog = () => {
           >
             <Form.Field>
               <Form.Row>
-                <Form.Label htmlFor="customerId">Customer</Form.Label>
+                <Form.Label htmlFor="customerId">Klient</Form.Label>
                 <Form.Message>
-                  Please enter the Customer's name
+                  Nazwa klienta
                 </Form.Message>
               </Form.Row>
               <Form.Input
                 id="customerId"
                 type="text"
                 name="customer"
-                value={'33d42fdd-11c8-44a7-a3b7-762872d8f0ac'}
+                value={'aa1150f1-9aaa-4cf4-81b8-d3bddec894ef'}
                 onChange={(e) => {
                   console.log(e);
                 }}
-                placeholder="Customer"
+                placeholder="Klient"
                 required />
             </Form.Field>
 
 
             <Form.Field>
               <Form.Row>
-                <Form.Label htmlFor="customerId">Title</Form.Label>
+                <Form.Label htmlFor="customerId">Tytuł</Form.Label>
                 <Form.Message>
-                  Please enter the Orders's title
+                  Tytuł zamówienia
                 </Form.Message>
               </Form.Row>
               <Form.Input
                 id="titleId"
                 type="text"
                 name="title"
-                placeholder="Order title"
+                placeholder="Tytuł"
                 required />
             </Form.Field>
 
             <Form.Message>
-              Please enter the Customer's name
+              Wpisz nazwę klienta
             </Form.Message>
 
             <div className="mt-[25px] flex justify-end gap-2">

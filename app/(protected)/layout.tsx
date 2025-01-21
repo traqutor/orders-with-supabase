@@ -1,8 +1,10 @@
 import Providers from './providers';
 import { NavSide } from '@/app/(protected)/nav-side';
-import Link from 'next/link';
 import { NavMobile } from '@/app/(protected)/nav-mobile';
 import { HeaderUser } from '@/app/(protected)/header-user';
+import * as Form from '@/components/ui/form';
+import React from 'react';
+import { OmniSearch } from '@/app/(protected)/omniSearch';
 
 
 export default function protectedLayout({
@@ -10,17 +12,18 @@ export default function protectedLayout({
                                         }: {
   children: React.ReactNode;
 }) {
+
   return (
     <Providers>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
         <NavSide />
-        <div className="flex flex-col sm:gap-4 sm:pl-14">
+        <div className="flex flex-col sm:pl-14">
           <header
             className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <NavMobile />
             <div className="w-full flex justify-between items-center p-3 px-5 text-sm">
-              <div className=" gap-5 items-center  font-semibold hidden md:flex">
-                <Link href={'/'}>Zamówienia</Link>
+              <div className="gap-5 items-center font-semibold hidden md:flex">
+                <OmniSearch />
               </div>
               <HeaderUser />
             </div>

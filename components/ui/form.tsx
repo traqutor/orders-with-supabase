@@ -35,7 +35,7 @@ const Row = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex justify-between', className)}
+    className={cn('flex gap-4 justify-between', className)}
     {...props}
   />
 ));
@@ -125,4 +125,4 @@ const Message = React.forwardRef<
 Message.displayName = 'Message';
 
 
-export { Root, Row, Field, Label, Input, Message };
+export { Root, Row, Field, Label, Select, Input, Message };

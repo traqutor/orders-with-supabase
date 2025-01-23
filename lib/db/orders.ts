@@ -5,9 +5,6 @@ import { QueryData } from '@supabase/supabase-js';
 
 const supabase = createClient();
 
-type OrderListItem = QueryData<any>
-
-
 const ordersListQuery = (offset: number) => supabase
   .from('orders')
   .select(

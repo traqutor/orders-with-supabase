@@ -36,13 +36,13 @@ const DialogCreateNote = (
   const [message, setMessage] = useState('');
   const router = useRouter();
 
-  const { orderId, note } = props;
+  const { orderId } = props;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const payload = {} as Tables<'notes'>;
 
-    const { data, error } = await postNote({
+    const { error } = await postNote({
       ...payload,
       order_id: orderId,
       message: message

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditIcon, PinIcon, MoreVertical } from 'lucide-react';
+import { PinIcon, MoreVertical } from 'lucide-react';
 import { Tables } from '@/types_db';
 import { DateTime } from 'luxon';
 

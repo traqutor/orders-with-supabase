@@ -28,7 +28,7 @@ const DialogCreateOrder = () => {
 
     const values = Object.fromEntries(new FormData(event.currentTarget));
 
-    const { data, error } = await postOrder({
+    const { error } = await postOrder({
       ...payload,
       customer_id: values.customer,
       title: values.title,

@@ -15,7 +15,7 @@ const Note = async (
       key={item.id}
       className="relative group w-full h-min flex flex-col justify-between items-start bg-yellow-200 rounded-lg border border-yellow-200 mb-6 py-5 px-4">
 
-      <PinIcon className="absolute end-[-4px] top-[-12px] text-tomato-900 dark:text-tomato-800 rotate-12" />
+      <PinIcon className="absolute end-[-4px] top-[-12px] text-tomato-900 dark:text-tomato-600 rotate-12" />
 
       <p className="text-gray-800 text-md">{item.message}</p>
 

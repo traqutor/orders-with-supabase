@@ -27,7 +27,7 @@ export default async function Layout({
 
   return (
     <Tabs defaultValue="tab">
-      <div className="flex items-center">
+      <div className="flex items-center mt-2">
         <TabsList>
 
           <Link href="/orders">

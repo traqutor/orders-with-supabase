@@ -1,11 +1,14 @@
 import React from 'react';
+import { ArrowBigLeft, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { getOrderById } from '@/lib/db/orders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowBigLeft } from 'lucide-react';
 import { BackButton } from '@/components/ui/back-button';
 import DialogCreateNote from '@/app/(protected)/order/dialog-create-note';
 import NotesList from '@/app/(protected)/order/notes-list';
+import { Pill } from '@/components/ui/pill';
+import { ListItem } from '@/components/ui/list-item';
+import { PositionsTable } from '@/app/(protected)/order/positions-table';
 
 export default async function OrderPage(
   props: {
@@ -19,9 +22,11 @@ export default async function OrderPage(
     orderId
   );
 
+  console.log(order);
+
   return (
     <Tabs defaultValue="contact">
-      <div className="flex items-center">
+      <div className="flex items-center mt-2">
         <TabsList>
 
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
@@ -41,23 +46,82 @@ export default async function OrderPage(
         </div>
       </div>
       <div
-        className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+        className="mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         <Card className="flex">
           <div className="flex-auto w-8/12">
 
             <CardHeader>
+              <CardTitle className="pb-2">{order.title}  </CardTitle>
+              <CardDescription className="flex">
+                <div className=" flex-auto w-4/12">Status: <Pill
+                  key={order.orders_statuses.id}
+                  variant={order.orders_statuses.color_hex || 'default' as any}
+                  title={order.orders_statuses.title || ''} /></div>
 
-              <CardTitle>{order.title}</CardTitle>
+                <div className="flex flex-wrap w-8/12 gap-2"> Akcje: {order.orders_actions.map((a: {
+                    actions: { id: React.Key | null | undefined; color_hex: any; title: any; };
+                  }) =>
+                    <Pill
+                      size="sm"
+                      key={a.actions.id}
+                      variant={a.actions.color_hex || 'default' as any}
+                      title={a.actions.title || ''} />
+                )}{order.orders_actions.map((a: {
+                    actions: { id: React.Key | null | undefined; color_hex: any; title: any; };
+                  }) =>
+                    <Pill
+                      size="sm"
+                      key={a.actions.id}
+                      variant={a.actions.color_hex || 'default' as any}
+                      title={a.actions.title || ''} />
+                )}{order.orders_actions.map((a: {
+                    actions: { id: React.Key | null | undefined; color_hex: any; title: any; };
+                  }) =>
+                    <Pill
+                      size="sm"
+                      key={a.actions.id}
+                      variant={a.actions.color_hex || 'default' as any}
+                      title={a.actions.title || ''} />
+                )}</div>
+
+              </CardDescription>
               <CardDescription>
                 Opis: {order.description}
               </CardDescription>
-
             </CardHeader>
 
             <CardContent>
               <TabsContent value="contact">
                 <div>
-                  <span>Klient: {order.customer_id}</span>
+                  <CardDescription className="pb-2">
+                    Klient:
+                  </CardDescription>
+                  <div>
+                    <ul className="list-unstyled mb-5">
+                      <ListItem label="Klient">
+                        <UserCircle2 /> {order.name}
+                      </ListItem>
+                      <ListItem label="Telefon">
+                        <PhoneIcon /> {order.phone}
+                      </ListItem>
+                      <ListItem label="Adres">
+                        <MailIcon /> {order.address}
+                      </ListItem>
+                      <ListItem label="NIP">
+                        NIP: {order.nip}
+                      </ListItem>
+                      <ListItem label="REGON">
+                        REGON: {order.regon}
+                      </ListItem>
+                    </ul>
+                  </div>
+
+
+                </div>
+                <div
+                  className="flex flex-col w-full h-full overflow-scroll">
+                  <PositionsTable positions={order.orders_positions} totalPositions={1} totalPriceGross={2}
+                                  totalPriceNett={3} />
                 </div>
               </TabsContent>
               <TabsContent value="warehouse">

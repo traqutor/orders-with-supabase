@@ -1,16 +1,19 @@
 'use client';
+
+import React, { useState } from 'react';
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
-import { Section } from '@/app/(protected)/settings/section';
 
+import * as Form from '@radix-ui/react-form';
+import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
-import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
-import * as Form from '@/components/ui/form';
 import { Action, useActions } from '@/hooks/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
+
+
 
 
 export function SectionActions() {
@@ -19,9 +22,9 @@ export function SectionActions() {
   const { actions, fetchActions } = useActions();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     const supabase = createClient();
-    event.preventDefault();
 
     if (item)
       if (item.id === '') {
@@ -42,16 +45,19 @@ export function SectionActions() {
     setItem({ id: '', title: '', color_hex: '', icon_name: '' });
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    console.log(e.target.name);
+    console.log(e.target.value);
+    console.log({ ...item, [e.target.name]: e.target.value });
+    if (item) setItem({ ...item, [e.target.name]: e.target.value });
+    console.log(item);
+  };
+
   const handleCancel = () => {
     setItem(undefined);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (item) setItem({ ...item, [e.target.name]: e.target.value });
-  };
-
-  const handleDelete = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleDelete = async () => {
 
     const supabase = createClient();
     if (item) {
@@ -87,32 +93,36 @@ export function SectionActions() {
           onSubmit={(event) => handleSubmit(event)}
         >
 
-          <Form.Field>
-
-            <Form.Label htmlFor="titleId">Title</Form.Label>
-            <Form.Input
-              id="titleId"
-              type="text"
-              name="title"
-              value={item.title || ''}
-              onChange={handleChange}
-              placeholder="Action"
-              required />
+          <Form.Field name="title" className="mb-3">
+            <Form.Label htmlFor="titleId" className="flex items-baseline justify-between py-1">Title</Form.Label>
+            <Form.Control asChild>
+              <input
+                id="titleId"
+                type="text"
+                name="title"
+                value={item.title || ''}
+                onChange={handleChange}
+                placeholder="Action"
+                required
+                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </Form.Control>
           </Form.Field>
 
-          <Form.Field>
-            <Form.Label htmlFor="colorHex">Color</Form.Label>
-            <Form.Select
-              id="colorHexId"
-              type="text"
-              name="color_hex"
-              value={item.color_hex || ''}
-              onChange={handleChange}
-              placeholder="Color"
-            >
-              {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
+          <Form.Field name="color_hex" className="mb-3">
+            <Form.Label htmlFor="colorHexId" className="flex items-baseline justify-between py-1">Color</Form.Label>
+            <Form.Control asChild>
+              <select
+                id="colorHexId"
+                name="color_hex"
+                value={item.color_hex || ''}
+                onChange={handleChange}
+                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
 
-            </Form.Select>
+              </select>
+            </Form.Control>
           </Form.Field>
 
 

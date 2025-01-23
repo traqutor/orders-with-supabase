@@ -1,14 +1,30 @@
-import { createClient } from '@/utils/supabase/server';
-import { Tables } from '@/types_db';
+import { createClient } from '@/utils/supabase/client';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
+
+import { QueryData } from '@supabase/supabase-js';
+
+const supabase = createClient();
+
+const ordersListQuery = (offset: number) => supabase
+  .from('orders')
+  .select(
+    `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+  )
+  .order('created_at', { ascending: false })
+  .range(offset, offset + PRODUCTS_PER_PAGE - 1);
 
 
 export async function getOrders(
   search: string,
   offset: number
-): Promise<{ orders: Tables<'orders'>[]; newOffset: number; totalOrdersCounter: number }> {
+): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
-  const supabase = await createClient();
 
   const { count } = await supabase
     .from('orders')
@@ -16,40 +32,28 @@ export async function getOrders(
       `*`, { count: 'exact', head: true }
     );
 
-
-  const { data, error } = await supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .order('created_at', { ascending: false })
-    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
+  const { data, error } = await ordersListQuery(offset);
 
   if (error) throw new Error(`Get list of Orders error:`, error);
 
+
+  const ordersList: any = data as QueryData<any>;
+
   // Always search the full table, not per page
-  if (search) {
+  if (data) {
     return {
-      orders: data,
+      orders: ordersList,
       newOffset: offset + PRODUCTS_PER_PAGE - 1,
       totalOrdersCounter: count || 0
     };
   }
 
-  if (offset === null) {
-    return { orders: [], newOffset: 0, totalOrdersCounter: 0 };
+  if (!data && offset === null) {
+    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
-  const totalOrdersCounter = count || 0; // to do select count from orders
-
+  const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
-
 
   return {
     orders: data,
@@ -62,9 +66,8 @@ export async function getOrdersWithStatus(
   search: string,
   offset: number,
   statusId: string
-): Promise<{ orders: Tables<'orders'>[]; newOffset: number; totalOrdersCounter: number }> {
+): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
-  const supabase = await createClient();
 
   const { count } = await supabase
     .from('orders')
@@ -90,36 +93,26 @@ export async function getOrdersWithStatus(
 
   if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error:`, error);
 
-  // Always search the full table, not per page
-  if (search) {
-    return {
-      orders: data,
-      newOffset: offset + PRODUCTS_PER_PAGE - 1,
-      totalOrdersCounter: count || 0
-    };
-  }
+  const ordersList: any = data as QueryData<any>;
 
-  if (offset === null) {
-    return { orders: [], newOffset: 0, totalOrdersCounter: 0 };
+  if (!data && offset === null) {
+    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
   const totalOrdersCounter = count || 0; // to do select count from orders
-
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
 
   return {
-    orders: data,
-    newOffset,
-    totalOrdersCounter
+    orders: ordersList,
+    newOffset: newOffset,
+    totalOrdersCounter: totalOrdersCounter
   };
 }
 
 export async function getOrderById(
   orderId: string
-): Promise<{ order: Tables<'orders'> }> {
-
-  const supabase = await createClient();
+): Promise<{ order: any }> {
 
 
   const { data, error } = await supabase

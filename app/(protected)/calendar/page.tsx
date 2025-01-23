@@ -12,7 +12,6 @@ export default async function CalendarPage() {
     return redirect('/sign-in');
   }
 
-  const data = await supabase.from('customers').select();
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">

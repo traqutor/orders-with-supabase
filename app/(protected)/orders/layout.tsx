@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
-import DialogDemo from '@/app/(protected)/orders/order-create-dialog';
+import DialogCreateOrder from '@/app/(protected)/orders/dialog-create-order';
 import { getListQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { Tables } from '@/types_db';
@@ -48,7 +48,7 @@ export default async function Layout({
               Export
             </span>
           </Button>
-          <DialogDemo />
+          <DialogCreateOrder />
 
         </div>
       </div>

@@ -5,7 +5,6 @@ import React from 'react';
 export default async function OrdersPage(
   props: {
     searchParams: Promise<{ q: string; offset: string }>;
-    children: React.ReactNode;
     params: Promise<{ orderSlug: string }>;
   }
 ) {

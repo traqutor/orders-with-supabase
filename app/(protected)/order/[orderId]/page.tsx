@@ -2,21 +2,21 @@ import React from 'react';
 import { getOrderById } from '@/lib/db/orders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { ArrowBigLeft, Notebook } from 'lucide-react';
+import { ArrowBigLeft } from 'lucide-react';
 import { BackButton } from '@/components/ui/back-button';
+import DialogCreateNote from '@/app/(protected)/order/dialog-create-note';
+import NotesList from '@/app/(protected)/order/notes-list';
 
 export default async function OrderPage(
   props: {
-    children: React.ReactNode;
-    params: Promise<{ orderSlug: string }>;
+    params: Promise<{ orderId: string }>;
   }
 ) {
 
-  const { orderSlug } = await props.params;
+  const { orderId } = await props.params;
 
   const { order } = await getOrderById(
-    orderSlug
+    orderId
   );
 
   return (
@@ -42,8 +42,9 @@ export default async function OrderPage(
       </div>
       <div
         className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-        <Card>
-          <div className="flex flex-1 justify-between">
+        <Card className="flex">
+          <div className="flex-auto w-8/12">
+
             <CardHeader>
 
               <CardTitle>{order.title}</CardTitle>
@@ -53,35 +54,28 @@ export default async function OrderPage(
 
             </CardHeader>
 
-            <div className="flex justify-center items-center p-6">
-              <Button size="sm" variant="outline" className="h-8 gap-1">
-                <Notebook className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj notatkę
-            </span>
-              </Button>
+            <CardContent>
+              <TabsContent value="contact">
+                <div>
+                  <span>Klient: {order.customer_id}</span>
+                </div>
+              </TabsContent>
+              <TabsContent value="warehouse">
+                Invoice: {order.invoice_id}
+              </TabsContent>
+              <TabsContent value="service">
+                Service: {order.service_id}
+              </TabsContent>
+            </CardContent>
+
+          </div>
+          <div className="flex-auto w-2/12 p-6">
+            <div className="flex flex-col gap-5">
+              <DialogCreateNote orderId={orderId} />
+
+              <NotesList orderId={orderId} />
             </div>
           </div>
-          <div className="flex p-6">
-
-            <div className="flex-auto w-8/12">
-              <CardContent>
-                <TabsContent value="contact">
-                  Klient: {order.customer_id}
-                </TabsContent>
-                <TabsContent value="warehouse">
-                  Invoice: {order.invoice_id}
-                </TabsContent>
-                <TabsContent value="service">
-                  Service: {order.service_id}
-                </TabsContent>
-              </CardContent>
-            </div>
-            <div className="flex-auto w-2/12 border-l-2 p-6">
-              03 content
-            </div>
-          </div>
-
         </Card>
       </div>
 

@@ -4,14 +4,14 @@ import Link from 'next/link';
 
 export default function Header() {
   return (
-    <div className="flex flex-col gap-16 items-center">
+    <div className="flex flex-col gap-8 items-center">
       <div className="flex gap-8 justify-center items-center">
         <a
           href="https://ets-polska.pl "
           target="_blank"
           rel="noreferrer"
         >
-          <Logo className="h-64 w-64" />
+          <Logo className="h-52 w-52" />
         </a>
       </div>
 
@@ -29,16 +29,16 @@ export default function Header() {
 
       </p>
 
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
 
       <div className="flex gap-2">
 
         <Button asChild size="sm" variant={'outline'}>
           <Link href="/sign-in">Sign in</Link>
         </Button>
-        <Button asChild size="sm" variant={'default'}>
+        {/*<Button asChild size="sm" variant={'default'}>
           <Link href="/sign-up">Sign up</Link>
-        </Button>
+        </Button>*/}
       </div>
 
     </div>

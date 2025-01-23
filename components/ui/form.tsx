@@ -66,6 +66,8 @@ Label.displayName = 'Label';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input = React.forwardRef<

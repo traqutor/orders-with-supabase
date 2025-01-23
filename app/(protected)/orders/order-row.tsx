@@ -15,7 +15,7 @@ import React from 'react';
 import Link from 'next/link';
 
 
-export function OrderRow(order: Tables<'orders'>) {
+export function OrderRow(order: any) {
 
   const deleteOrderRecord = (order: Tables<'orders'>) => {
     console.log('Delete order', order);
@@ -40,9 +40,9 @@ export function OrderRow(order: Tables<'orders'>) {
         {DateTime.fromISO(order.created_at).toFormat('dd-mm-yyyy')}
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        {order.orders_actions.map(action => (
+        {order.orders_actions.map((action: {actions: Tables<'actions'>}) => (
           <Pill
-            key={action.id}
+            key={action.actions.id}
             variant={action.actions.color_hex || 'default' as any}
             title={action.actions.title || ''} />
         ))}

@@ -18,7 +18,7 @@ const postOrder = async (order: any) => {
     .select();
 };
 
-const OrderCreateDialog = () => {
+const DialogCreateOrder = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -27,8 +27,6 @@ const OrderCreateDialog = () => {
     const payload = {} as Tables<'orders'>;
 
     const values = Object.fromEntries(new FormData(event.currentTarget));
-    console.log('values', values);
-
 
     const { data, error } = await postOrder({
       ...payload,
@@ -36,8 +34,7 @@ const OrderCreateDialog = () => {
       title: values.title,
       status_id: '14b47017-86ca-40e6-8b6f-f4ba78f2d4c0'
     });
-    console.log('submit data', data);
-    console.log('submit error', error);
+
     if (error) {
       console.error('error', error);
       return;
@@ -141,4 +138,4 @@ const OrderCreateDialog = () => {
   );
 };
 
-export default OrderCreateDialog;
+export default DialogCreateOrder;

@@ -15,7 +15,7 @@ export function OrdersTable({
                               offset,
                               totalProducts
                             }: {
-  orders: Tables<'orders'>[];
+  orders: any[];
   offset: number;
   totalProducts: number;
 }) {

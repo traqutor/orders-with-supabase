@@ -46,7 +46,7 @@ export default async function OrderPage(
         </div>
       </div>
       <div
-        className="mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+        className="mt-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         <Card className="flex">
           <div className="flex-auto w-8/12">
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 
 export function ListItem({
@@ -13,15 +13,11 @@ export function ListItem({
   const pathname = usePathname();
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <li
-          className="cursor-pointer flex shrink h-8 gap-4 items-start justify-start text-muted-foreground transition-colors hover:text-foreground md:h-6 mb-1"
-        >
-          {children}
-        </li>
-      </TooltipTrigger>
-      <TooltipContent side="right">{label}</TooltipContent>
-    </Tooltip>
+    <li
+      className="cursor-pointer flex shrink h-8 gap-4 items-start justify-start text-muted-foreground transition-colors hover:text-foreground md:h-6 mb-1"
+    >
+      {children}
+    </li>
+
   );
 }

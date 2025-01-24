@@ -15,7 +15,7 @@ export default function Header() {
         </a>
       </div>
 
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xs text-center">
+      <p className="text-3xl lg:text-4xl leading-tight! mx-auto max-w-xs text-center">
         Nowa aplikacja w {' '}
 
         <a
@@ -29,7 +29,7 @@ export default function Header() {
 
       </p>
 
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+      <div className="w-full p-[1px] bg-linear-to-r from-transparent via-foreground/10 to-transparent" />
 
       <div className="flex gap-2">
 

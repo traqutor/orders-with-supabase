@@ -12,14 +12,16 @@ import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase
 import { createClient } from '@/utils/supabase/client';
 import { Action, useActions } from '@/hooks/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
-
-
+import Select from '@/components/ui/Select/select';
+import DynamicIcon from '@/components/ui/Icon/icon';
 
 
 export function SectionActions() {
 
   const [item, setItem] = useState<Action>();
   const { actions, fetchActions } = useActions();
+
+  console.log(item);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -119,11 +121,13 @@ export function SectionActions() {
                 onChange={handleChange}
                 className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
+                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color.toLowerCase()}</option>)}
 
               </select>
             </Form.Control>
           </Form.Field>
+
+          <Select />
 
 
           <div className="mt-[25px] flex justify-between gap-2">

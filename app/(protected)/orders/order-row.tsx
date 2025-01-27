@@ -28,7 +28,11 @@ export function OrderRow(order: any) {
           <Package className="text-green-600 hover:text-green-900" />
         </Link>
       </TableCell>
-      <TableCell className="font-medium">{order.title}</TableCell>
+      <TableCell className="font-medium">
+        <Link href={`/order/${order.id}`}>
+          {order.title}
+        </Link>
+      </TableCell>
       <TableCell className="font-medium">{order.customers.name}</TableCell>
       <TableCell>
         <Pill
@@ -40,7 +44,7 @@ export function OrderRow(order: any) {
         {DateTime.fromISO(order.created_at).toFormat('dd-mm-yyyy')}
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        {order.orders_actions.map((action: {actions: Tables<'actions'>}) => (
+        {order.orders_actions.map((action: { actions: Tables<'actions'> }) => (
           <Pill
             key={action.actions.id}
             variant={action.actions.color_hex || 'default' as any}

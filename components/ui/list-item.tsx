@@ -1,23 +1,19 @@
 'use client';
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
-export function ListItem({
-                           label,
-                           children
-                         }: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
 
-  return (
-    <li
-      className="cursor-pointer flex shrink h-8 gap-4 items-start justify-start text-muted-foreground transition-colors hover:text-foreground md:h-6 mb-1"
-    >
-      {children}
-    </li>
+const ListItem = React.forwardRef<
+  HTMLLIElement,
+  React.HTMLAttributes<HTMLLIElement>
+>(({ className, ...props }, ref) => (
+  <li
+    ref={ref}
+    className={cn('cursor-pointer mb-1 flex gap-2 shrink items-center justify-start transition-colors hover:text-foreground', className)}
+    {...props}
+  />
+));
+ListItem.displayName = 'ListItem';
 
-  );
-}
+export { ListItem };

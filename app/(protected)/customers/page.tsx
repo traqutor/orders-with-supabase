@@ -1,26 +1,28 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { CustomersTable } from '@/app/(protected)/customers/customers-table';
+import { getOrders } from '@/lib/db/orders';
+import { getCustomers } from '@/lib/db/customers';
 
-export default async function CustomersPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/sign-in');
+export default async function CustomersPage(
+  props: {
+    searchParams: Promise<{ q: string; offset: string }>;
   }
+) {
 
+  const searchParams = await props.searchParams;
+  const search = searchParams.q ?? '';
+  const offset = searchParams.offset ?? 0;
+
+
+  const { customers, newOffset, totalOrdersCounter } = await getCustomers(
+    search,
+    Number(offset)
+  );
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Klienci</h2>
-
-      </div>
-
-    </div>
+    <CustomersTable
+      customers={customers}
+      offset={newOffset ?? 0}
+      totalProducts={totalOrdersCounter}
+    />
   );
 }

@@ -3,10 +3,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
-import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
 import { getListQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { Tables } from '@/types_db';
+import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 
 const title = 'Zamówienia';
 
@@ -31,14 +31,8 @@ export default async function Layout({
         <TabsList>
 
           <Link href="/orders">
-            <TabsTrigger value="tab">Wszystkie</TabsTrigger>
+            <TabsTrigger value="tab">Wszyscy klienci</TabsTrigger>
           </Link>
-
-          {statuses.map((status) =>
-            (<Link key={status.id} href={`/orders/${status.id}`}>
-              <TabsTrigger value={status.id}>{status.title}</TabsTrigger>
-            </Link>)
-          )}
 
         </TabsList>
         <div className="ml-auto flex items-center gap-2 pr-2">
@@ -48,7 +42,7 @@ export default async function Layout({
               Export
             </span>
           </Button>
-          <OrderCreateDialog />
+          <CustomerCreateDialog />
 
         </div>
       </div>

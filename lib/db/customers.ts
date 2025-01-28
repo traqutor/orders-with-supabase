@@ -67,6 +67,26 @@ async function getCustomers(
   };
 }
 
+async function getCustomerById(
+  customerId: string
+): Promise<{ customer: any }> {
+  const { data, error } = await supabase
+    .from('customers')
+    .select(
+      `*`
+    ).eq('id', customerId)
+    .single();
+
+
+  if (error) throw new Error(`Get Customers by Id error:`, error);
+
+
+  return {
+    customer: data
+  };
+
+}
+
 const postCustomer = async (payload: Tables<'customers'>) => {
   return supabase
     .from('customers')
@@ -75,10 +95,10 @@ const postCustomer = async (payload: Tables<'customers'>) => {
 };
 
 const putCustomer = async (payload: Tables<'customers'>) => {
-
+  console.log('update as:',payload);
   return supabase
     .from('customers')
-    .update(payload)
+    .update({...payload})
     .eq('id', payload.id)
     .select();
 };
@@ -93,4 +113,4 @@ const deleteCustomer = async (payload: Tables<'customers'>) => {
 };
 
 
-export { getCustomers, postCustomer, putCustomer, deleteCustomer };
+export { getCustomers, getCustomerById, postCustomer, putCustomer, deleteCustomer };

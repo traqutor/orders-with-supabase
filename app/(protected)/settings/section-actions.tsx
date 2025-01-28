@@ -8,7 +8,6 @@ import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
 import { Action, useActions } from '@/lib/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import Select from '@/components/ui/Select/select';
@@ -24,8 +23,6 @@ export function SectionActions() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const supabase = createClient();
 
     if (item)
       if (item.id === '') {

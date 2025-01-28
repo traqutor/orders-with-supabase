@@ -1,107 +1,331 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { v4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog';
-import { PlusCircle, SaveIcon, XIcon } from 'lucide-react';
+import { Edit2, PlusCircle, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import * as Form from '@/components/ui/form';
-import { createClient } from '@/utils/supabase/client';
+import * as Form from '@radix-ui/react-form';
 import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
+import { useCustomers } from '@/lib/db/useCustomers';
+import { postOrder, putOrder } from '@/lib/db/orders';
+import SelectField from '@/components/ui/Form/select-field';
+import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
+import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 
-const postOrder = async (order: any) => {
-  const db = createClient();
 
-  return db
-    .from('orders')
-    .insert(order)
-    .select();
+interface OrderCreateDialogProps {
+  order?: Tables<'orders'>;
+}
+
+
+const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
+  return {
+    id: order.id,
+    customer_id: order.customer_id,
+    status_id: order.status_id,
+    title: order.title,
+    name: order.name,
+    phone: order.phone,
+    email: order.email,
+    address: order.address,
+    nip: order.nip,
+    regon: order.regon,
+    description: order.description,
+    created_by: order.created_by,
+    created_at: order.created_at,
+    reference_number: order.reference_number,
+    due_at: order.due_at,
+    shipment_id: order.shipment_id,
+    assigned_to: order.assigned_to,
+    invoice_id: order.invoice_id,
+    service_id: order.service_id
+  };
 };
 
-const OrderCreateDialog = () => {
+const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
+
   const [open, setOpen] = useState(false);
+
   const router = useRouter();
+
+  const { customers, fetchCustomers } = useCustomers();
+  const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
+  const [formData, setFormData] = useState<Tables<'orders'>>(mapOrderToFormData(order || {} as Tables<'orders'>));
+  const computedIsEdit = useMemo(() => {
+    return !!order?.customer_id;
+  }, [order]);
+
+
+  useEffect(() => {
+    fetchCustomers().then();
+    fetchOrdersStatuses().then();
+  }, []);
+
+  useEffect(() => {
+    if (!computedIsEdit && ordersStatuses.length > 0) {
+      formData.status_id = ordersStatuses[0].id;
+    }
+  }, [ordersStatuses]);
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const payload = {} as Tables<'orders'>;
 
-    const values = Object.fromEntries(new FormData(event.currentTarget));
+    if (order?.id) {
+      const { error } = await putOrder({
+        ...formData,
+        id: order.id
+      });
 
-    const { error } = await postOrder({
-      ...payload,
-      customer_id: values.customer,
-      title: values.title,
-      status_id: '14b47017-86ca-40e6-8b6f-f4ba78f2d4c0'
-    });
-
-    if (error) {
-      console.error('error', error);
-      return;
+      if (error) {
+        console.error(`Update order with payload: ${formData} error`, error);
+        return;
+      } else {
+        setOpen(false);
+        router.push(`/order/${order.id}`);
+      }
     } else {
-      setOpen(false);
-      router.push('/orders');
+      const { error } = await postOrder({
+        ...formData,
+        id: v4()
+      });
+
+      if (error) {
+        console.error(`Create order with payload: ${formData} error`, error);
+        return;
+      } else {
+        setOpen(false);
+        router.push('/orders');
+      }
     }
   };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const key = name as keyof Tables<'orders'>;
+
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [key]: value
+    }));
+  };
+
+  const handleCustomerIdChange = (value: string) => {
+    const customer = customers.find((c) => c.id === value);
+
+    if (!customer) {
+      return;
+    }
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      customer_id: customer.id,
+      name: customer.name,
+      phone: customer.phone,
+      email: customer.email,
+      address: customer.address,
+      nip: customer.nip,
+      regon: customer.regon,
+      description: customer.description
+    }));
+  };
+
+  const handleStatusChange = (value: string) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      status_id: value
+    }));
+  };
+
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button size="sm" className="h-8 gap-1">
+        {computedIsEdit ? <Button size="sm" className="h-8 gap-1">
+          <Edit2 className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Edutuj zamówienie
+            </span>
+        </Button> : <Button size="sm" className="h-8 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Dodaj Zamówienie
             </span>
-        </Button>
+        </Button>}
+
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Content
-          className="bg-card border shadow-xl fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
+          className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Dodaj Zamówienie
+            {computedIsEdit ? 'Zmiana w zamówieniu' : 'Nowe Zamówienie'}
           </Dialog.Title>
-          <Dialog.Description className="mb-5 mt-2.5 text-[15px] leading-normal text-mauve11 ">
-            Wybierz klienta i wprowadź tytuł zamówienia
+          <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
+            {computedIsEdit ? 'Edytujesz dane klienta przypisane do do zamówienia. Nie możesz zmienić klienta ale możesz edytować jego dane w zamówieniu' : 'Dodajesz nowe Zamówienie, wypełnije wymagane pola.'}
           </Dialog.Description>
 
           <Form.Root
-            onSubmit={(event) => handleSubmit(event)}
+            onSubmit={handleSubmit}
           >
-            <Form.Field>
-              <Form.Row>
-                <Form.Label htmlFor="customerId">Klient</Form.Label>
-                <Form.Message>
-                  Nazwa klienta
-                </Form.Message>
-              </Form.Row>
-              <Form.Input
-                id="customerId"
-                type="text"
-                name="customer"
-                placeholder="Klient"
-                required />
+            <div className="mb-5">
+              <SelectField
+                label="Status zamówienia"
+                name=""
+                value={formData.status_id}
+                required
+                onChange={handleStatusChange}
+                options={ordersStatuses.map((s) => {
+                  return { value: s.id, label: s.title };
+                })}
+              />
+            </div>
+
+            {!computedIsEdit && <div className="mb-5">
+              <SelectField
+                label="Wybierz klienta"
+                name={formData.name || ''}
+                value={formData.customer_id || ''}
+                onChange={handleCustomerIdChange}
+                required
+                options={customers.map((c) => {
+                  return { value: c.id, label: c.name || '' };
+                })}
+              />
+            </div>}
+
+            <Form.Field name={'title'} className="mb-5">
+              <div className="flex justify-between align-middle mb-1 text-muted-foreground text-xs">
+                <label htmlFor="customerId">Tytuł lub nazwa zamówienia</label>
+                <span>Pole wymagane</span>
+              </div>
+              <Form.Control asChild>
+                <input
+                  id="titleId"
+                  type="text"
+                  name="title"
+                  value={formData?.title || ''}
+                  onChange={handleChange}
+                  placeholder="Tytuł"
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required />
+              </Form.Control>
             </Form.Field>
 
 
-            <Form.Field>
-              <Form.Row>
-                <Form.Label htmlFor="customerId">Tytuł</Form.Label>
-                <Form.Message>
-                  Tytuł zamówienia
-                </Form.Message>
-              </Form.Row>
-              <Form.Input
-                id="titleId"
-                type="text"
-                name="title"
-                placeholder="Tytuł"
-                required />
-            </Form.Field>
+            {computedIsEdit ? <div>
+                <Form.Field name="name" className="pb-2">
+                  <Form.Label htmlFor="nameId" className="text-muted-foreground text-xs">
+                    Nazwa klienta
+                  </Form.Label>
+                  <input
+                    id="nameId"
+                    type="text"
+                    name="name"
+                    value={formData?.name || ''}
+                    onChange={handleChange}
+                    placeholder="Nazwa"
+                    required
+                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>
 
-            <Form.Message>
-              Wpisz nazwę klienta
-            </Form.Message>
+                <div className="flex w-full items-center justify-evenly gap-2 pb-2">
+
+                  <Form.Field name="nip" className="flex flex-col w-full">
+                    <Form.Label htmlFor="nipId" className="text-muted-foreground text-xs mb-0.5">NIP</Form.Label>
+                    <input
+                      id="nipId"
+                      type="text"
+                      name="nip"
+                      value={formData?.nip || ''}
+                      onChange={handleChange}
+                      placeholder="NIP"
+                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </Form.Field>
+
+                  <Form.Field name="regon" className="flex flex-col w-full">
+                    <Form.Label htmlFor="regonId" className="text-muted-foreground text-xs mb-0.5">Regon</Form.Label>
+                    <input
+                      id="regonId"
+                      type="text"
+                      name="regon"
+                      value={formData?.regon || ''}
+                      onChange={handleChange}
+                      placeholder="Regon"
+                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </Form.Field>
+
+                </div>
+
+                <div className="flex w-full items-center justify-evenly gap-2 ">
+
+                  <Form.Field name="phone" className="flex flex-col w-full">
+                    <Form.Label htmlFor="phoneId" className="text-muted-foreground text-xs mb-0.5">Telefon</Form.Label>
+                    <input
+                      id="phoneId"
+                      type="text"
+                      name="phone"
+                      value={formData?.phone || ''}
+                      onChange={handleChange}
+                      placeholder="Telefon"
+                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </Form.Field>
+
+
+                  <Form.Field name="email" className="flex flex-col w-full">
+                    <Form.Label htmlFor="emailId" className="text-muted-foreground text-xs mb-0.5">Email</Form.Label>
+                    <input
+                      id="emailId"
+                      type="text"
+                      name="email"
+                      value={formData?.email || ''}
+                      onChange={handleChange}
+                      placeholder="Email"
+                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </Form.Field>
+                </div>
+
+                <Form.Field name="address">
+                  <Form.Label htmlFor="addressId" className="text-muted-foreground text-xs">Adres</Form.Label>
+                  <input
+                    id="addressId"
+                    type="text"
+                    name="address"
+                    value={formData?.address || ''}
+                    onChange={handleChange}
+                    placeholder="Adres"
+                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>
+
+
+                <Form.Field name="description">
+                  <Form.Label htmlFor="descriptionId" className="text-muted-foreground text-xs">Opis</Form.Label>
+                  <input
+                    id="descriptionId"
+                    type="text"
+                    name="description"
+                    value={formData?.description || ''}
+                    onChange={handleChange}
+                    placeholder="Opis"
+                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>
+              </div> :
+              <div className="pt-4">
+                <CustomerContentTab customer={formData} />
+              </div>
+            }
 
             <div className="mt-[25px] flex justify-end gap-2">
               <Dialog.Close asChild>
@@ -111,7 +335,8 @@ const OrderCreateDialog = () => {
                 </Button>
               </Dialog.Close>
 
-              <Button size="sm" className="h-8 gap-1" type="submit">
+              <Button size="sm" className="h-8 gap-1" type="submit"
+                      disabled={!formData.name || !formData.customer_id || !formData.status_id}>
                 <SaveIcon className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Save</span>
               </Button>
@@ -132,6 +357,7 @@ const OrderCreateDialog = () => {
       </Dialog.Portal>
     </Dialog.Root>
   );
-};
+});
+
 
 export default OrderCreateDialog;

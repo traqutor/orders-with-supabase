@@ -45,7 +45,6 @@ export function CustomerContentTab({ customer }: any) {
           </ListItem>
         </ul>
       </div>
-
     </div>
   );
 }

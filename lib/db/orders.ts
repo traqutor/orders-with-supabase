@@ -36,7 +36,7 @@ const ordersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, sear
       .range(offset, offset + limit - 1);
 
 
-export async function getOrders(
+async function getOrders(
   search: string,
   offset: number
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
@@ -80,7 +80,7 @@ export async function getOrders(
   };
 }
 
-export async function getOrdersWithStatus(
+async function getOrdersWithStatus(
   search: string,
   offset: number,
   statusId: string
@@ -128,10 +128,9 @@ export async function getOrdersWithStatus(
   };
 }
 
-export async function getOrderById(
+async function getOrderById(
   orderId: string
 ): Promise<{ order: any }> {
-
 
   const { data, error } = await supabase
     .from('orders')
@@ -159,3 +158,25 @@ export async function getOrderById(
 
 }
 
+
+const postOrder = async (order: any) => {
+  const db = createClient();
+
+  return db
+    .from('orders')
+    .insert(order)
+    .select();
+};
+
+const putOrder = async (order: any) => {
+  const db = createClient();
+
+  return db
+    .from('orders')
+    .update(order)
+    .eq('id', order.id)
+    .select();
+};
+
+
+export { getOrders, getOrdersWithStatus, postOrder, putOrder, getOrderById };

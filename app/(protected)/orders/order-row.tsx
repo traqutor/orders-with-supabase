@@ -28,7 +28,7 @@ export function OrderRow(order: any) {
           <Package className="text-green-600 hover:text-green-900" />
         </Link>
       </TableCell>
-      <TableCell className="font-medium">
+      <TableCell className="font-medium max-w-sm truncate">
         <Link href={`/order/${order.id}`}>
           {order.title}
         </Link>

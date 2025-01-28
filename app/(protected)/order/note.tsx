@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Fragment } from 'react';
-import { EditIcon, PinIcon } from 'lucide-react';
+import { PinIcon } from 'lucide-react';
 import { Tables } from '@/types_db';
 import { DateTime } from 'luxon';
 import cn from 'clsx';

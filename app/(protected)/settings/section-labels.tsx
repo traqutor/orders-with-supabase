@@ -1,16 +1,16 @@
 'use client';
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
-import { Label, useLabels } from '@/hooks/db/useLabels';
+import { Label, useLabels } from '@/lib/db/useLabels';
 import { Section } from '@/app/(protected)/settings/section';
 
 import { Pill } from '@/components/ui/pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
+import { deleteLabel, postLabel, putLabel } from '@/lib/db/labels';
 
 export function SectionLabels() {
 
@@ -23,9 +23,9 @@ export function SectionLabels() {
 
     if (item)
       if (item.id === '') {
-        await insertRowQuery(supabase, 'labels', { ...item, id: v4() });
+        await postLabel({ ...item, id: v4() });
       } else {
-        await updateRowQuery(supabase, 'labels', item);
+        await putLabel(item);
       }
 
     await getLabels();
@@ -49,9 +49,8 @@ export function SectionLabels() {
   };
 
   const handleDelete = async () => {
-    const supabase = createClient();
     if (item) {
-      await deleteRowQuery(supabase, 'labels', item);
+      await deleteLabel(item);
       await getLabels();
       setItem(undefined);
     }

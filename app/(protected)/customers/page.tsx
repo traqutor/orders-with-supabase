@@ -1,5 +1,4 @@
 import { CustomersTable } from '@/app/(protected)/customers/customers-table';
-import { getOrders } from '@/lib/db/orders';
 import { getCustomers } from '@/lib/db/customers';
 
 export default async function CustomersPage(

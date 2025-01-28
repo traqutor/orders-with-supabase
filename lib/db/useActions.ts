@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Tables } from '@/types_db';
-import { getListQuery } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
+import { getActions } from '@/lib/db/actions';
 
 export type Action = Tables<'actions'>;
 
@@ -11,7 +10,7 @@ export function useActions() {
 
 
   useEffect(() => {
-    fetchActions();
+    fetchActions().then();
 
     return () => {
       console.log('Actions clean up', actions);
@@ -20,8 +19,9 @@ export function useActions() {
   }, []);
 
   const fetchActions = async () => {
-    const db = createClient();
-    const data = await getListQuery(db, 'actions') as Action[];
+    const { data, error } = await getActions();
+
+    if (error) throw new Error(`Get list of Actions error:`, error);
 
     setActions(data);
   };

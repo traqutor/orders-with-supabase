@@ -12,7 +12,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 
 
 interface CustomerCreateDialogProps {
-  customer: Tables<'customers'>;
+  customer?: Tables<'customers'>;
 }
 
 const emptyCustomer: Tables<'customers'> = {
@@ -59,8 +59,7 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
     event.preventDefault();
 
     const { error } = await postCustomer({
-      ...formData,
-      id: customer.id
+      ...formData
     });
 
     if (error) {

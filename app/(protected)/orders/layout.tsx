@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
 import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
-import { getListQuery } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
 import { Tables } from '@/types_db';
+import { getOrdersStatuses } from '@/lib/db/orders_statuses';
 
 const title = 'Zamówienia';
 
@@ -22,8 +21,13 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
 
-  const supabase = await createClient();
-  const statuses: OrderStatus[] = await getListQuery(supabase, 'orders_statuses') as OrderStatus[];
+  const { data, error } = await getOrdersStatuses();
+
+  if (error) {
+    throw new Error(`Get list of Orders Statuses error:`, error);
+  }
+
+  const statuses: OrderStatus[] = data as OrderStatus[];
 
   return (
     <Tabs defaultValue="tab">

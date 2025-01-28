@@ -9,12 +9,15 @@ interface DynamicIconProps {
   color?: string;
 }
 
-const DynamicIcon: React.FC<DynamicIconProps> = ({
-  iconName,
-  size = 12,
-  color = 'currentColor'
-}) => {
-  const IconComponent = Icons[iconName];
+const DynamicIcon: React.FC<DynamicIconProps> = (
+  {
+    iconName,
+    size = 12,
+    color = 'currentColor'
+  }
+) => {
+
+  const IconComponent = Icons[iconName] as React.ElementType;
 
   if (!IconComponent) {
     return <p>Icon "{iconName}" not found</p>;

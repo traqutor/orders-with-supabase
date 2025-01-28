@@ -8,12 +8,11 @@ import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import { Button } from '@/components/ui/button';
-import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
-import { Action, useActions } from '@/hooks/db/useActions';
+import { Action, useActions } from '@/lib/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import Select from '@/components/ui/Select/select';
-import DynamicIcon from '@/components/ui/Icon/icon';
+import { deleteAction, postAction, putAction } from '@/lib/db/actions';
 
 
 export function SectionActions() {
@@ -30,9 +29,9 @@ export function SectionActions() {
 
     if (item)
       if (item.id === '') {
-        await insertRowQuery(supabase, 'actions', { ...item, id: v4() });
+        await postAction({ ...item, id: v4() });
       } else {
-        await updateRowQuery(supabase, 'actions', { ...item });
+        await putAction({ ...item });
       }
 
     await fetchActions();
@@ -61,9 +60,8 @@ export function SectionActions() {
 
   const handleDelete = async () => {
 
-    const supabase = createClient();
     if (item) {
-      await deleteRowQuery(supabase, 'actions', item);
+      await deleteAction(item);
       await fetchActions();
       setItem(undefined);
     }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Tables } from '@/types_db';
-import { getListQuery } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
+import { getOrdersStatuses } from '@/lib/db/orders_statuses';
 
 export type OrderStatus = Tables<'orders_statuses'>;
 
@@ -11,7 +10,7 @@ export function useOrdersStatuses() {
 
 
   useEffect(() => {
-    fetchOrdersStatuses();
+    fetchOrdersStatuses().then();
 
     return () => {
       console.log('Order Statuses clean up', ordersStatuses);
@@ -19,8 +18,9 @@ export function useOrdersStatuses() {
   }, []);
 
   const fetchOrdersStatuses = async () => {
-    const db = createClient();
-    const data = await getListQuery(db, 'orders_statuses') as OrderStatus[];
+    const { data, error } = await getOrdersStatuses();
+
+    if (error) throw new Error(`Get list of Orders Statuses error:`, error);
 
     setOrdersStatuses(data);
   };

@@ -6,11 +6,10 @@ import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
-import { OrderStatus, useOrdersStatuses } from '@/hooks/db/useOrdersStatuses';
+import { OrderStatus, useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
+import { deleteOrderStatus, postOrderStatus, putOrderStatus } from '@/lib/db/orders_statuses';
 
 export function SectionOrdersStatuses() {
 
@@ -18,15 +17,13 @@ export function SectionOrdersStatuses() {
   const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-
-    const supabase = createClient();
     event.preventDefault();
 
     if (item)
       if (item.id === '') {
-        await insertRowQuery(supabase, 'orders_statuses', { ...item, id: v4() });
+        await postOrderStatus({ ...item, id: v4() });
       } else {
-        await updateRowQuery(supabase, 'orders_statuses', { ...item });
+        await putOrderStatus({ ...item });
       }
 
     await fetchOrdersStatuses();
@@ -51,9 +48,8 @@ export function SectionOrdersStatuses() {
   };
 
   const handleDelete = async () => {
-    const supabase = createClient();
     if (item) {
-      await deleteRowQuery(supabase, 'orders_statuses', item);
+      await deleteOrderStatus(item);
       await fetchOrdersStatuses();
       setItem(undefined);
     }

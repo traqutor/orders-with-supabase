@@ -5,8 +5,6 @@ import * as  Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from 'lucide-react';
 
 
-const countries = { france: '🇫🇷', 'united-kingdom': '🇬🇧', spain: '🇪🇸' };
-
 export default () => {
   const [value, setValue] = useState('france');
   return (

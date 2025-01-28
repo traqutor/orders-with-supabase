@@ -49,6 +49,8 @@ export function CustomersTable({
               <TableHead>Nazwa</TableHead>
               <TableHead>Rodzaj</TableHead>
               <TableHead className="hidden md:table-cell">Kontakt</TableHead>
+              <TableHead className="hidden md:table-cell">NIP</TableHead>
+              <TableHead className="hidden md:table-cell">Regon</TableHead>
               <TableHead>
                 <span className="sr-only">Menu</span>
               </TableHead>

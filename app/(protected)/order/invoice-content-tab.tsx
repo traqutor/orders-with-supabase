@@ -37,7 +37,7 @@ export function InvoiceContentTab({ order }: any) {
         <CardContent>
           <div>
             <CardDescription className=" pb-2">
-              Kontrachent:
+              Kontrahent:
             </CardDescription>
             <div>
               <ul className="list-unstyled mb-5">

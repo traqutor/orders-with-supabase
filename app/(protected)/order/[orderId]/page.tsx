@@ -11,6 +11,7 @@ import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
 import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
+import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
 
 export default async function OrderPage(
   props: {
@@ -51,9 +52,20 @@ export default async function OrderPage(
           <div className="flex-auto w-8/12">
 
             <CardHeader>
-              <CardTitle className="pb-2">{order.title}  </CardTitle>
+              <div className={'flex flex-auto justify-between pb-5'}>
+                <div>
+                  <CardTitle className="pb-2">{order.title}</CardTitle>
+                  <CardDescription>
+                    Opis: {order.description}
+                  </CardDescription>
+                </div>
 
-              <div className="flex pb-5">
+                <div className="p-7">
+                  <OrderCreateDialog order={order} />
+                </div>
+              </div>
+
+              <div className="flex">
                 <div className=" flex-auto w-4/12">
                   <span className="text-sm text-muted-foreground mr-2">Status: </span> <Pill
                   key={order.orders_statuses.id}
@@ -71,11 +83,7 @@ export default async function OrderPage(
                         variant={a.actions.color_hex || 'default' as any}
                         title={a.actions.title || ''} />
                   )}</div>
-
               </div>
-              <CardDescription>
-                Opis: {order.description}
-              </CardDescription>
             </CardHeader>
 
             <CardContent>

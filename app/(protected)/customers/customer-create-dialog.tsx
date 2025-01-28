@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import { v4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog';
-import { PlusCircle, SaveIcon, XIcon } from 'lucide-react';
+import { Edit2, PlusCircle, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
-import { postCustomer } from '@/lib/db/customers';
+import { postCustomer, putCustomer } from '@/lib/db/customers';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 
 
@@ -32,7 +33,8 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
 
   const [open, setOpen] = useState(false);
 
-  const [formData, setFormData] = useState<Tables<'customers'>>(customer ? customer : { ...emptyCustomer });
+
+  const [formData, setFormData] = useState<Tables<'customers'>>(customer ? customer : { ...Object.assign({}, emptyCustomer) });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -58,35 +60,57 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { error } = await postCustomer({
-      ...formData
-    });
+    if (customer?.id) {
+      const { error } = await putCustomer({
+        ...formData,
+        id: customer.id
+      });
 
-    if (error) {
-      console.error('error', error);
-      return;
+      if (error) {
+        console.error(`Update customer with payload: ${formData} error`, error);
+        return;
+      } else {
+        setOpen(false);
+        router.push(`/customer/${customer.id}`);
+      }
     } else {
-      setOpen(false);
-      router.push('/customers');
+      const { error } = await postCustomer({
+        ...formData,
+        id: v4()
+      });
+
+      if (error) {
+        console.error(`Create customer with payload: ${formData} error`, error);
+        return;
+      } else {
+        setOpen(false);
+        router.push('/customers');
+      }
     }
   };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <Button size="sm" className="h-8 gap-1">
+        {customer?.id ? <Button size="sm" className="h-8 gap-1">
+          <Edit2 className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Edutuj Kontrahenta
+            </span>
+        </Button> : <Button size="sm" className="h-8 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj Kontrachenta
+              Dodaj Kontrahenta
             </span>
-        </Button>
+        </Button>}
+
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Content
           className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Dodaj Kontrachenta
+            Dodaj Kontrahenta
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[15px] leading-normal text-mauve11 ">
           </Dialog.Description>
@@ -192,32 +216,34 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
               />
             </Form.Field>
 
-            <Form.Field>
-              <Form.Label htmlFor="nipId">NIP</Form.Label>
-              <input
-                id="nipId"
-                type="text"
-                name="nip"
-                value={formData?.nip || ''}
-                onChange={handleChange}
-                placeholder="NIP"
-                className="flex whitespace-pre-wrap min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </Form.Field>
-
-            {formData?.customer_type_id === 1 &&
-              <Form.Field>
-                <Form.Label htmlFor="regonId">Regon</Form.Label>
+            <div className="flex w-full items-center justify-evenly gap-2 ">
+              <Form.Field className="flex w-full">
+                <Form.Label htmlFor="nipId">NIP</Form.Label>
                 <input
-                  id="regonId"
+                  id="nipId"
                   type="text"
-                  name="regon"
-                  value={formData?.regon || ''}
+                  name="nip"
+                  value={formData?.nip || ''}
                   onChange={handleChange}
-                  placeholder="Regon"
+                  placeholder="NIP"
                   className="flex whitespace-pre-wrap min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
-              </Form.Field>}
+              </Form.Field>
+
+              {formData?.customer_type_id === 1 &&
+                <Form.Field className="flex w-full">
+                  <Form.Label htmlFor="regonId">Regon</Form.Label>
+                  <input
+                    id="regonId"
+                    type="text"
+                    name="regon"
+                    value={formData?.regon || ''}
+                    onChange={handleChange}
+                    placeholder="Regon"
+                    className="flex whitespace-pre-wrap min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>}
+            </div>
 
             <Form.Field>
               <Form.Label htmlFor="descriptionId">Opis</Form.Label>

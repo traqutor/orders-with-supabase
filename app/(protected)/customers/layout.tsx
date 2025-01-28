@@ -3,9 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
-import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
-import { Tables } from '@/types_db';
-import { getOrdersStatuses } from '@/lib/db/orders_statuses';
+import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 
 const title = 'Zamówienia';
 
@@ -13,7 +11,6 @@ export const metadata = {
   title
 };
 
-type OrderStatus = Tables<'orders_statuses'>;
 
 export default async function Layout({
                                        children
@@ -21,13 +18,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
 
-  const { data, error } = await getOrdersStatuses();
-
-  if (error) {
-    throw new Error(`Get list of Orders Statuses error:`, error);
-  }
-
-  const statuses: OrderStatus[] = data as OrderStatus[];
 
   return (
     <Tabs defaultValue="tab">
@@ -35,14 +25,8 @@ export default async function Layout({
         <TabsList>
 
           <Link href="/orders">
-            <TabsTrigger value="tab">Wszystkie</TabsTrigger>
+            <TabsTrigger value="tab">Wszyscy klienci</TabsTrigger>
           </Link>
-
-          {statuses.map((status) =>
-            (<Link key={status.id} href={`/orders/${status.id}`}>
-              <TabsTrigger value={status.id}>{status.title}</TabsTrigger>
-            </Link>)
-          )}
 
         </TabsList>
         <div className="ml-auto flex items-center gap-2 pr-2">
@@ -52,7 +36,7 @@ export default async function Layout({
               Export
             </span>
           </Button>
-          <OrderCreateDialog />
+          <CustomerCreateDialog />
 
         </div>
       </div>

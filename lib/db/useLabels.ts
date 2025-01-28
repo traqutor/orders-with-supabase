@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Tables } from '@/types_db';
-import { getListQuery } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
+import { getLabels } from '@/lib/db/labels';
 
 export type Label = Tables<'labels'>;
 
@@ -11,18 +10,19 @@ export function useLabels() {
 
 
   useEffect(() => {
-    getLabels();
+    fetchLabels().then();
 
     return () => {
       console.log('Labels clean up', labels);
     };
   }, []);
 
-  const getLabels = async () => {
-    const db = createClient();
-    const labels = await getListQuery(db, 'labels') as Label[];
+  const fetchLabels = async () => {
+    const { data, error } = await getLabels();
 
-    setLabels(labels);
+    if (error) throw new Error(`Get list of Labels error:`, error);
+
+    setLabels(data);
   };
 
   return {

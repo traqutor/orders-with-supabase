@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Tables } from '@/types_db';
-import Note from '@/components/ui/Note/notes';
+import Note from '@/app/(protected)/order/note';
 
 const getNotes = async (orderId: string) => {
   const db = createClient();
@@ -10,6 +11,7 @@ const getNotes = async (orderId: string) => {
     .from('notes')
     .select()
     .eq('order_id', orderId)
+    .order('pin', { ascending: false })
     .order('created_at', { ascending: false });
 };
 
@@ -17,7 +19,6 @@ const getNotes = async (orderId: string) => {
 const NotesList = async (
   props:
   { orderId: string }) => {
-
 
   const { orderId } = props;
 

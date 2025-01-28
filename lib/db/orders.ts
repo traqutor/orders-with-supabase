@@ -5,19 +5,35 @@ import { QueryData } from '@supabase/supabase-js';
 
 const supabase = createClient();
 
-const ordersListQuery = (offset: number) => supabase
-  .from('orders')
-  .select(
-    `*,
+const ordersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, search?: string) =>
+  search ? supabase
+      .from('orders')
+      .select(
+        `*,
         labels(*),
         pinned_orders(*),
         orders_statuses(*),
         orders_actions(*, actions(*)),
         customers(*)
        `
-  )
-  .order('created_at', { ascending: false })
-  .range(offset, offset + PRODUCTS_PER_PAGE - 1);
+      )
+      .textSearch('title', search)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+    :
+    supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
 
 export async function getOrders(
@@ -25,6 +41,7 @@ export async function getOrders(
   offset: number
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
+  console.log(search);
 
   const { count } = await supabase
     .from('orders')
@@ -32,13 +49,14 @@ export async function getOrders(
       `*`, { count: 'exact', head: true }
     );
 
-  const { data, error } = await ordersListQuery(offset);
+  const { data, error } = await ordersListQuery(offset, 5, search);
 
   if (error) throw new Error(`Get list of Orders error:`, error);
 
 
   const ordersList: any = data as QueryData<any>;
 
+  console.log('ordersList', ordersList);
   // Always search the full table, not per page
   if (data) {
     return {
@@ -131,6 +149,8 @@ export async function getOrderById(
     .eq('id', orderId);
 
   if (error) throw new Error(`Get Order by id: ${orderId} error:`, error);
+
+  console.log('resp order data', data);
 
   return {
     order: data[0]

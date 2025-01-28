@@ -8,18 +8,19 @@ import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import { Button } from '@/components/ui/button';
-import { deleteRowQuery, insertRowQuery, updateRowQuery } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
-import { Action, useActions } from '@/hooks/db/useActions';
+import { Action, useActions } from '@/lib/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
-
-
+import Select from '@/components/ui/Select/select';
+import { deleteAction, postAction, putAction } from '@/lib/db/actions';
 
 
 export function SectionActions() {
 
   const [item, setItem] = useState<Action>();
   const { actions, fetchActions } = useActions();
+
+  console.log(item);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,9 +29,9 @@ export function SectionActions() {
 
     if (item)
       if (item.id === '') {
-        await insertRowQuery(supabase, 'actions', { ...item, id: v4() });
+        await postAction({ ...item, id: v4() });
       } else {
-        await updateRowQuery(supabase, 'actions', { ...item });
+        await putAction({ ...item });
       }
 
     await fetchActions();
@@ -59,9 +60,8 @@ export function SectionActions() {
 
   const handleDelete = async () => {
 
-    const supabase = createClient();
     if (item) {
-      await deleteRowQuery(supabase, 'actions', item);
+      await deleteAction(item);
       await fetchActions();
       setItem(undefined);
     }
@@ -104,7 +104,7 @@ export function SectionActions() {
                 onChange={handleChange}
                 placeholder="Action"
                 required
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </Form.Control>
           </Form.Field>
@@ -117,13 +117,15 @@ export function SectionActions() {
                 name="color_hex"
                 value={item.color_hex || ''}
                 onChange={handleChange}
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
+                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color.toLowerCase()}</option>)}
 
               </select>
             </Form.Control>
           </Form.Field>
+
+          <Select />
 
 
           <div className="mt-[25px] flex justify-between gap-2">

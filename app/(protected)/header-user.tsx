@@ -52,7 +52,7 @@ export async function HeaderUser() {
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem>
-              <Link href="/login">Sign In</Link>
+              <Link href="/sign-in">Sign In</Link>
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

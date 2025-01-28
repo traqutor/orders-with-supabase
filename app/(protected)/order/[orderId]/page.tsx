@@ -1,11 +1,16 @@
 import React from 'react';
+import { ArrowBigLeft, Notebook } from 'lucide-react';
 import { getOrderById } from '@/lib/db/orders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowBigLeft } from 'lucide-react';
 import { BackButton } from '@/components/ui/back-button';
-import DialogCreateNote from '@/app/(protected)/order/dialog-create-note';
+import NoteCreateDialog from '@/app/(protected)/order/note-create-dialog';
 import NotesList from '@/app/(protected)/order/notes-list';
+import { Pill } from '@/components/ui/pill';
+import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
+import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
+import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
+import { Button } from '@/components/ui/button';
 
 export default async function OrderPage(
   props: {
@@ -21,7 +26,7 @@ export default async function OrderPage(
 
   return (
     <Tabs defaultValue="contact">
-      <div className="flex items-center">
+      <div className="flex items-center mt-2">
         <TabsList>
 
           <TabsTrigger value="contact">Kontakt</TabsTrigger>
@@ -41,37 +46,61 @@ export default async function OrderPage(
         </div>
       </div>
       <div
-        className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+        className="mt-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         <Card className="flex">
           <div className="flex-auto w-8/12">
 
             <CardHeader>
+              <CardTitle className="pb-2">{order.title}  </CardTitle>
 
-              <CardTitle>{order.title}</CardTitle>
+              <div className="flex pb-5">
+                <div className=" flex-auto w-4/12">
+                  <span className="text-sm text-muted-foreground mr-2">Status: </span> <Pill
+                  key={order.orders_statuses.id}
+                  variant={order.orders_statuses.color_hex || 'default' as any}
+                  title={order.orders_statuses.title || ''} /></div>
+
+                <div className="flex flex-wrap w-8/12 gap-2">
+                  <span className="text-sm text-muted-foreground mt-1 mr-2">Akcje: </span>
+                  {order.orders_actions.map((a: {
+                      actions: { id: React.Key | null | undefined; color_hex: any; title: any; };
+                    }) =>
+                      <Pill
+                        size="sm"
+                        key={a.actions.id}
+                        variant={a.actions.color_hex || 'default' as any}
+                        title={a.actions.title || ''} />
+                  )}</div>
+
+              </div>
               <CardDescription>
                 Opis: {order.description}
               </CardDescription>
-
             </CardHeader>
 
             <CardContent>
               <TabsContent value="contact">
-                <div>
-                  <span>Klient: {order.customer_id}</span>
-                </div>
+                <ContactContentTab order={order} />
               </TabsContent>
               <TabsContent value="warehouse">
-                Invoice: {order.invoice_id}
+                <InvoiceContentTab order={order} />
               </TabsContent>
               <TabsContent value="service">
-                Service: {order.service_id}
+                <ServiceContentTab order={order} />
               </TabsContent>
             </CardContent>
 
           </div>
           <div className="flex-auto w-2/12 p-6">
             <div className="flex flex-col gap-5">
-              <DialogCreateNote orderId={orderId} />
+              <NoteCreateDialog orderId={orderId}>
+                <Button size="sm" variant="outline" className="h-8 gap-1">
+                  <Notebook className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Dodaj notatkę
+                  </span>
+                </Button>
+              </NoteCreateDialog>
 
               <NotesList orderId={orderId} />
             </div>

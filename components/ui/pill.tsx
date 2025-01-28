@@ -1,7 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-
 
 const pillVariants = cva(
   'text-xs font-medium me-2 px-2.5 py-0.5 whitespace-nowrap',
@@ -29,7 +30,7 @@ const pillVariants = cva(
         lime: 'bg-lime-100 text-lime-800 border-lime-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-lime-900 dark:text-lime-300',
         violet: 'bg-violet-100 text-violet-800 border-violet-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-violet-900 dark:text-violet-300',
         fuchsia: 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-fuchsia-900 dark:text-fuchsia-300',
-        rose: 'bg-rose-100 text-rose-800 border-rose-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-rose-900 dark:text-rose-300',
+        rose: 'bg-rose-100 text-rose-800 border-rose-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-rose-900 dark:text-rose-300'
       },
       size: {
         default: 'h-6 px-4 py-1',
@@ -59,7 +60,9 @@ const Pill = React.forwardRef<HTMLDivElement, PillProps>(
         className={cn(pillVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      >{title}</span>
+      >
+        {title}
+      </span>
     );
   }
 );

@@ -12,6 +12,7 @@ import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
 import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
+import OrderActionsComponent from '@/components/Action/order-actions-component';
 
 export default async function OrderPage(
   props: {
@@ -24,6 +25,7 @@ export default async function OrderPage(
   const { order } = await getOrderById(
     orderId
   );
+
 
   return (
     <Tabs defaultValue="contact">
@@ -55,7 +57,7 @@ export default async function OrderPage(
               <div className={'flex flex-auto justify-between pb-5'}>
                 <div>
                   <CardTitle className="pb-2">{order.title}</CardTitle>
-                  <CardDescription>
+                  <CardDescription className="whitespace-pre-wrap">
                     Opis: {order.description}
                   </CardDescription>
                 </div>
@@ -68,21 +70,17 @@ export default async function OrderPage(
               <div className="flex">
                 <div className=" flex-auto w-4/12">
                   <span className="text-sm text-muted-foreground mr-2">Status: </span> <Pill
-                  key={order.orders_statuses.id}
-                  variant={order.orders_statuses.color_hex || 'default' as any}
-                  title={order.orders_statuses.title || ''} /></div>
+                    key={order.orders_statuses.id}
+                    variant={order.orders_statuses.color_hex || 'default' as any}
+                    title={order.orders_statuses.title || ''}
+                  />
+                </div>
+
 
                 <div className="flex flex-wrap w-8/12 gap-2">
-                  <span className="text-sm text-muted-foreground mt-1 mr-2">Akcje: </span>
-                  {order.orders_actions.map((a: {
-                      actions: { id: React.Key | null | undefined; color_hex: any; title: any; };
-                    }) =>
-                      <Pill
-                        size="sm"
-                        key={a.actions.id}
-                        variant={a.actions.color_hex || 'default' as any}
-                        title={a.actions.title || ''} />
-                  )}</div>
+                  <OrderActionsComponent orderId={order.id} />
+                </div>
+
               </div>
             </CardHeader>
 

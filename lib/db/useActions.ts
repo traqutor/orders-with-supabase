@@ -24,12 +24,14 @@ export function useActions() {
     if (error) throw new Error(`Get list of Actions error:`, error);
 
     setActions(data);
+
+    return data;
   };
 
   return {
 
     actions,
-    fetchActions
+    fetchActions,
   };
 
 }

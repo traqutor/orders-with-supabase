@@ -95,7 +95,7 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
         {customer?.id ? <Button size="sm" className="h-8 gap-1">
           <Edit2 className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Edutuj Kontrahenta
+              Edytuj Kontrahenta
             </span>
         </Button> : <Button size="sm" className="h-8 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />

@@ -10,7 +10,6 @@ import { Pill } from '@/components/ui/pill';
 import { Button } from '@/components/ui/button';
 import { Action, useActions } from '@/lib/db/useActions';
 import { COLOR_OPTIONS } from '@/lib/utils';
-import Select from '@/components/ui/Select/select';
 import { deleteAction, postAction, putAction } from '@/lib/db/actions';
 
 
@@ -121,8 +120,6 @@ export function SectionActions() {
               </select>
             </Form.Control>
           </Form.Field>
-
-          <Select />
 
 
           <div className="mt-[25px] flex justify-between gap-2">

@@ -13,6 +13,7 @@ import { postOrder, putOrder } from '@/lib/db/orders';
 import SelectField from '@/components/ui/Form/select-field';
 import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import SelectStatus from '@/components/ui/Form/select-status';
 
 
 interface OrderCreateDialogProps {
@@ -142,23 +143,22 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
     }));
   };
 
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         {computedIsEdit ? <Button size="sm" className="h-8 gap-1">
           <Edit2 className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Edutuj zamówienie
-            </span>
+            Edytuj zamówienie
+          </span>
         </Button> : <Button size="sm" className="h-8 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj Zamówienie
-            </span>
+            Dodaj Zamówienie
+          </span>
         </Button>}
-
       </Dialog.Trigger>
+
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Content
@@ -173,31 +173,16 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
           <Form.Root
             onSubmit={handleSubmit}
           >
-            <div className="mb-5">
-              <SelectField
+
+            <div className="mb-4">
+              <SelectStatus
                 label="Status zamówienia"
                 name=""
                 value={formData.status_id}
                 required
                 onChange={handleStatusChange}
-                options={ordersStatuses.map((s) => {
-                  return { value: s.id, label: s.title };
-                })}
               />
             </div>
-
-            {!computedIsEdit && <div className="mb-5">
-              <SelectField
-                label="Wybierz klienta"
-                name={formData.name || ''}
-                value={formData.customer_id || ''}
-                onChange={handleCustomerIdChange}
-                required
-                options={customers.map((c) => {
-                  return { value: c.id, label: c.name || '' };
-                })}
-              />
-            </div>}
 
             <Form.Field name={'title'} className="mb-5">
               <div className="flex justify-between align-middle mb-1 text-muted-foreground text-xs">
@@ -216,6 +201,19 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
                   required />
               </Form.Control>
             </Form.Field>
+
+            {!computedIsEdit && <div className="mb-5">
+              <SelectField
+                label="Wybierz klienta"
+                name={formData.name || ''}
+                value={formData.customer_id || ''}
+                onChange={handleCustomerIdChange}
+                required
+                options={customers.map((c) => {
+                  return { value: c.id, label: c.name || '' };
+                })}
+              />
+            </div>}
 
 
             {computedIsEdit ? <div>
@@ -297,13 +295,13 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
 
                 <Form.Field name="address">
                   <Form.Label htmlFor="addressId" className="text-muted-foreground text-xs">Adres</Form.Label>
-                  <input
+                  <textarea
                     id="addressId"
-                    type="text"
                     name="address"
                     value={formData?.address || ''}
                     onChange={handleChange}
                     placeholder="Adres"
+                    rows={3}
                     className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </Form.Field>
@@ -311,18 +309,32 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
 
                 <Form.Field name="description">
                   <Form.Label htmlFor="descriptionId" className="text-muted-foreground text-xs">Opis</Form.Label>
-                  <input
+                  <textarea
                     id="descriptionId"
-                    type="text"
                     name="description"
                     value={formData?.description || ''}
                     onChange={handleChange}
                     placeholder="Opis"
+                    rows={5}
                     className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </Form.Field>
               </div> :
+
               <div className="pt-4">
+                <div className="mb-5">
+                  <SelectField
+                    label="Wybierz klienta"
+                    name={formData.name || ''}
+                    value={formData.customer_id || ''}
+                    onChange={handleCustomerIdChange}
+                    required
+                    options={customers.map((c) => {
+                      return { value: c.id, label: c.name || '' };
+                    })}
+                  />
+                </div>
+
                 <CustomerContentTab customer={formData} />
               </div>
             }

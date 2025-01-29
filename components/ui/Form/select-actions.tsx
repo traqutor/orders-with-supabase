@@ -1,0 +1,57 @@
+'use strict';
+
+import React, { useEffect } from 'react';
+import { Tables } from '@/types_db';
+import { useActions } from '@/lib/db/useActions';
+import { MultiSelect } from '@/components/ui/Form/select-multi';
+
+type OrderAction = Tables<'actions'>;
+
+interface SelectFieldProps {
+  label: string;
+  name: string;
+  value: string[] | undefined;
+  required?: boolean;
+  onChange: (value: string[]) => void;
+}
+
+const SelectActions: React.FC<SelectFieldProps> = ({ label, name, value, required, onChange }) => {
+
+  const { actions, fetchActions } = useActions();
+  const [selected, setSelected] = React.useState<OrderAction[]>();
+
+  const handleChange = (event: string[]) => {
+    const options = actions.filter((option) => event.some(o => option.id === o));
+
+    if (!options.length) return null;
+
+    setSelected(options);
+    onChange(options.map((i) => i.id));
+  };
+
+  useEffect(() => {
+    fetchActions().then((response) => {
+      const option = response.filter((o) => value?.some(v => v === o.id));
+      setSelected(option || response[0]);
+    });
+
+    return () => {
+      console.log('Select Actions useEffect clean up', actions);
+    };
+  }, []);
+
+  return (
+    <MultiSelect
+      options={actions.map((action) => ({ label: action.title || 'Label', value: action.id }))}
+      onValueChange={handleChange}
+      placeholder={label}
+      variant="inverted"
+      animation={2}
+      maxCount={3}
+    />
+
+  );
+};
+
+export default SelectActions;
+

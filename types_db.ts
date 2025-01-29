@@ -315,17 +315,14 @@ export type Database = {
       }
       orders_actions: {
         Row: {
-          action_at: string | null
           id: string
           order_id: string
         }
         Insert: {
-          action_at?: string | null
           id?: string
           order_id?: string
         }
         Update: {
-          action_at?: string | null
           id?: string
           order_id?: string
         }

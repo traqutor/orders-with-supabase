@@ -52,10 +52,10 @@ const Note = (
 
         <PinIcon onClick={(e) => {
           e.preventDefault();
-          handlePin();
+          handlePin().then();
         }} className={classNamesPin} />
 
-        <p className="text-gray-800 text-md">{item.message}</p>
+        <p className="text-gray-800 text-md whitespace-pre-wrap">{item.message}</p>
 
         <div className="w-full flex flex-col items-end">
           <div className="relative flex items-end justify-between text-gray-800 w-full">

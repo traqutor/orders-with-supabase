@@ -3,21 +3,12 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import { IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import { Edit, IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { InvoiceTable } from '@/app/(protected)/order/invoice-table';
+import { PositionsTable } from '@/app/(protected)/order/positions-table';
 
 
 export function InvoiceContentTab({ order }: any) {
-
-  console.log('orderorderorderorder', order);
-
-  const handleEdit = (position: any) => {
-    console.log('Edit order', position);
-  };
-  const handleDelete = (position: any) => {
-    console.log('Delete order', position);
-  };
 
   return (
     <div>
@@ -27,9 +18,9 @@ export function InvoiceContentTab({ order }: any) {
             <div className="flex items-center justify-self-start gap-2"><span>Nr Faktury:</span> <span
               className="text-2xl">FV 123/24/2025</span></div>
             <Button size="sm" variant="outline" className="h-8 gap-1">
-              <LucidePlus />
+              <Edit />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj pozycję
+              Dane faktury
             </span>
             </Button>
           </div>
@@ -64,13 +55,14 @@ export function InvoiceContentTab({ order }: any) {
           </div>
           <div
             className="flex flex-col w-full h-full overflow-scroll">
-            <InvoiceTable positions={order.orders_positions} totalPositions={1} totalPriceGross={2}
-                          totalPriceNett={3} />
+            <PositionsTable order={order} asInvoice={true}/>
           </div>
         </CardContent>
+
         <CardFooter>
           Płatnosć: Do dnia: Grupa fakturowa:
         </CardFooter>
+
       </Card>
 
       <div className="flex justify-between p-5">

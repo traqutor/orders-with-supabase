@@ -1,7 +1,7 @@
 'use client';
 
 import * as Menubar from '@radix-ui/react-menubar';
-import { DeleteIcon, EditIcon, MoreVertical, PinIcon } from 'lucide-react';
+import { EditIcon, MoreVertical, PinIcon } from 'lucide-react';
 import React from 'react';
 import { Tables } from '@/types_db';
 import { deleteNote, putNote } from '@/lib/db/notes';
@@ -87,28 +87,28 @@ export const NoteMenu = (
 
               <Menubar.Item
                 onSelect={handlePin}
-                className="group relative flex h-[35px] font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none ">
-                <PinIcon className="mr-2 size-4 rotate-12" />
+                className="group relative flex gap-2 h-[35px] hover:text-green-800  font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none ">
+                <PinIcon className="rotate-12" />
                 Odepnij
               </Menubar.Item> :
 
               <Menubar.Item
                 onSelect={handlePin}
-                className="group relative flex h-[35px] font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none ">
-                <PinIcon className="mr-2 size-4 text-tomato-900 dark:text-tomato-600" />
+                className="group relative flex gap-2 h-[35px] hover:text-green-800  font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none ">
+                <PinIcon className="text-tomato-900 dark:text-tomato-600" />
                 Przypnij
               </Menubar.Item>
             }
 
             <Menubar.Item
               onSelect={handleEdit}
-              className="group relative flex h-[35px] font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
+              className="group relative flex h-[35px] font-medium  hover:text-green-800 select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
             >
               <NoteCreateDialog orderId={note.order_id} note={note}>
                 <div
-                  className="group relative flex h-[35px] font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
+                  className="group relative flex gap-2 h-[35px] hover:text-green-800  font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
                 >
-                  <EditIcon className="mr-2 size-4" /> Edytuj
+                  <EditIcon /> Edytuj
                 </div>
               </NoteCreateDialog>
             </Menubar.Item>
@@ -116,12 +116,12 @@ export const NoteMenu = (
             <Menubar.Separator className="m-[5px] h-px bg-neutral-100" />
             <div
               className="group relative flex h-[35px] font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none ">
-              <DeleteIcon className="mr-2 size-4" />
               <ConfirmDialog
                 triggerLabel="Skasuj notatkę"
                 title="Kasujesz notatkę"
                 description="Czy potwierdzasz?"
-                onClickSubmit={handleDelete} />
+                onClickSubmit={handleDelete}
+              />
             </div>
 
           </Menubar.Content>

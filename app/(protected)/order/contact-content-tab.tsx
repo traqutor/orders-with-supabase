@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { CardDescription } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
@@ -8,15 +6,6 @@ import { PositionsTable } from '@/app/(protected)/order/positions-table';
 
 
 export function ContactContentTab({ order }: any) {
-
-
-  const handleEdit = (position: any) => {
-    console.log('Edit order', position);
-  };
-
-  const handleDelete = (position: any) => {
-    console.log('Delete order', position);
-  };
 
   return (
     <div>
@@ -42,8 +31,7 @@ export function ContactContentTab({ order }: any) {
       </div>
       <div
         className="flex flex-col w-full h-full overflow-scroll">
-        <PositionsTable positions={order.orders_positions} totalPositions={1} totalPriceGross={2}
-                        totalPriceNett={3} />
+        <PositionsTable order={order} asInvoice={false} />
       </div>
     </div>
   );

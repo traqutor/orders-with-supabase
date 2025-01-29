@@ -1,52 +1,102 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { PositionRow } from '@/app/(protected)/order/position-row';
 import { Button } from '@/components/ui/button';
 import { LucidePlus } from 'lucide-react';
+import { Tables } from '@/types_db';
+import {
+  deleteOrderPosition,
+  getPositionsForOrderId,
+  postOrderPosition,
+  putOrderPosition
+} from '@/lib/db/orders_positions';
+import { v4 } from 'uuid';
 
+
+type OrderPosition = Tables<'orders_positions'>
 
 export function PositionsTable({
-                                 positions,
-                                 totalPositions,
-                                 totalPriceNett,
-                                 totalPriceGross
+                                 order,
+                                 asInvoice
                                }: {
-  positions: any[],
-  totalPositions: number,
-  totalPriceNett: number,
-  totalPriceGross: number
+  order: Tables<'orders'>,
+  asInvoice: boolean
 }) {
+
+  const [positions, setPositions] = useState<OrderPosition[]>();
+
+
+  useEffect(() => {
+    getPositions().then();
+  }, []);
+
+  const getPositions = async () => {
+    const { data, error } = await getPositionsForOrderId(order.id);
+    if (error) throw new Error(`Get list of Order Positions for Order Id ${order.id} error:`, error);
+
+    setPositions(data);
+  };
+
+  const handleAddPosition = async () => {
+    const position: OrderPosition = {
+      id: v4(),
+      order_id: order.id,
+      created_at: new Date().toISOString(),
+      position_type: '',
+      description: '',
+      is_optima: false,
+      price: null,
+      price_type: 'netto',
+      unit: 'szt',
+      quantity: null
+    };
+    await postOrderPosition({ ...position });
+    await getPositions();
+  };
+
+  const handleUpdatePosition = async (position: OrderPosition) => {
+    await putOrderPosition({ ...position });
+  };
+
+  const handleDeletePosition = async (position: OrderPosition) => {
+    await deleteOrderPosition({ ...position });
+    await getPositions();
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardDescription className="flex justify-between ">
-          <span>Pozycje do zamówienia</span>
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <LucidePlus />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+        <div className="flex justify-between">
+          <CardDescription className="flex justify-between ">
+            <span>Pozycje do zamówienia</span>
+          </CardDescription>
+          <div className="flex gap-2">
+            <Button onClick={handleAddPosition} size="sm" variant="outline" className="h-8 gap-1">
+              <LucidePlus />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Dodaj pozycję
             </span>
-          </Button>
-
-        </CardDescription>
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[10px]">
+              <TableHead>
                 <span className="sr-only">Image</span>
               </TableHead>
-              <TableHead >Nazwa</TableHead>
-              <TableHead className="hidden md:table-cell">Rodzaj</TableHead>
-              <TableHead className="hidden md:table-cell">Jednostka</TableHead>
-              <TableHead className="hidden md:table-cell">Ilość</TableHead>
-              <TableHead className="hidden md:table-cell text-right">Cena netto</TableHead>
-              <TableHead className="hidden md:table-cell text-right">Cena brutto</TableHead>
+              <TableHead>Nazwa</TableHead>
+              <TableHead>Rodzaj</TableHead>
+              <TableHead>Jedn.</TableHead>
+              <TableHead>Ilość</TableHead>
+              <TableHead className="text-right">Cena</TableHead>
+              <TableHead></TableHead>
+              {asInvoice && <TableHead className="text-center">Optima</TableHead>}
               <TableHead>
                 <span className="sr-only">Menu</span>
               </TableHead>
@@ -54,21 +104,19 @@ export function PositionsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {positions.map((position) =>
-              <PositionRow key={position.id} {...position } />
+            {positions?.map((position, idx) =>
+              <PositionRow
+                key={position.id}
+                position={position}
+                rowNumber={idx + 1}
+                asInvoice={asInvoice}
+                onUpdatePosition={handleUpdatePosition}
+                onDeletePosition={handleDeletePosition}
+              />
             )}
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter>
-        <form className="flex items-center w-full justify-between">
-          <div className="text-xs text-muted-foreground">
-            Showing{' '}<strong> {totalPositions}, {totalPriceNett},
-            {totalPriceGross}
-          </strong>{' '}
-          </div>
-        </form>
-      </CardFooter>
     </Card>
   );
 }

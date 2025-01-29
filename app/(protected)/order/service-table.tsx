@@ -1,21 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ServiceRow } from '@/app/(protected)/order/service-row';
+import { Tables } from '@/types_db';
 
+type ServicePosition = Tables<'services_positions'>
 
-export function ServiceTable({
-                               positions,
-                               totalPositions,
-                               totalPriceNett,
-                               totalPriceGross
-                             }: {
-  positions: any[],
-  totalPositions: number,
-  totalPriceNett: number,
-  totalPriceGross: number
-}) {
+export function ServiceTable({ order }: { order: Tables<'orders'> }) {
+
+  const [positions, setPositions] = useState<ServicePosition[]>();
 
   return (
 
@@ -38,7 +32,7 @@ export function ServiceTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {positions.map((position) =>
+        {positions?.map((position) =>
           <ServiceRow key={position.id} {...position} />
         )}
       </TableBody>

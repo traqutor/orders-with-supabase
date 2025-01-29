@@ -138,11 +138,7 @@ async function getOrderById(
       `*,
         orders_actions(*, actions(*)),
         labels(*),
-        orders_statuses(*),
-        invoices(*),
-        services(*),
-        shipments(*),
-        orders_positions(*)
+        orders_statuses(*)
        `
     )
     .eq('id', orderId);

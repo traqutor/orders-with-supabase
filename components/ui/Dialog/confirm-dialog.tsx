@@ -1,5 +1,6 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { Delete } from 'lucide-react';
 
 interface ConfirmDialogProps {
 }
@@ -19,16 +20,16 @@ const ConfirmDialog = forwardRef<ConfirmDialogProps, ConfirmDialogRef>((props, r
   const { title, description, triggerLabel, cancelLabel, submitLabel, onClickSubmit } = props;
 
   const handleOnClick = () => {
+
     onClickSubmit();
-    console.log('Kasuję i zamykam');
   };
 
 
   return <AlertDialog.Root>
     <AlertDialog.Trigger asChild>
       <button
-        className="group relative flex h-[35px] font-medium select-none items-center rounded p-2 text-[13px] leading-none  outline-none ">
-        {triggerLabel}
+        className="group relative flex gap-2 h-[35px] font-medium select-none items-center rounded text-[13px] leading-none cursor-pointer outline-none hover:text-green-800 ">
+        <Delete />  {triggerLabel}
       </button>
     </AlertDialog.Trigger>
     <AlertDialog.Portal>

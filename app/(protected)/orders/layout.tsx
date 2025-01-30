@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
-import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
+import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Tables } from '@/types_db';
 import { getOrdersStatuses } from '@/lib/db/orders_statuses';
 
@@ -52,7 +52,7 @@ export default async function Layout({
               Export
             </span>
           </Button>
-          <OrderCreateDialog />
+          <OrderDialog />
 
         </div>
       </div>

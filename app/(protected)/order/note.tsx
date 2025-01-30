@@ -8,7 +8,7 @@ import cn from 'clsx';
 import { useRouter } from 'next/navigation';
 import { NoteMenu } from '@/app/(protected)/order/note-menu';
 import { putNote } from '@/lib/db/notes';
-import NoteCreateDialog from '@/app/(protected)/order/note-create-dialog';
+import NoteDialog from '@/app/(protected)/order/note-dialog';
 
 const Note = (
   props:
@@ -45,17 +45,17 @@ const Note = (
 
   return (
     <Fragment>
-      <NoteCreateDialog orderId={item.order_id} note={item} />
+      <NoteDialog orderId={item.order_id} note={item} />
       <div
         key={item.id}
         className={classNames}>
 
         <PinIcon onClick={(e) => {
           e.preventDefault();
-          handlePin();
+          handlePin().then();
         }} className={classNamesPin} />
 
-        <p className="text-gray-800 text-md">{item.message}</p>
+        <p className="text-gray-800 text-md whitespace-pre-wrap">{item.message}</p>
 
         <div className="w-full flex flex-col items-end">
           <div className="relative flex items-end justify-between text-gray-800 w-full">

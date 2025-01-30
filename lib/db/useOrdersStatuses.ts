@@ -6,6 +6,8 @@ export type OrderStatus = Tables<'orders_statuses'>;
 
 export function useOrdersStatuses() {
 
+  console.log('useOrdersStatuses');
+
   const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
 
 
@@ -23,6 +25,8 @@ export function useOrdersStatuses() {
     if (error) throw new Error(`Get list of Orders Statuses error:`, error);
 
     setOrdersStatuses(data);
+
+    return data
   };
 
   return {

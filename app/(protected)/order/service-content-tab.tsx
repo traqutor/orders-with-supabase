@@ -1,95 +1,144 @@
 'use client';
 
-import React from 'react';
-import { CardDescription } from '@/components/ui/card';
-import { LucidePlus, UserCircle2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { ServiceTable } from '@/app/(protected)/order/service-table';
+import { getServicesForServiceId, postService, putService } from '@/lib/db/services_queries';
+import { Tables } from '@/types_db';
 import { Button } from '@/components/ui/button';
-import * as Form from '@/components/ui/form';
+import { v4 } from 'uuid';
+import { putOrder } from '@/lib/db/orders_queries';
+import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
+import ServiceDialog from '@/app/(protected)/order/service-dialog';
+import { ListItem } from '@/components/ui/list-item';
+import { getFormatedDateTime } from '@/utils/time';
 
 
 export function ServiceContentTab({ order }: any) {
 
-  console.log('orderorderorderorder', order);
+  const [service, setService] = useState<Tables<'services'>>();
 
-  const handleEdit = (position: any) => {
-    console.log('Edit order', position);
+  useEffect(() => {
+    getService().then();
+  }, []);
+
+  const getService = async () => {
+    const { data, error } = await getServicesForServiceId(order.service_id);
+    if (error) throw new Error(`Get Service for Order Service Id ${order.service_id} error:`, error);
+
+    setService(data);
   };
-  const handleDelete = (position: any) => {
-    console.log('Delete order', position);
+
+  const handleAddService = async () => {
+    const payload: Tables<'services'> = {
+      id: v4(),
+      description: '',
+      contact: '',
+      address: '',
+      email: '',
+      phone: '',
+      location: '',
+      technician: '',
+      end_at: null,
+      start_at: null
+    };
+
+    const { data, error } = await postService(payload);
+
+    if (error) throw new Error(`Create Service for ${payload} error:`, error);
+
+    const { data: service, error: serviceError } = await getServicesForServiceId(data.id);
+
+    if (serviceError) throw new Error(`Create Service for ${payload} error:`, serviceError);
+
+    const { error: orderError } = await putOrder(
+      {
+        ...mapOrderToFormData(order),
+        service_id: service.id
+      }
+    );
+
+    if (orderError) throw new Error(`Update Order for service Id ${service.id} error:`, orderError);
+
+    setService(service);
   };
+
+  const handleUpdateService = async (service: Tables<'services'>) => {
+    await putService({ ...service });
+  };
+
 
   return (
     <div>
-      <div className="flex gap-7">
-        <div className="flex-auto w-6/12 ">
-          <CardDescription className="flex align-middle gap-2 pb-2">
-            <UserCircle2 /> Osba do kontaktu:
-          </CardDescription>
-          <div>
-             {order.name}, {order.phone}, {order.address}
-          </div>
-        </div>
-        <div className=" flex-auto w-6/12">
-          <CardDescription className=" pb-2">
-            Planowany czas wykonania:
-          </CardDescription>
-          <div>
+      {service ?
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between ">
+              <div className="flex items-center justify-self-start gap-2">
+                Serwis
+              </div>
+              <div className="flex gap-2">
+                <ServiceDialog service={service} fetchDataOnSubmit={getService} />
+              </div>
+            </div>
+          </CardHeader>
 
-            <Form.Root>
-              <Form.Field>
-                <Form.Row>
-                  <Form.Label htmlFor="startAtId">Rozpoczęcie</Form.Label>
-                </Form.Row>
-                <Form.Input
-                  id="startAtId"
-                  type="text"
-                  name="startAt"
-                  value={'24-01-2025'}
-                  onChange={(e) => {
-                    console.log(e);
-                  }}
-                  placeholder="Rozpoczęcie"
-                  required />
-              </Form.Field>
-            </Form.Root>
+          <CardContent>
+            <div>
+              <CardDescription className="flex align-middle gap-2 pb-2">
+                Kontakt:
+              </CardDescription>
+              <div>
+                <ul className="list-unstyled text-muted-foreground mb-5">
+                  <ListItem className="mb-3">
+                    <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 " /> {service.contact}
+                  </ListItem>
+                  <ListItem>
+                    <PhoneIcon className="h-5 w-5 min-h-5 min-w-5 " /> {service.phone}
+                  </ListItem>
+                  <ListItem>
+                    <MailIcon className="h-5 w-5 min-h-5 min-w-5 " /> {service.address}
+                  </ListItem>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <CardDescription className="flex align-middle gap-2 pb-2">
+                Serwisant:
+              </CardDescription>
+
+              <ul className="list-unstyled text-muted-foreground mb-5">
+                <ListItem className="mb-3">
+                  <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 " /> {service.technician}
+                </ListItem>
+
+              </ul>
+              <CardDescription className="flex align-middle gap-2 pb-2">
+                Wykonanie:
+              </CardDescription>
+              <ul className="list-unstyled text-muted-foreground mb-5">
+                <ListItem>
+                  <Calendar
+                    className="h-5 w-5 min-h-5 min-w-5 " /> {getFormatedDateTime(service.start_at)} -{'>'} {getFormatedDateTime(service.end_at)}
+                </ListItem>
+              </ul>
+            </div>
 
 
-            <Form.Root>
-              <Form.Field>
-                <Form.Row>
-                  <Form.Label htmlFor="endAtId">Zakończenie</Form.Label>
-                </Form.Row>
-                <Form.Input
-                  id="endAtId"
-                  type="text"
-                  name="endAt"
-                  value={'1-02-2025'}
-                  onChange={(e) => {
-                    console.log(e);
-                  }}
-                  placeholder="Zakończenie"
-                  required />
-              </Form.Field>
-            </Form.Root>
-          </div>
+            <ServiceTable serviceId={service.id} />
 
-        </div>
-      </div>
-      <div
-        className="flex flex-col w-full h-full overflow-scroll">
-        <div className="flex justify-between py-5">
-          <span className="text-sm text-muted-foreground">Pozycje serwisowe</span>
-          <Button size="sm" variant="outline" className="h-8 gap-1">
+          </CardContent>
+        </Card> :
+        <div>
+          <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddService}>
             <LucidePlus />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj pozycję
+              Dotaj serwis
             </span>
           </Button>
-        </div>
-        <ServiceTable positions={order.orders_positions} totalPositions={1} totalPriceGross={2}
-                      totalPriceNett={3} />
-      </div>
+        </div>}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/client';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 
 import { QueryData } from '@supabase/supabase-js';
+import { Tables } from '@/types_db';
 
 const supabase = createClient();
 
@@ -138,18 +139,12 @@ async function getOrderById(
       `*,
         orders_actions(*, actions(*)),
         labels(*),
-        orders_statuses(*),
-        invoices(*),
-        services(*),
-        shipments(*),
-        orders_positions(*)
+        orders_statuses(*)
        `
     )
     .eq('id', orderId);
 
   if (error) throw new Error(`Get Order by id: ${orderId} error:`, error);
-
-  console.log('resp order data', data);
 
   return {
     order: data[0]
@@ -159,7 +154,7 @@ async function getOrderById(
 }
 
 
-const postOrder = async (order: any) => {
+const postOrder = async (order: Tables<'orders'>) => {
   const db = createClient();
 
   return db
@@ -168,7 +163,7 @@ const postOrder = async (order: any) => {
     .select();
 };
 
-const putOrder = async (order: any) => {
+const putOrder = async (order: Tables<'orders'>) => {
   const db = createClient();
 
   return db

@@ -11,7 +11,7 @@ import { postNote } from '@/lib/db/notes';
 
 type ButtonProps = React.HTMLProps<HTMLButtonElement>
 
-const NoteCreateDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
+const NoteDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
   { orderId: string, note?: Tables<'notes'> }>(
   (props, ref) => {
     const { orderId, note } = props;
@@ -129,4 +129,4 @@ const NoteCreateDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
   })
 ;
 
-export default NoteCreateDialog;
+export default NoteDialog;

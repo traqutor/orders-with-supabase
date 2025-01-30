@@ -8,7 +8,7 @@ import cn from 'clsx';
 import { useRouter } from 'next/navigation';
 import { NoteMenu } from '@/app/(protected)/order/note-menu';
 import { putNote } from '@/lib/db/notes';
-import NoteCreateDialog from '@/app/(protected)/order/note-create-dialog';
+import NoteDialog from '@/app/(protected)/order/note-dialog';
 
 const Note = (
   props:
@@ -45,7 +45,7 @@ const Note = (
 
   return (
     <Fragment>
-      <NoteCreateDialog orderId={item.order_id} note={item} />
+      <NoteDialog orderId={item.order_id} note={item} />
       <div
         key={item.id}
         className={classNames}>

@@ -146,8 +146,6 @@ async function getOrderById(
 
   if (error) throw new Error(`Get Order by id: ${orderId} error:`, error);
 
-  console.log('resp order data', data);
-
   return {
     order: data[0]
   };

@@ -3,15 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import { Edit, IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import { IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import { Tables } from '@/types_db';
 import { putService } from '@/lib/db/services_queries';
 import { v4 } from 'uuid';
 import { putOrder } from '@/lib/db/orders_queries';
-import { mapOrderToFormData } from '@/app/(protected)/order/order-create-dialog';
+import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import { getInvoiceByInvoiceId, postInvoice } from '@/lib/db/invoices_queries';
+import InvoiceDialog from '@/app/(protected)/order/invoice-dialog';
 
 
 export function InvoiceContentTab({ order }: any) {
@@ -82,12 +83,7 @@ export function InvoiceContentTab({ order }: any) {
               </span>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <Edit />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dane faktury
-            </span>
-                </Button>
+                <InvoiceDialog invoice={invoice} fetchDataOnSubmit={getInvoice} />
 
                 <Button size="sm" variant="outline" className="h-8 gap-1">
                   <LucidePlus />
@@ -152,9 +148,17 @@ export function InvoiceContentTab({ order }: any) {
               </div>
             </div>
 
-            <div className="flex gap 2">
-              Płatnosć: select Do dnia: date Grupa fakturowa: boolean Koszt: number Opis kosztu: string
+            <div className="flex gap-2 justify-start items-center flex-wrap text-md text-muted-foreground">
+              Płatnosć: <span className="text-foreground">{invoice.payment_type}</span> Do dnia: <span
+              className="text-foreground">{invoice.payment_at}</span>
             </div>
+            {invoice.is_invoice_group && <div className="py-2">
+              <span className="text-md text-muted-foreground">Grupa fakturowa</span>
+              <div className="flex gap-2 justify-start items-center flex-wrap text-md text-muted-foreground">
+                <span>Koszt: <span className="text-foreground">{invoice.group_cost}</span> Opis: <span
+                  className="text-foreground">{invoice.group_description}</span></span>
+              </div>
+            </div>}
 
             <div
               className="flex flex-col w-full h-full overflow-scroll">

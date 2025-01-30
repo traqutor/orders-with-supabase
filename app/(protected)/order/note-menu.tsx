@@ -7,7 +7,7 @@ import { Tables } from '@/types_db';
 import { deleteNote, putNote } from '@/lib/db/notes';
 import { useRouter } from 'next/navigation';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
-import NoteCreateDialog from '@/app/(protected)/order/note-create-dialog';
+import NoteDialog from '@/app/(protected)/order/note-dialog';
 
 export const NoteMenu = (
   props:
@@ -104,13 +104,13 @@ export const NoteMenu = (
               onSelect={handleEdit}
               className="group relative flex h-[35px] font-medium  hover:text-green-800 select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
             >
-              <NoteCreateDialog orderId={note.order_id} note={note}>
+              <NoteDialog orderId={note.order_id} note={note}>
                 <div
                   className="group relative flex gap-2 h-[35px] hover:text-green-800  font-medium select-none items-center rounded p-1 text-[13px] leading-none  outline-none "
                 >
                   <EditIcon /> Edytuj
                 </div>
-              </NoteCreateDialog>
+              </NoteDialog>
             </Menubar.Item>
 
             <Menubar.Separator className="m-[5px] h-px bg-neutral-100" />

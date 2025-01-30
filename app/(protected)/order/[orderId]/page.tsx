@@ -4,14 +4,13 @@ import { getOrderById } from '@/lib/db/orders_queries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
-import NoteCreateDialog from '@/app/(protected)/order/note-create-dialog';
+import NoteDialog from '@/app/(protected)/order/note-dialog';
 import NotesList from '@/app/(protected)/order/notes-list';
 import { Pill } from '@/components/ui/pill';
 import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
 import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
-import OrderCreateDialog from '@/app/(protected)/order/order-create-dialog';
 import OrderActionsComponent from '@/components/Action/order-actions-component';
 
 export default async function OrderPage(
@@ -95,14 +94,14 @@ export default async function OrderPage(
           </div>
           <div className="flex-auto w-2/12 p-6">
             <div className="flex flex-col gap-5">
-              <NoteCreateDialog orderId={orderId}>
+              <NoteDialog orderId={orderId}>
                 <Button size="sm" variant="outline" className="h-8 gap-1">
                   <Notebook className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     Dodaj notatkę
                   </span>
                 </Button>
-              </NoteCreateDialog>
+              </NoteDialog>
 
               <NotesList orderId={orderId} />
             </div>

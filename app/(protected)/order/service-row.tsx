@@ -93,7 +93,7 @@ export function ServiceRow(props: {
             disabled={!isChanged}
             onClick={handleEdit}
           >
-            <Hammer />
+            <Hammer  className="rotate-y-180"/>
           </button>
           {isChanged ?
             <button

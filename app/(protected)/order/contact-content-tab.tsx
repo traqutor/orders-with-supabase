@@ -3,7 +3,7 @@ import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
 import { Edit, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
-import OrderCreateDialog from '@/app/(protected)/order/order-create-dialog';
+import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Button } from '@/components/ui/button';
 
 
@@ -30,7 +30,7 @@ export function ContactContentTab({ order }: any) {
             </ul>
 
           </div>
-          <OrderCreateDialog order={order} />
+          <OrderDialog order={order} />
         </div>
 
         <CardDescription className="whitespace-pre-wrap">

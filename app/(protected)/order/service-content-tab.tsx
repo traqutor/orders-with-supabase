@@ -2,15 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
-import { Edit, LucidePlus, UserCircle2 } from 'lucide-react';
+import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { ServiceTable } from '@/app/(protected)/order/service-table';
-import * as Form from '@/components/ui/form';
 import { getServicesForServiceId, postService, putService } from '@/lib/db/services_queries';
 import { Tables } from '@/types_db';
 import { Button } from '@/components/ui/button';
 import { v4 } from 'uuid';
 import { putOrder } from '@/lib/db/orders_queries';
-import { mapOrderToFormData } from '@/app/(protected)/order/order-create-dialog';
+import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
+import ServiceDialog from '@/app/(protected)/order/service-dialog';
+import { ListItem } from '@/components/ui/list-item';
+import { getFormatedDateTime } from '@/utils/time';
 
 
 export function ServiceContentTab({ order }: any) {
@@ -18,10 +20,10 @@ export function ServiceContentTab({ order }: any) {
   const [service, setService] = useState<Tables<'services'>>();
 
   useEffect(() => {
-    getServicePositions().then();
+    getService().then();
   }, []);
 
-  const getServicePositions = async () => {
+  const getService = async () => {
     const { data, error } = await getServicesForServiceId(order.service_id);
     if (error) throw new Error(`Get Service for Order Service Id ${order.service_id} error:`, error);
 
@@ -31,15 +33,15 @@ export function ServiceContentTab({ order }: any) {
   const handleAddService = async () => {
     const payload: Tables<'services'> = {
       id: v4(),
-      address: '',
       description: '',
       contact: '',
+      address: '',
       email: '',
       phone: '',
-      end_at: null,
       location: '',
-      start_at: null,
-      technician: ''
+      technician: '',
+      end_at: null,
+      start_at: null
     };
 
     const { data, error } = await postService(payload);
@@ -74,19 +76,10 @@ export function ServiceContentTab({ order }: any) {
           <CardHeader>
             <div className="flex justify-between ">
               <div className="flex items-center justify-self-start gap-2">
-                <span>Osoba do kontaktu:</span>
-                <span
-                  className="text-2xl">
-                {service.contact}
-              </span>
+                Serwis
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <Edit />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Dane kontaktowe
-                  </span>
-                </Button>
+                <ServiceDialog service={service} orderId={order.id} fetchDataOnSubmit={getService} />
               </div>
             </div>
           </CardHeader>
@@ -94,52 +87,45 @@ export function ServiceContentTab({ order }: any) {
           <CardContent>
             <div>
               <CardDescription className="flex align-middle gap-2 pb-2">
-                <UserCircle2 /> Osba do kontaktu:
+                Kontakt:
               </CardDescription>
               <div>
-                {service.contact}, {service.phone}, {service.address}
+                <ul className="list-unstyled text-muted-foreground mb-5">
+                  <ListItem className="mb-3">
+                    <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 " /> {service.contact}
+                  </ListItem>
+                  <ListItem>
+                    <PhoneIcon className="h-5 w-5 min-h-5 min-w-5 " /> {service.phone}
+                  </ListItem>
+                  <ListItem>
+                    <MailIcon className="h-5 w-5 min-h-5 min-w-5 " /> {service.address}
+                  </ListItem>
+                </ul>
               </div>
             </div>
 
-            <div className=" flex gap-3 justify-start items-center">
-                Planowany czas wykonania:
+            <div>
+              <CardDescription className="flex align-middle gap-2 pb-2">
+                Serwisant:
+              </CardDescription>
 
+              <ul className="list-unstyled text-muted-foreground mb-5">
+                <ListItem className="mb-3">
+                  <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 " /> {service.technician}
+                </ListItem>
 
-                <Form.Root className="flex gap-2">
-                  <Form.Field>
-                    <Form.Row className="text-sm text-muted-foreground">
-                      <Form.Label  htmlFor="startAtId">Rozpoczęcie</Form.Label>
-                    </Form.Row>
-                    <Form.Input
-                      id="startAtId"
-                      type="datetime-local"
-                      name="startAt"
-                      value={service.start_at || ''}
-                      onChange={(e) => {
-                        console.log(e);
-                      }}
-                      placeholder="Rozpoczęcie"
-                      required />
-                  </Form.Field>
-
-                  <Form.Field>
-                    <Form.Row className="text-sm text-muted-foreground">
-                      <Form.Label htmlFor="endAtId">Zakończenie</Form.Label>
-                    </Form.Row>
-                    <Form.Input
-                      id="endAtId"
-                      type="datetime-local"
-                      name="endAt"
-                      value={service.end_at || ''}
-                      onChange={(e) => {
-                        console.log(e);
-                      }}
-                      placeholder="Zakończenie"
-                      required />
-                  </Form.Field>
-                </Form.Root>
-
+              </ul>
+              <CardDescription className="flex align-middle gap-2 pb-2">
+                Wykonanie:
+              </CardDescription>
+              <ul className="list-unstyled text-muted-foreground mb-5">
+                <ListItem>
+                  <Calendar
+                    className="h-5 w-5 min-h-5 min-w-5 " /> {getFormatedDateTime(service.start_at)} -{'>'} {getFormatedDateTime(service.end_at)}
+                </ListItem>
+              </ul>
             </div>
+
 
             <ServiceTable serviceId={service.id} />
 

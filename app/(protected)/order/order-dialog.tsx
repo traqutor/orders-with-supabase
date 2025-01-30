@@ -94,7 +94,7 @@ const createInvoice = async () => {
   return data;
 };
 
-const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
+const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
 
   const [open, setOpen] = useState(false);
 
@@ -412,4 +412,4 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
 });
 
 
-export default OrderCreateDialog;
+export default OrderDialog;

@@ -1,13 +1,13 @@
 import { Tables } from '@/types_db';
 import { createClient } from '@/utils/supabase/client';
 
-const getServicePositionsForOrderId = async (orderId: string) => {
+const getServicePositionsForServiceId = async (serviceId: string) => {
   const db = createClient();
 
   return db
     .from('services_positions')
     .select(`*`)
-    .eq('order_id', orderId);
+    .eq('service_id', serviceId);
 };
 
 
@@ -41,4 +41,4 @@ const deleteServicePosition = async (payload: Tables<'services_positions'>) => {
 };
 
 
-export { getServicePositionsForOrderId, postServicePosition, putServicePosition, deleteServicePosition };
+export { getServicePositionsForServiceId, postServicePosition, putServicePosition, deleteServicePosition };

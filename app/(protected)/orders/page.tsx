@@ -1,5 +1,5 @@
 import { OrdersTable } from './orders-table';
-import { getOrders } from '@/lib/db/orders';
+import { getOrders } from '@/lib/db/orders_queries';
 
 export default async function OrdersPage(
   props: {

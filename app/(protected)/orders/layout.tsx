@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { File } from 'lucide-react';
-import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
+import OrderCreateDialog from '@/app/(protected)/order/order-create-dialog';
 import { Tables } from '@/types_db';
 import { getOrdersStatuses } from '@/lib/db/orders_statuses';
 

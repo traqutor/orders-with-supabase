@@ -93,8 +93,6 @@ export type Database = {
         Row: {
           address: string | null
           contact: string | null
-          created_at: string
-          created_by: string | null
           description: string | null
           email: string | null
           group_cost: number | null
@@ -112,8 +110,6 @@ export type Database = {
         Insert: {
           address?: string | null
           contact?: string | null
-          created_at?: string
-          created_by?: string | null
           description?: string | null
           email?: string | null
           group_cost?: number | null
@@ -131,8 +127,7 @@ export type Database = {
         Update: {
           address?: string | null
           contact?: string | null
-          created_at?: string
-          created_by?: string | null
+
           description?: string | null
           email?: string | null
           group_cost?: number | null

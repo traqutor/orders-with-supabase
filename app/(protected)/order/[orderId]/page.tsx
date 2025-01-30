@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowBigLeft, Notebook } from 'lucide-react';
-import { getOrderById } from '@/lib/db/orders';
+import { getOrderById } from '@/lib/db/orders_queries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
@@ -11,7 +11,7 @@ import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
 import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
-import OrderCreateDialog from '@/app/(protected)/orders/order-create-dialog';
+import OrderCreateDialog from '@/app/(protected)/order/order-create-dialog';
 import OrderActionsComponent from '@/components/Action/order-actions-component';
 
 export default async function OrderPage(
@@ -25,7 +25,6 @@ export default async function OrderPage(
   const { order } = await getOrderById(
     orderId
   );
-
 
   return (
     <Tabs defaultValue="contact">
@@ -54,16 +53,13 @@ export default async function OrderPage(
           <div className="flex-auto w-8/12">
 
             <CardHeader>
-              <div className={'flex flex-auto justify-between pb-5'}>
+              <div className={'flex flex-auto justify-between'}>
                 <div>
                   <CardTitle className="pb-2">{order.title}</CardTitle>
-                  <CardDescription className="whitespace-pre-wrap">
-                    Opis: {order.description}
-                  </CardDescription>
                 </div>
 
                 <div className="p-7">
-                  <OrderCreateDialog order={order} />
+
                 </div>
               </div>
 

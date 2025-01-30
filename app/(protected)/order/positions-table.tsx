@@ -67,22 +67,7 @@ export function PositionsTable({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between">
-          <CardDescription className="flex justify-between ">
-            <span>Pozycje do zamówienia</span>
-          </CardDescription>
-          <div className="flex gap-2">
-            <Button onClick={handleAddPosition} size="sm" variant="outline" className="h-8 gap-1">
-              <LucidePlus />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dodaj pozycję
-            </span>
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
+    <Card className="border-none">
       <CardContent>
         <Table>
           <TableHeader>
@@ -117,6 +102,21 @@ export function PositionsTable({
           </TableBody>
         </Table>
       </CardContent>
+      <CardHeader>
+        <div className="flex justify-between">
+          <CardDescription className="flex justify-between ">
+            <span>Pozycje do zamówienia</span>
+          </CardDescription>
+          <div className="flex gap-2">
+            <Button onClick={handleAddPosition} size="sm" variant="outline" className="h-8 gap-1">
+              <LucidePlus />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Dodaj pozycję
+            </span>
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
     </Card>
   );
 }

@@ -9,11 +9,13 @@ import * as Form from '@radix-ui/react-form';
 import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
 import { useCustomers } from '@/lib/db/useCustomers';
-import { postOrder, putOrder } from '@/lib/db/orders';
+import { postOrder, putOrder } from '@/lib/db/orders_queries';
 import SelectField from '@/components/ui/Form/select-field';
 import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
+import { postService } from '@/lib/db/services_queries';
+import { postInvoice } from '@/lib/db/invoices_queries';
 
 
 interface OrderCreateDialogProps {
@@ -21,7 +23,7 @@ interface OrderCreateDialogProps {
 }
 
 
-const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
+export const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
   return {
     id: order.id,
     customer_id: order.customer_id,
@@ -45,6 +47,53 @@ const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
   };
 };
 
+const service: Tables<'services'> = {
+  id: v4(),
+  address: '',
+  description: '',
+  contact: '',
+  email: '',
+  phone: '',
+  end_at: null,
+  location: '',
+  start_at: null,
+  technician: ''
+};
+
+const invoice: Tables<'invoices'> = {
+  id: v4(),
+  address: '',
+  description: '',
+  contact: '',
+  email: '',
+  phone: '',
+  nip: '',
+  invoice_number: '',
+  regon: '',
+  group_cost: null,
+  is_invoice_group: false,
+  group_description: '',
+  payment_at: null,
+  payment_type: null,
+  total_amount: null
+};
+
+const createService = async () => {
+  const { data, error } = await postService(service);
+
+  if (error) throw new Error(`Create Service for ${service} error:`, error);
+
+  return data;
+};
+
+const createInvoice = async () => {
+  const { data, error } = await postInvoice(invoice);
+
+  if (error) throw new Error(`Create Invoice for ${invoice} error:`, error);
+
+  return data;
+};
+
 const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
 
   const [open, setOpen] = useState(false);
@@ -57,7 +106,6 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
   const computedIsEdit = useMemo(() => {
     return !!order?.customer_id;
   }, [order]);
-
 
   useEffect(() => {
     fetchCustomers().then();
@@ -88,9 +136,15 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
         router.push(`/order/${order.id}`);
       }
     } else {
+
+      const invoice = await createInvoice();
+      const service = await createService();
+
       const { error } = await postOrder({
         ...formData,
-        id: v4()
+        id: v4(),
+        service_id: service.id,
+        invoice_id: invoice.id
       });
 
       if (error) {
@@ -146,7 +200,7 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        {computedIsEdit ? <Button size="sm" className="h-8 gap-1">
+        {computedIsEdit ? <Button variant="outline" size="sm" className="h-8 gap-1">
           <Edit2 className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Edytuj zamówienie
@@ -201,20 +255,6 @@ const OrderCreateDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order 
                   required />
               </Form.Control>
             </Form.Field>
-
-            {!computedIsEdit && <div className="mb-5">
-              <SelectField
-                label="Wybierz klienta"
-                name={formData.name || ''}
-                value={formData.customer_id || ''}
-                onChange={handleCustomerIdChange}
-                required
-                options={customers.map((c) => {
-                  return { value: c.id, label: c.name || '' };
-                })}
-              />
-            </div>}
-
 
             {computedIsEdit ? <div>
                 <Form.Field name="name" className="pb-2">

@@ -1,4 +1,4 @@
-import { getOrdersWithStatus } from '@/lib/db/orders';
+import { getOrdersWithStatus } from '@/lib/db/orders_queries';
 import { OrdersTable } from '@/app/(protected)/orders/orders-table';
 import React from 'react';
 

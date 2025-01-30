@@ -79,7 +79,7 @@ export function ServiceContentTab({ order }: any) {
                 Serwis
               </div>
               <div className="flex gap-2">
-                <ServiceDialog service={service} orderId={order.id} fetchDataOnSubmit={getService} />
+                <ServiceDialog service={service} fetchDataOnSubmit={getService} />
               </div>
             </div>
           </CardHeader>

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import { Edit, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import { MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
-import { Button } from '@/components/ui/button';
 
 
 export function ContactContentTab({ order }: any) {

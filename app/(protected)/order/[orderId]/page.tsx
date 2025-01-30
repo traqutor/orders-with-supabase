@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowBigLeft, Notebook } from 'lucide-react';
 import { getOrderById } from '@/lib/db/orders_queries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
 import NoteDialog from '@/app/(protected)/order/note-dialog';

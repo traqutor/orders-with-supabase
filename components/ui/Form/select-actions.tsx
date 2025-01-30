@@ -1,7 +1,6 @@
 'use strict';
 
 import React, { useEffect } from 'react';
-import { Tables } from '@/types_db';
 import { useActions } from '@/lib/db/useActions';
 import { MultiSelect } from '@/components/ui/Form/select-multi';
 
@@ -27,9 +26,7 @@ const SelectActions: React.FC<SelectFieldProps> = ({ label, value, onChange }) =
   };
 
   useEffect(() => {
-    fetchActions().then((response) => {
-      const option = response.filter((o) => value?.some(v => v === o.id));
-    });
+    fetchActions().then();
 
     return () => {
       console.log('Select Actions useEffect clean up', actions);

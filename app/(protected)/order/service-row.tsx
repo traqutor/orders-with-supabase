@@ -1,4 +1,4 @@
-import { Hammer, Images, Save } from 'lucide-react';
+import { Hammer, Save } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React, { useState } from 'react';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
@@ -33,7 +33,7 @@ export function ServiceRow(props: {
     setIsChanged(false);
   };
 
-  const handleEdit = (position: any) => {
+  const handleEdit = () => {
     onUpdatePosition(formData);
     setIsChanged(false);
   };

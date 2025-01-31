@@ -2,7 +2,7 @@ import { DateTime, Interval } from 'luxon';
 
 type DateTimeConvertible = string | Date | DateTime | number | null;
 
-export function toDateTimeObject(spec: DateTimeConvertible | undefined): DateTime {
+export function toDateTimeObject(spec: DateTimeConvertible | undefined): DateTime | null {
   if (spec instanceof DateTime) {
     return spec.setLocale('pl-PL');
   } else if (typeof spec === 'string') {
@@ -13,16 +13,11 @@ export function toDateTimeObject(spec: DateTimeConvertible | undefined): DateTim
     return DateTime.fromJSDate(spec).setLocale('pl-PL');
   } else if (typeof spec === 'undefined') {
     return DateTime.now().setLocale('pl-PL');
+  } else if (spec === null) {
+    return null;
   }
 
   throw new Error('Invalid date');
-}
-
-function toInterval(
-  spec1: DateTimeConvertible,
-  spec2: DateTimeConvertible
-): Interval {
-  return Interval.fromDateTimes(toDateTimeObject(spec1), toDateTimeObject(spec2));
 }
 
 /**
@@ -37,7 +32,8 @@ export function toInputDate(value: string) {
  * Returns DateTime as a string format '2023-12-01 1:28:08PM'
  */
 export const getFormatedDateTime = (dateTime?: DateTimeConvertible): string => {
-  return toDateTimeObject(dateTime).toFormat('dd-MM-yyyy hh:mm').toUpperCase();
+  const dt = toDateTimeObject(dateTime);
+  return dt ? dt.toFormat('dd-MM-yyyy hh:mm').toUpperCase() : '';
 };
 
 /**
@@ -45,5 +41,7 @@ export const getFormatedDateTime = (dateTime?: DateTimeConvertible): string => {
  * @param dateTime
  */
 export const getFormatedDate = (dateTime?: DateTimeConvertible): string => {
-  return toDateTimeObject(dateTime).toLocaleString();
+  const dt = toDateTimeObject(dateTime);
+
+  return dt ? dt.toLocaleString() : '';
 };

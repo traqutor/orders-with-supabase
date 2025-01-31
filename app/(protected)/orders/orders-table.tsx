@@ -6,7 +6,6 @@ import { OrderRow } from './order-row';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tables } from '@/types_db';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 
 
@@ -27,7 +26,7 @@ export function OrdersTable({
   }
 
   function nextPage() {
-    const path = `?offset=${offset}`
+    const path = `?offset=${offset}`;
     router.push(path, { scroll: false });
   }
 

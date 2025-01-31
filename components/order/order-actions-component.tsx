@@ -49,7 +49,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
 
         <Popover.Root>
           <Popover.Trigger
-            className="flex h-min align-middle justify-items-start cursor-pointer text-muted-foreground hover:bg-muted rounded p-1 px-4">
+            className="flex h-[38px] items-center justify-start cursor-pointer text-muted-foreground hover:bg-muted rounded p-1 px-4">
           <div className="text-sm">
             Akcje:
           </div>
@@ -100,7 +100,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
           </Popover.Portal>
         </Popover.Root>
 
-        <div className="flex flex-wrap flex-auto gap-1 ml-2">
+        <div className="flex flex-wrap flex-auto gap-1 pt-1 ml-2">
 
           {orderActions.map((a: { actions: Tables<'actions'> }) =>
 

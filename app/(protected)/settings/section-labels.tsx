@@ -80,10 +80,10 @@ export function SectionLabels() {
           onSubmit={(event) => handleSubmit(event)}
         >
           <Form.Field name="title" className="mb-3">
-            <Form.Label htmlFor="titleId" className="flex items-baseline justify-between py-1">Title</Form.Label>
+            <Form.Label htmlFor="title" className="flex items-baseline justify-between py-1">Title</Form.Label>
             <Form.Control asChild>
               <input
-                id="labelId"
+                id="title"
                 type="text"
                 name="title"
                 value={item.title || ''}

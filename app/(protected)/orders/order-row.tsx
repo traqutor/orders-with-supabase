@@ -6,10 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Package } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Tables } from '@/types_db';
-import Package from '@/components/package';
 import { Pill } from '@/components/ui/pill';
 import React from 'react';
 import Link from 'next/link';

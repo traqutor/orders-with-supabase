@@ -97,18 +97,26 @@ export function SectionLabels() {
 
           <Form.Field name="color_hex" className="mb-3">
             <Form.Label htmlFor="colorHexId" className="flex items-baseline justify-between py-1">Color</Form.Label>
-            <Form.Control asChild>
-              <select
-                id="colorHexId"
-                name="color_hex"
-                value={item.color_hex || ''}
-                onChange={handleChange}
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
+            <select
+              id="colorHexId"
+              name="color_hex"
+              value={item.color_hex || ''}
+              onChange={handleChange}
+              className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
 
-              </select>
-            </Form.Control>
+            </select>
+
+            <select
+              name="color_hex"
+              value={item.color_hex || ''}
+              onChange={handleChange}
+              className=" w-min flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
+            </select>
+
           </Form.Field>
 
 

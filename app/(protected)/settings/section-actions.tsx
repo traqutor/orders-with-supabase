@@ -9,57 +9,67 @@ import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import { Button } from '@/components/ui/button';
 import { Action, useActions } from '@/lib/db/useActions';
-import { COLOR_OPTIONS } from '@/lib/utils';
 import { deleteAction, postAction, putAction } from '@/lib/db/actions';
+import { Tables } from '@/types_db';
+import { COLOR_OPTIONS } from '@/lib/utils';
 
+const EMPTY_ACTION: Action = {
+  id: '',
+  color_hex: '',
+  title: '',
+  icon_name: ''
+};
 
 export function SectionActions() {
 
-  const [item, setItem] = useState<Action>();
   const { actions, fetchActions } = useActions();
+  const [formData, setFormData] = useState<Tables<'actions'>>({ ...EMPTY_ACTION });
 
-  console.log(item);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    const key = name as keyof Tables<'actions'>;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [key]: value
+    }));
+  };
+
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement | HTMLInputElement | HTMLSelectElement>) => {
     event.preventDefault();
 
-    if (item)
-      if (item.id === '') {
-        await postAction({ ...item, id: v4() });
+    if (formData)
+      if (formData.id === 'new') {
+        await postAction({ ...formData, id: v4() });
       } else {
-        await putAction({ ...item });
+        await putAction({ ...formData });
       }
 
     await fetchActions();
-    setItem(undefined);
+    setFormData({ ...EMPTY_ACTION });
   };
 
   const handleClick = (action: Action) => {
-    setItem(action);
+    setFormData(action);
   };
 
   const handleAddNew = () => {
-    setItem({ id: '', title: '', color_hex: '', icon_name: '' });
+    setFormData({ ...EMPTY_ACTION, id: 'new' });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
-    console.log({ ...item, [e.target.name]: e.target.value });
-    if (item) setItem({ ...item, [e.target.name]: e.target.value });
-    console.log(item);
-  };
 
   const handleCancel = () => {
-    setItem(undefined);
+    setFormData({ ...EMPTY_ACTION });
   };
 
   const handleDelete = async () => {
-
-    if (item) {
-      await deleteAction(item);
-      await fetchActions();
-      setItem(undefined);
+    if (formData.id !== '') {
+      await deleteAction(formData);
+      handleCancel();
     }
   };
 
@@ -76,56 +86,66 @@ export function SectionActions() {
               key={b.id}
               variant={b.color_hex || 'default' as any}
               title={b.title || ''} />)}
-
         </div>
+
         <div className="flex-1 flex justify-end pt-4">
           <Button onClick={handleAddNew} variant="outline" size="sm">
             <Plus />
           </Button>
         </div>
       </div>
-      {item &&
+      {formData.id !== '' &&
         <Form.Root
           onSubmit={(event) => handleSubmit(event)}
         >
+          <label htmlFor="pillSample" className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
-          <Form.Field name="title" className="mb-3">
-            <Form.Label htmlFor="title" className="flex items-baseline justify-between py-1">Title</Form.Label>
-            <Form.Control asChild>
-              <input
-                id="title"
-                type="text"
-                name="title"
-                value={item.title || ''}
-                onChange={handleChange}
-                placeholder="Action"
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </Form.Control>
-          </Form.Field>
+          <Pill
+            id="pillSample"
+            size="sm"
+            variant={formData.color_hex || 'default' as any}
+            title={formData.title || ''}
+            className="mb-1"
+          />
 
-          <Form.Field name="color_hex" className="mb-3">
-            <Form.Label htmlFor="colorHexId" className="flex items-baseline justify-between py-1">Color</Form.Label>
-            <Form.Control asChild>
+          <div className="flex w-full justify-start items-end gap-5">
+
+
+            <Form.Field name="title">
+              <Form.Label htmlFor="title" className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Title</Form.Label>
+              <Form.Control asChild>
+                <input
+                  id="title"
+                  type="text"
+                  name="title"
+                  value={formData.title || ''}
+                  onChange={handleChange}
+                  placeholder="Action title"
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Control>
+            </Form.Field>
+
+            <Form.Field name="color_hex">
+              <Form.Label htmlFor="color_hex" className="flex items-baseline justify-between py-1">Color</Form.Label>
               <select
-                id="colorHexId"
                 name="color_hex"
-                value={item.color_hex || ''}
+                value={formData.color_hex || ''}
                 onChange={handleChange}
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className=" w-min flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color.toLowerCase()}</option>)}
-
+                {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
               </select>
-            </Form.Control>
-          </Form.Field>
 
+            </Form.Field>
+          </div>
 
           <div className="mt-[25px] flex justify-between gap-2">
 
-            {item.id ? <Button onClick={handleDelete} size="sm" variant="outline" type="submit" className="h-8 gap-1">
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Delete</span>
-            </Button> : <div></div>}
+            {formData.id ?
+              <Button onClick={handleDelete} size="sm" variant="outline" type="submit" className="h-8 gap-1">
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Delete</span>
+              </Button> : <div></div>}
 
             <div className="flex gap-2">
               <Button onClick={handleCancel} size="sm" variant="outline" className="h-8 gap-1" type="submit">

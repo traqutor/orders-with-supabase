@@ -77,7 +77,7 @@ const InvoiceDialog: React.FC<InvoiceDialogProps> = React.memo(({ invoice, fetch
         <Button variant="outline" size="sm" className="h-8 gap-1">
           <Edit2 className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Edytuj dane faktury
+            Edytuj fakturę
           </span>
         </Button>
       </Dialog.Trigger>
@@ -87,7 +87,7 @@ const InvoiceDialog: React.FC<InvoiceDialogProps> = React.memo(({ invoice, fetch
         <Dialog.Content
           className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Zmiana danych
+            Faktura
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
             Edytujesz dane faktury.

@@ -218,10 +218,10 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
         <Dialog.Content
           className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            {computedIsEdit ? 'Zmiana w zamówieniu' : 'Nowe Zamówienie'}
+            Zamówienie
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
-            {computedIsEdit ? 'Edytujesz dane klienta przypisane do do zamówienia. Nie możesz zmienić klienta ale możesz edytować jego dane w zamówieniu' : 'Dodajesz nowe Zamówienie, wypełnije wymagane pola.'}
+            {computedIsEdit ? 'Edytujesz dane klienta przypisane do do zamówienia. Nie możesz zmienić klienta ale możesz edytować jego dane w zamówieniu' : 'Dodajesz nowe Zamówienie, wypełnij wymagane pola.'}
           </Dialog.Description>
 
           <Form.Root

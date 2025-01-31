@@ -11,7 +11,8 @@ import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
 import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
-import OrderActionsComponent from '@/components/Action/order-actions-component';
+import OrderActionsComponent from '@/components/order/order-actions-component';
+import OrderStatusComponent from '@/components/order/order-status-component';
 
 export default async function OrderPage(
   props: {
@@ -64,11 +65,7 @@ export default async function OrderPage(
 
               <div className="flex">
                 <div className=" flex-auto w-4/12">
-                  <span className="text-sm text-muted-foreground mr-2">Status: </span> <Pill
-                    key={order.orders_statuses.id}
-                    variant={order.orders_statuses.color_hex || 'default' as any}
-                    title={order.orders_statuses.title || ''}
-                  />
+                  <OrderStatusComponent order={order} />
                 </div>
 
 

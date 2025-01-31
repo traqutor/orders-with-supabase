@@ -42,8 +42,6 @@ async function getOrders(
   offset: number
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
-  console.log(search);
-
   const { count } = await supabase
     .from('orders')
     .select(
@@ -54,11 +52,8 @@ async function getOrders(
 
   if (error) throw new Error(`Get list of Orders error:`, error);
 
-
   const ordersList: any = data as QueryData<any>;
 
-  console.log('ordersList', ordersList);
-  // Always search the full table, not per page
   if (data) {
     return {
       orders: ordersList,
@@ -152,7 +147,6 @@ async function getOrderById(
 
 
 }
-
 
 const postOrder = async (order: Tables<'orders'>) => {
   const db = createClient();

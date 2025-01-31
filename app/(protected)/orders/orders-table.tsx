@@ -27,7 +27,7 @@ export function OrdersTable({
   }
 
   function nextPage() {
-    const path = `?offset=${offset}`
+    const path = `?offset=${offset}`;
     router.push(path, { scroll: false });
   }
 

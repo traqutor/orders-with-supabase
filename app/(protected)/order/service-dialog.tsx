@@ -81,7 +81,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
         <Dialog.Content
           className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Zmiana danych
+            Serwis
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
             Edytujesz dane kontaktowe przypisane do serwisu.

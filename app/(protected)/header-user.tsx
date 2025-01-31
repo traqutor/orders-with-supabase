@@ -11,7 +11,8 @@ import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { User } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import LogoutButton from '@/app/(protected)/logout-button';
+
 
 export async function HeaderUser() {
   const supabase = await createClient();
@@ -20,10 +21,6 @@ export async function HeaderUser() {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const signOutAction = async () => {
-    await supabase.auth.signOut();
-    return redirect('/sign-in');
-  };
 
   return (
     <div className="flex gap-6 ">
@@ -45,8 +42,8 @@ export async function HeaderUser() {
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
           {user ? (
-            <DropdownMenuItem onClick={signOutAction}>
-              Sign Out
+            <DropdownMenuItem>
+              <LogoutButton />
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem>

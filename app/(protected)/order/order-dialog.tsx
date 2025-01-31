@@ -137,14 +137,12 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
       }
     } else {
 
-      const invoice = await createInvoice();
-      const service = await createService();
+      /*const invoice = await createInvoice();
+      const service = await createService();*/
 
       const { error } = await postOrder({
         ...formData,
-        id: v4(),
-        service_id: service.id,
-        invoice_id: invoice.id
+        id: v4()
       });
 
       if (error) {

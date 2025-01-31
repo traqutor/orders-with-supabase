@@ -14,14 +14,11 @@ import SelectField from '@/components/ui/Form/select-field';
 import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
-import { postService } from '@/lib/db/services_queries';
-import { postInvoice } from '@/lib/db/invoices_queries';
 
 
 interface OrderCreateDialogProps {
   order?: Tables<'orders'>;
 }
-
 
 export const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
   return {
@@ -47,52 +44,6 @@ export const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> =>
   };
 };
 
-const service: Tables<'services'> = {
-  id: v4(),
-  address: '',
-  description: '',
-  contact: '',
-  email: '',
-  phone: '',
-  end_at: '',
-  location: '',
-  start_at: '',
-  technician: ''
-};
-
-const invoice: Tables<'invoices'> = {
-  id: v4(),
-  address: '',
-  description: '',
-  contact: '',
-  email: '',
-  phone: '',
-  nip: '',
-  invoice_number: '',
-  regon: '',
-  group_cost: null,
-  is_invoice_group: false,
-  group_description: '',
-  payment_at: null,
-  payment_type: null,
-  total_amount: null
-};
-
-const createService = async () => {
-  const { data, error } = await postService(service);
-
-  if (error) throw new Error(`Create Service for ${service} error:`, error);
-
-  return data;
-};
-
-const createInvoice = async () => {
-  const { data, error } = await postInvoice(invoice);
-
-  if (error) throw new Error(`Create Invoice for ${invoice} error:`, error);
-
-  return data;
-};
 
 const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
 
@@ -136,9 +87,6 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
         router.push(`/order/${order.id}`);
       }
     } else {
-
-      /*const invoice = await createInvoice();
-      const service = await createService();*/
 
       const { error } = await postOrder({
         ...formData,

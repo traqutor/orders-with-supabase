@@ -2,56 +2,79 @@
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
 import { Section } from '@/app/(protected)/settings/section';
-
 import { Pill } from '@/components/ui/pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { OrderStatus, useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
-import { deleteOrderStatus, postOrderStatus, putOrderStatus } from '@/lib/db/orders_statuses';
+import { Tables } from '@/types_db';
+
+import {
+  deleteOrderStatus as onDelete,
+  postOrderStatus as onPost,
+  putOrderStatus as onPut
+} from '@/lib/db/orders_statuses';
+
+type LocalItem = Tables<'orders_statuses'>
+
+const EMPTY_ITEM: LocalItem = {
+  id: '',
+  color_hex: '',
+  title: ''
+};
+
 
 export function SectionOrdersStatuses() {
 
-  const [item, setItem] = useState<OrderStatus>();
-  const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
+  const { ordersStatuses: items, fetchOrdersStatuses: onFetch } = useOrdersStatuses();
+  const [formData, setFormData] = useState<LocalItem>({ ...EMPTY_ITEM });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
-    if (item)
-      if (item.id === '') {
-        await postOrderStatus({ ...item, id: v4() });
-      } else {
-        await putOrderStatus({ ...item });
-      }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    const key = name as keyof LocalItem;
 
-    await fetchOrdersStatuses();
-    setItem(undefined);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [key]: value
+    }));
   };
 
-  const handleClick = (item: OrderStatus) => {
-    setItem(item);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement | HTMLInputElement | HTMLSelectElement>) => {
+    event.preventDefault();
+
+    if (formData)
+      if (formData.id === 'new') {
+        await onPost({ ...formData, id: v4() });
+      } else {
+        await onPut({ ...formData });
+      }
+
+    await onFetch();
+    setFormData({ ...EMPTY_ITEM });
+  };
+
+  const handleClick = (item: LocalItem) => {
+    setFormData(item);
   };
 
   const handleAddNew = () => {
-    setItem({ id: '', title: '', color_hex: '' });
+    setFormData({ ...EMPTY_ITEM, id: 'new' });
   };
+
 
   const handleCancel = () => {
-    setItem(undefined);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    console.log(e);
-    if (item) setItem({ ...item, [e.target.name]: e.target.value });
+    setFormData({ ...EMPTY_ITEM });
   };
 
   const handleDelete = async () => {
-    if (item) {
-      await deleteOrderStatus(item);
-      await fetchOrdersStatuses();
-      setItem(undefined);
+    if (formData.id !== '') {
+      await onDelete(formData);
+      handleCancel();
     }
   };
 
@@ -61,7 +84,7 @@ export function SectionOrdersStatuses() {
 
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
-          {ordersStatuses.map(b =>
+          {items.map(b =>
             <Pill
               onClick={() => handleClick(b)}
               key={b.id}
@@ -76,50 +99,61 @@ export function SectionOrdersStatuses() {
         </div>
       </div>
 
-      {item &&
+      {formData.id !== '' &&
         <Form.Root
           onSubmit={(event) => handleSubmit(event)}
         >
-          <Form.Field name="title" className="mb-3">
-            <Form.Label htmlFor="titleId" className="flex items-baseline justify-between py-2">Title</Form.Label>
-            <Form.Control asChild>
-              <input
-                id="titleId"
-                type="text"
-                name="title"
-                value={item.title || ''}
-                onChange={handleChange}
-                placeholder="Action"
-                required
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </Form.Control>
-          </Form.Field>
+          <label htmlFor="pillSample"
+                 className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
-          <Form.Field name="color_hex" className="mb-3">
-            <Form.Label htmlFor="colorHexId" className="flex items-baseline justify-between py-1">Color</Form.Label>
-            <Form.Control asChild>
+          <Pill
+            id="pillSample"
+            variant={formData.color_hex || 'default' as any}
+            title={formData.title || ''}
+          />
+
+          <div className="flex w-full justify-start items-end gap-5">
+
+
+            <Form.Field name="title">
+              <Form.Label htmlFor="title"
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Title</Form.Label>
+              <Form.Control asChild>
+                <input
+                  id="title"
+                  type="text"
+                  name="title"
+                  value={formData.title || ''}
+                  onChange={handleChange}
+                  placeholder="Title"
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Control>
+            </Form.Field>
+
+            <Form.Field name="color_hex">
+              <Form.Label htmlFor="color_hex" className="flex items-baseline justify-between py-1">Color</Form.Label>
               <select
-                id="colorHexId"
                 name="color_hex"
-                value={item.color_hex || ''}
+                value={formData.color_hex || ''}
                 onChange={handleChange}
-                className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className=" w-min flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
               </select>
-            </Form.Control>
-          </Form.Field>
 
+            </Form.Field>
+          </div>
 
           <div className="mt-[25px] flex justify-between gap-2">
 
-            {item.id ? <Button onClick={handleDelete} size="sm" variant="outline" className="h-8 gap-1">
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Delete</span>
-            </Button> : <div></div>}
+            {formData.id ?
+              <Button onClick={handleDelete} size="sm" variant="outline" type="submit" className="h-8 gap-1">
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Delete</span>
+              </Button> : <div></div>}
 
             <div className="flex gap-2">
-              <Button onClick={handleCancel} size="sm" variant="outline" className="h-8 gap-1">
+              <Button onClick={handleCancel} size="sm" variant="outline" className="h-8 gap-1" type="submit">
 
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Cancel</span>
               </Button>

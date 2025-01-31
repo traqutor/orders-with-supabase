@@ -24,6 +24,10 @@ export function ServiceContentTab({ order }: any) {
   }, []);
 
   const getService = async () => {
+    if (!order.service_id) {
+      return;
+    }
+
     const { data, error } = await getServicesForServiceId(order.service_id);
     if (error) throw new Error(`Get Service for Order Service Id ${order.service_id} error:`, error);
 
@@ -34,10 +38,10 @@ export function ServiceContentTab({ order }: any) {
     const payload: Tables<'services'> = {
       id: v4(),
       description: '',
-      contact: '',
-      address: '',
-      email: '',
-      phone: '',
+      contact: order.name,
+      address: order.address,
+      email: order.email,
+      phone: order.phone,
       location: '',
       technician: '',
       end_at: null,
@@ -48,26 +52,21 @@ export function ServiceContentTab({ order }: any) {
 
     if (error) throw new Error(`Create Service for ${payload} error:`, error);
 
-    const { data: service, error: serviceError } = await getServicesForServiceId(data.id);
+    const { data: serviceData, error: serviceError } = await getServicesForServiceId(data.id);
 
     if (serviceError) throw new Error(`Create Service for ${payload} error:`, serviceError);
 
     const { error: orderError } = await putOrder(
       {
         ...mapOrderToFormData(order),
-        service_id: service.id
+        service_id: serviceData.id
       }
     );
 
-    if (orderError) throw new Error(`Update Order for service Id ${service.id} error:`, orderError);
+    if (orderError) throw new Error(`Update Order for service Id ${serviceData.id} error:`, orderError);
 
-    setService(service);
+    setService(serviceData);
   };
-
-  const handleUpdateService = async (service: Tables<'services'>) => {
-    await putService({ ...service });
-  };
-
 
   return (
     <div>

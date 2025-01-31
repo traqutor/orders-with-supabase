@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
 import NoteDialog from '@/app/(protected)/order/note-dialog';
 import NotesList from '@/app/(protected)/order/notes-list';
-import { Pill } from '@/components/ui/pill';
 import { ContactContentTab } from '@/app/(protected)/order/contact-content-tab';
 import { InvoiceContentTab } from '@/app/(protected)/order/invoice-content-tab';
 import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
@@ -53,17 +52,9 @@ export default async function OrderPage(
           <div className="flex-auto w-8/12">
 
             <CardHeader>
-              <div className={'flex flex-auto justify-between'}>
-                <div>
-                  <CardTitle className="pb-2">{order.title}</CardTitle>
-                </div>
+              <CardTitle className="pb-2">{order.title}</CardTitle>
 
-                <div className="p-7">
-
-                </div>
-              </div>
-
-              <div className="flex">
+              <div className="flex justify-start items-center">
                 <div className=" flex-auto w-4/12">
                   <OrderStatusComponent order={order} />
                 </div>
@@ -99,7 +90,6 @@ export default async function OrderPage(
                   </span>
                 </Button>
               </NoteDialog>
-
               <NotesList orderId={orderId} />
             </div>
           </div>

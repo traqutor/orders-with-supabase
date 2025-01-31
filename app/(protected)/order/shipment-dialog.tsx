@@ -7,33 +7,31 @@ import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 
 import { Tables } from '@/types_db';
-import { putService } from '@/lib/db/services_queries';
-import { Separator } from '@radix-ui/react-separator';
 import { toInputDate } from '@/utils/time';
+import { putShipment } from '@/lib/db/shipment_queries';
 
 
-interface ServiceDialogProps {
-  service: Tables<'services'>;
+interface ShipmentDialogProps {
+  shipment: Tables<'shipments'>;
   fetchDataOnSubmit: () => void;
 }
 
-
-const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetchDataOnSubmit }) => {
+const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fetchDataOnSubmit }) => {
 
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState<Tables<'services'>>(service);
+  const [formData, setFormData] = useState<Tables<'shipments'>>(shipment);
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { error } = await putService({
+    const { error } = await putShipment({
       ...formData,
-      id: service.id
+      id: shipment.id
     });
 
     if (error) {
-      console.error(`Update Service with payload: ${formData} error`, error);
+      console.error(`Update Invoice with payload: ${formData} error`, error);
       return;
     } else {
       fetchDataOnSubmit();
@@ -43,12 +41,12 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
 
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    const key = name as keyof Tables<'services'>;
+    const key = name as keyof Tables<'shipments'>;
 
-    if (type === 'datetime-local') {
+    if (type === 'date') {
       const d = toInputDate(value);
 
       setFormData((prevFormData) => ({
@@ -71,7 +69,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
         <Button variant="outline" size="sm" className="h-8 gap-1">
           <Edit2 className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Edytuj serwis
+            Edytuj wysyłkę
           </span>
         </Button>
       </Dialog.Trigger>
@@ -81,10 +79,10 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
         <Dialog.Content
           className="bg-card border shadow-xl fixed left-1/2 top-1/2 overflow-auto max-h-[85vh] w-[90vw] max-w-[650px] -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] focus:outline-hidden data-[state=open]:animate-contentShow">
           <Dialog.Title className="m-0 text-[17px] font-medium">
-            Serwis
+            Wysyłka
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
-            Edytujesz dane kontaktowe przypisane do serwisu.
+            Edytujesz dane do wysyłki.
           </Dialog.Description>
 
           <Form.Root
@@ -92,11 +90,11 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
           >
 
             <Form.Field>
-              <Form.Label htmlFor="contactId" className="text-muted-foreground text-xs">
-                Nazwa klienta
+              <Form.Label htmlFor="contact" className="text-muted-foreground text-xs">
+                Nazwa
               </Form.Label>
               <input
-                id="contactId"
+                id="contact"
                 type="text"
                 name="contact"
                 value={formData.contact || ''}
@@ -107,9 +105,9 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
             </Form.Field>
 
             <Form.Field>
-              <Form.Label htmlFor="addressId" className="text-muted-foreground text-xs">Adres</Form.Label>
+              <Form.Label htmlFor="address" className="text-muted-foreground text-xs">Adres</Form.Label>
               <textarea
-                id="addressId"
+                id="address"
                 name="address"
                 value={formData.address || ''}
                 onChange={handleChange}
@@ -149,58 +147,19 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
               </Form.Field>
             </div>
 
-            <Separator className="border-b mb-3" />
-
-            <Form.Field>
-              <Form.Label htmlFor="technicianId" className="text-muted-foreground text-xs">
-                Serwisant/ Osoba odpowiedzialna
-              </Form.Label>
+            <div>
+              <label htmlFor="due_at" className="text-muted-foreground text-xs mb-0.5">Wysłać do dnia</label>
               <input
-                id="technicianId"
-                type="text"
-                name="technician"
-                value={formData.technician || ''}
+                id="due_at"
+                type="date"
+                name="due_at"
+                value={formData.due_at ? toInputDate(formData.due_at) : ''}
                 onChange={handleChange}
-                placeholder="Serwisant"
+                placeholder="Płatnosć"
                 className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
-            </Form.Field>
-
-
-            <div className="flex w-full justify-start items-center gap-2 ">
-              <span className="text-sm text-muted-foreground">Planowany czas:</span>
-              <Form.Field>
-                <Form.Row className="text-xs text-muted-foreground">
-                  <Form.Label htmlFor="start_at">Rozpoczęcie</Form.Label>
-                </Form.Row>
-                <input
-                  id="start_at"
-                  type="datetime-local"
-                  name="start_at"
-                  value={formData.start_at ? toInputDate(formData.start_at) : ''}
-                  onChange={handleChange}
-                  placeholder="Rozpoczęcie"
-                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                />
-              </Form.Field>
-
-              <Form.Field>
-                <Form.Row className="text-xs text-muted-foreground">
-                  <Form.Label htmlFor="end_at">Zakończenie</Form.Label>
-                </Form.Row>
-                <input
-                  id="end_at"
-                  type="datetime-local"
-                  name="end_at"
-                  value={formData.end_at ? toInputDate(formData.end_at) : ''}
-                  onChange={handleChange}
-                  placeholder="Zakończenie"
-                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-
-                />
-              </Form.Field>
-
             </div>
+
 
             <div className="mt-[25px] flex justify-end gap-2">
               <Dialog.Close asChild>
@@ -234,4 +193,4 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
 });
 
 
-export default ServiceDialog;
+export default ShipmentDialog;

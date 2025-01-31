@@ -54,9 +54,9 @@ const service: Tables<'services'> = {
   contact: '',
   email: '',
   phone: '',
-  end_at: null,
+  end_at: '',
   location: '',
-  start_at: null,
+  start_at: '',
   technician: ''
 };
 

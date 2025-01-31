@@ -50,12 +50,12 @@ const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
       <Select.Root value={order.status_id} onValueChange={handleChange}>
 
         <Select.Trigger
-          className="flex w-full bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex bg-background  hover:bg-muted rounded cursor-pointer px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Select.Value
             aria-label="State"
           >
-            <div className="flex items-center justify-start gap-2">
+            <div className="flex items-center justify-start gap-2 ">
               <div className="text-muted-foreground text-sm">
                 Status:
               </div>

@@ -10,8 +10,9 @@ import {
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { ThemeSwitcher } from '@/components/theme-switcher';
-import { signOutAction } from '@/app/actions';
 import { User } from 'lucide-react';
+import LogoutButton from '@/app/(protected)/logout-button';
+
 
 export async function HeaderUser() {
   const supabase = await createClient();
@@ -19,6 +20,7 @@ export async function HeaderUser() {
   const {
     data: { user }
   } = await supabase.auth.getUser();
+
 
   return (
     <div className="flex gap-6 ">
@@ -41,14 +43,7 @@ export async function HeaderUser() {
           <DropdownMenuSeparator />
           {user ? (
             <DropdownMenuItem>
-              <form
-                action={async () => {
-                  'use server';
-                  await signOutAction();
-                }}
-              >
-                <button type="submit">Sign Out</button>
-              </form>
+              <LogoutButton />
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem>

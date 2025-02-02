@@ -129,11 +129,6 @@ async function getOrdersPinned(
   offset: number
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-  if (userError) throw new Error(`Get list of Pinned Orders error:`, userError);
-
-
   const { count } = await supabase
     .from('orders')
     .select(

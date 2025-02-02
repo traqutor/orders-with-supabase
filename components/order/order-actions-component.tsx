@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 import { Tables } from '@/types_db';
 import { deleteOrderAction, getActionsForOrderId, postOrderAction, putOrderAction } from '@/lib/db/orders_actions';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
-import DynamicIcon from '@/components/icon/DynamicIcon';
 
 
 type OrderAction = Tables<'orders_actions'> & { actions: Tables<'actions'> }

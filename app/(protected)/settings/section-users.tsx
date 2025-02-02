@@ -26,8 +26,6 @@ export function SectionUsers() {
   const supabase = createClient();
   const { profiles, fetchProfiles, updateProfile } = useProfiles();
   const [formData, setFormData] = useState<Profile>({ ...EMPTY_PROFILE });
-  const [files, setFiles] = useState<File[]>([]);
-
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

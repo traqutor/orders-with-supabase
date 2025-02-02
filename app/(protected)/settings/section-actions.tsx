@@ -17,7 +17,8 @@ const EMPTY_ACTION: Action = {
   id: '',
   color_hex: '',
   title: '',
-  icon_name: ''
+  icon_name: '',
+  note_info: '',
 };
 
 export function SectionActions() {
@@ -98,7 +99,8 @@ export function SectionActions() {
         <Form.Root
           onSubmit={(event) => handleSubmit(event)}
         >
-          <label htmlFor="pillSample" className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
+          <label htmlFor="pillSample"
+                 className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
           <Pill
             id="pillSample"
@@ -112,7 +114,8 @@ export function SectionActions() {
 
 
             <Form.Field name="title">
-              <Form.Label htmlFor="title" className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Title</Form.Label>
+              <Form.Label htmlFor="title"
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Title</Form.Label>
               <Form.Control asChild>
                 <input
                   id="title"
@@ -127,7 +130,8 @@ export function SectionActions() {
             </Form.Field>
 
             <Form.Field name="color_hex">
-              <Form.Label htmlFor="color_hex" className="flex items-baseline justify-between py-1">Color</Form.Label>
+              <Form.Label htmlFor="color_hex"
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Color</Form.Label>
               <select
                 name="color_hex"
                 value={formData.color_hex || ''}
@@ -137,6 +141,23 @@ export function SectionActions() {
                 {COLOR_OPTIONS.map((color) => <option key={color} value={color}>{color}</option>)}
               </select>
 
+            </Form.Field>
+
+            <Form.Field name="note_info">
+              <Form.Label htmlFor="color_hex"
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Informacja widoczna w notatkach po wykonanoi akcji</Form.Label>
+
+              <Form.Control asChild>
+                <textarea
+                  id="note_info"
+                  name="note_info"
+                  value={formData.note_info || ''}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Action Note Information"
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Control>
             </Form.Field>
           </div>
 

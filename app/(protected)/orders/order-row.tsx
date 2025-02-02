@@ -12,6 +12,7 @@ import { Tables } from '@/types_db';
 import { Pill } from '@/components/ui/pill';
 import React from 'react';
 import Link from 'next/link';
+import { getFormatedDate } from '@/utils/time';
 
 
 export function OrderRow(order: any) {
@@ -40,7 +41,7 @@ export function OrderRow(order: any) {
           title={order.orders_statuses.title || ''} />
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        {DateTime.fromISO(order.created_at).toFormat('dd-mm-yyyy')}
+        {getFormatedDate(order.created_at)}
       </TableCell>
       <TableCell className="w-[100px]">
         <div className="flex flex-wrap gap-2 space-x-2">

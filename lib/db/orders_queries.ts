@@ -145,7 +145,6 @@ async function getOrderById(
     order: data[0]
   };
 
-
 }
 
 const postOrder = async (order: Tables<'orders'>) => {

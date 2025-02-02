@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { NoteMenu } from '@/app/(protected)/order/note-menu';
 import { putNote } from '@/lib/db/notes';
 import NoteDialog from '@/app/(protected)/order/note-dialog';
+import AvatarProfile from '@/components/profile/avatar-profile';
 
 const Note = (
   props:
@@ -59,9 +60,13 @@ const Note = (
 
         <div className="w-full flex flex-col items-end">
           <div className="relative flex items-end justify-between text-gray-800 w-full">
-            <div className="flex flex-auto items-center justify-between mt-2 h-[30px]">
-              <div>
-                <p className="text-[10px]">{DateTime.fromISO(item.created_at).toFormat('dd-MM-yyyy hh:mm')}</p>
+            <div className="flex w-full items-center justify-between pt-5">
+              <div className="text-xs text-muted-foreground">
+                <div className="flex items-center justify-start gap-2 pb-1">
+                <span>Dodał:</span>
+                <AvatarProfile profileId={item.created_by} />
+                </div>
+                <span >{DateTime.fromISO(item.created_at).toFormat('dd-MM-yyyy hh:mm')}</span>
               </div>
               <div>
                 {item &&

@@ -42,14 +42,14 @@ export function OrdersTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="hidden w-[100px] sm:table-cell">
+              <TableHead className="">
                 <span className="sr-only">Image</span>
               </TableHead>
-              <TableHead>Tytuł</TableHead>
-              <TableHead>Klient</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Z dnia</TableHead>
-              <TableHead className="hidden md:table-cell">Akcje</TableHead>
+              <TableHead className="">Tytuł</TableHead>
+              <TableHead className="">Klient</TableHead>
+              <TableHead className="">Status</TableHead>
+              <TableHead className="">Z dnia</TableHead>
+              <TableHead className="">Akcje</TableHead>
               <TableHead>
                 <span className="sr-only">Menu</span>
               </TableHead>

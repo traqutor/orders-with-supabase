@@ -7,7 +7,6 @@ import { Section } from '@/app/(protected)/settings/section';
 import { Pill } from '@/components/ui/pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
 import { deleteLabel, postLabel, putLabel } from '@/lib/db/labels';
@@ -18,7 +17,7 @@ export function SectionLabels() {
   const { labels, getLabels } = useLabels();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const supabase = createClient();
+
     event.preventDefault();
 
     if (item)

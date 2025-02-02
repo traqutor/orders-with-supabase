@@ -7,7 +7,8 @@ const getPositionsForOrderId = async (orderId: string) => {
   return db
     .from('orders_positions')
     .select(`*`)
-    .eq('order_id', orderId);
+    .eq('order_id', orderId)
+    .order('seq');
 };
 
 

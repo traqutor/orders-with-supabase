@@ -10,8 +10,8 @@ import {
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { ThemeSwitcher } from '@/components/theme-switcher';
-import { User } from 'lucide-react';
 import LogoutButton from '@/app/(protected)/logout-button';
+import AvatarProfile from '@/components/profile/avatar-profile';
 
 
 export async function HeaderUser() {
@@ -32,7 +32,7 @@ export async function HeaderUser() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <User className="h-5 w-5" />
+            <AvatarProfile profileId={user?.id} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

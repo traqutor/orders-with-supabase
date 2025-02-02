@@ -3,6 +3,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import React, { useState } from 'react';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
 import { Tables } from '@/types_db';
+import { cn } from '@/lib/utils';
 
 type ServicePosition = Tables<'services_positions'>
 
@@ -11,8 +12,9 @@ export function ServiceRow(props: {
   position: ServicePosition,
   rowNumber: number,
   onUpdatePosition: (p: ServicePosition) => void,
+  onDeletePosition: (p: ServicePosition) => void,
 }) {
-  const { position, rowNumber, onUpdatePosition } = props;
+  const { position, rowNumber, onUpdatePosition, onDeletePosition } = props;
   const [formData, setFormData] = useState<ServicePosition>({ ...position });
   const [isChanged, setIsChanged] = useState<boolean>();
 
@@ -25,11 +27,8 @@ export function ServiceRow(props: {
     setIsChanged(true);
   };
 
-  const handleToggleServiceIsDoneChange = () => {
-    setFormData((prev) => ({
-      ...prev,
-      is_done: !prev.is_done
-    }));
+  const handleToggleServiceIsDoneChange = (is_done: boolean) => {
+    onUpdatePosition({ ...formData, is_done });
     setIsChanged(false);
   };
 
@@ -38,14 +37,18 @@ export function ServiceRow(props: {
     setIsChanged(false);
   };
 
+  const handleDelete = () => {
+    onDeletePosition(formData);
+    setIsChanged(false);
+  };
 
   return (
     <TableRow>
-      <TableCell className="">
+      <TableCell>
         {rowNumber}
       </TableCell>
 
-      <TableCell className="">
+      <TableCell>
         <input
           type="text"
           name="vehicle_vin"
@@ -86,15 +89,21 @@ export function ServiceRow(props: {
       </TableCell>
 
 
-      <TableCell className="px-2">
+      <TableCell className="w-[90px] px-2">
         <div className="flex gap-4">
-          <button
-            className="flex gap-2 h-[35px] font-medium select-none text-green-600 hover:text-green-800 items-center rounded text-[13px] leading-none cursor-pointer outline-none"
-            disabled={!isChanged}
-            onClick={handleEdit}
-          >
-            <Hammer  className="rotate-y-180"/>
-          </button>
+          <ConfirmDialog
+            triggerLabel=""
+            triggerIcon={
+              <Hammer
+                className={cn(' text-green-600 hover:text-green-800',
+                  position.is_done ? ' text-gray-600 hover:text-gray-800'
+                    : 'rotate-y-180 '
+                )}
+              />}
+            title={position.is_done ? 'Powrót do czynności serwisowej.' : 'Zakończenie czynności serwisowej.'}
+            description="Czy potwierdzasz?"
+            onClickSubmit={() => handleToggleServiceIsDoneChange(!position.is_done)} />
+
           {isChanged ?
             <button
               className="flex gap-2 h-[35px] font-medium select-none text-green-600 hover:text-green-800 items-center rounded text-[13px] leading-none cursor-pointer outline-none"
@@ -105,9 +114,9 @@ export function ServiceRow(props: {
             </button> : <div className="w-6"></div>}
           <ConfirmDialog
             triggerLabel=""
-            title={position.is_done ? 'Powrót do czynności serwisowej.' : 'Zakończenie czynności serwisowej.'}
+            title="Kasujesz pozycję serwisową."
             description="Czy potwierdzasz?"
-            onClickSubmit={handleToggleServiceIsDoneChange} />
+            onClickSubmit={handleDelete} />
         </div>
       </TableCell>
     </TableRow>

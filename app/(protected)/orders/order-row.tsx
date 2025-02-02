@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import { Tables } from '@/types_db';
 import { Pill } from '@/components/ui/pill';
 import React from 'react';
 import Link from 'next/link';
+import { getFormatedDate } from '@/utils/time';
 
 
 export function OrderRow(order: any) {
@@ -22,7 +22,7 @@ export function OrderRow(order: any) {
 
   return (
     <TableRow>
-      <TableCell className="hidden sm:table-cell">
+      <TableCell className="">
         <Link href={`/order/${order.id}`}>
           <Package className="text-green-600 hover:text-green-900" />
         </Link>
@@ -39,16 +39,20 @@ export function OrderRow(order: any) {
           variant={order.orders_statuses.color_hex || 'default' as any}
           title={order.orders_statuses.title || ''} />
       </TableCell>
-      <TableCell className="hidden md:table-cell">
-        {DateTime.fromISO(order.created_at).toFormat('dd-mm-yyyy')}
+      <TableCell className="">
+        {getFormatedDate(order.created_at)}
       </TableCell>
-      <TableCell className="w-[100px]">
-        <div className="flex flex-wrap gap-2 space-x-2">
-          {order.orders_actions.map((action: { actions: Tables<'actions'> }) => (
+      <TableCell className="">
+        <div className="flex gap-x-0.5 space-x-2">
+          {order.orders_actions.map((action: Tables<'orders_actions'> & { actions: Tables<'actions'> }) => (
             <Pill
+              size="sm"
               key={action.actions.id}
-              variant={action.actions.color_hex || 'default' as any}
-              title={action.actions.title || ''} />
+              variant={action.performed ? 'neutral' : action.actions.color_hex || 'default' as any}
+              title={action.actions.title || ''}
+              iconName={action.actions.icon_name || ''}
+              iconOnly={true}
+            />
           ))}
         </div>
       </TableCell>

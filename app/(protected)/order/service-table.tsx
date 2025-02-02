@@ -8,7 +8,8 @@ import { v4 } from 'uuid';
 import {
   getServicePositionsForServiceId,
   postServicePosition,
-  putServicePosition
+  putServicePosition,
+  deleteServicePosition,
 } from '@/lib/db/services_positions_queries';
 import { Button } from '@/components/ui/button';
 import { File, LucidePlus } from 'lucide-react';
@@ -49,6 +50,12 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
 
   const handleUpdatePosition = async (position: ServicePosition) => {
     await putServicePosition({ ...position });
+    await getServicePositions();
+  };
+
+  const handleDeletePosition = async (position: ServicePosition) => {
+    await deleteServicePosition({ ...position });
+    await getServicePositions();
   };
 
   return (
@@ -60,11 +67,11 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
               <span className="sr-only">Image</span>
             </TableHead>
             <TableHead>VIN</TableHead>
-            <TableHead className="hidden md:table-cell">Nr Rej.</TableHead>
-            <TableHead className="hidden md:table-cell">Nr Seryjny</TableHead>
-            <TableHead className="hidden md:table-cell">Serwisant</TableHead>
-            <TableHead className="hidden md:table-cell">Status</TableHead>
-            <TableHead>
+            <TableHead className="">Nr Rej.</TableHead>
+            <TableHead className="">Nr Seryjny</TableHead>
+            <TableHead className="">Serwisant</TableHead>
+            <TableHead className="">Status</TableHead>
+            <TableHead className="w-[90px]">
               <span className="sr-only">Menu</span>
             </TableHead>
           </TableRow>
@@ -77,6 +84,7 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
               position={position}
               rowNumber={idx + 1}
               onUpdatePosition={handleUpdatePosition}
+              onDeletePosition={handleDeletePosition}
             />
           )}
         </TableBody>

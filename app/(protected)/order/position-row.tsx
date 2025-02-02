@@ -39,6 +39,7 @@ export function PositionRow(props: {
       [name]: value
     }));
     setIsChanged(true);
+    onUpdatePosition(formData);
   };
 
   const handleOptimaChange = (value: boolean) => {
@@ -51,11 +52,11 @@ export function PositionRow(props: {
 
   return (
     <TableRow>
-      <TableCell className="">
+      <TableCell >
         {rowNumber}
       </TableCell>
 
-      <TableCell className="font-medium ">
+      <TableCell>
         <input
           type="text"
           name="description"
@@ -65,12 +66,12 @@ export function PositionRow(props: {
         />
       </TableCell>
 
-      <TableCell className="">
+      <TableCell className="w-[140px]">
         <select
           name="position_type"
           value={formData.position_type || 'sell'}
           onChange={handleChange}
-          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 
         >
           <option value="sell">Sprzedaż</option>
@@ -78,12 +79,12 @@ export function PositionRow(props: {
         </select>
       </TableCell>
 
-      <TableCell className="">
+      <TableCell className="w-[90px]">
         <select
           name="unit"
           value={formData.unit || 'szt'}
           onChange={handleChange}
-          className=" w-min flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="szt">Szt.</option>
           <option value="hour">Godz.</option>
@@ -91,39 +92,39 @@ export function PositionRow(props: {
         </select>
       </TableCell>
 
-      <TableCell className="">
+      <TableCell className="w-[90px]">
         <input
           type="number"
           name="quantity"
           value={formData.quantity || 0}
           onChange={handleChange}
-          className="w-[65px] text-right flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex text-right rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </TableCell>
 
-      <TableCell className="text-right">
+      <TableCell className="w-[140px]">
         <input
           type="number"
           name="price"
           value={formData.price || 0}
           onChange={handleChange}
-          className="w-[120px] text-right flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className=" text-right flex rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </TableCell>
 
-      <TableCell className="pr-2">
+      <TableCell className="pr-2 w-[90px]">
         <select
           name="price_type"
           value={formData.price_type || 'nett'}
           onChange={handleChange}
-          className="w-[85px] flex rounded-md border border-input bg-background p-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-right flex rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="nett">Netto</option>
           <option value="gross">Brutto</option>
         </select>
       </TableCell>
 
-      {asInvoice && <TableCell className="pr-2">
+      {asInvoice && <TableCell className="w-[90px] pr-2">
         <div className="flex justify-center items-center">
           <Checkbox.Root onCheckedChange={handleOptimaChange}
                          className="flex size-[18px] appearance-none items-center justify-center rounded bg-white shadow-[0_2px_10px]  outline-none hover:bg-green-50 focus:shadow-[0_0_0_2px_black]"
@@ -137,7 +138,7 @@ export function PositionRow(props: {
         </div>
       </TableCell>}
 
-      <TableCell className="px-2">
+      <TableCell className="w-[90px] px-2">
         <div className="flex gap-4">
           {isChanged ?
             <button

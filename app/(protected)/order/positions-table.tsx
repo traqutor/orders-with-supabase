@@ -76,13 +76,13 @@ export function PositionsTable({
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Nazwa</TableHead>
-              <TableHead>Rodzaj</TableHead>
-              <TableHead>Jedn.</TableHead>
-              <TableHead>Ilość</TableHead>
-              <TableHead className="text-right">Cena</TableHead>
-              <TableHead></TableHead>
-              {asInvoice && <TableHead className="text-center">Optima</TableHead>}
-              <TableHead>
+              <TableHead className="w-[140px] text-center" >Rodzaj</TableHead>
+              <TableHead className="w-[90px] text-center">Jedn.</TableHead>
+              <TableHead className="w-[90px] text-right" >Ilość</TableHead>
+              <TableHead className="w-[140px] text-right">Cena</TableHead>
+              <TableHead className="w-[90px]"></TableHead>
+              {asInvoice && <TableHead className="w-[90px] text-center">Optima</TableHead>}
+              <TableHead className="w-[90px]">
                 <span className="sr-only">Menu</span>
               </TableHead>
 

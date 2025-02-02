@@ -14,18 +14,21 @@ export type Database = {
           color_hex: string | null
           icon_name: string | null
           id: string
+          note_info: string | null
           title: string | null
         }
         Insert: {
           color_hex?: string | null
           icon_name?: string | null
           id?: string
+          note_info?: string | null
           title?: string | null
         }
         Update: {
           color_hex?: string | null
           icon_name?: string | null
           id?: string
+          note_info?: string | null
           title?: string | null
         }
         Relationships: []
@@ -127,7 +130,6 @@ export type Database = {
         Update: {
           address?: string | null
           contact?: string | null
-
           description?: string | null
           email?: string | null
           group_cost?: number | null
@@ -169,8 +171,9 @@ export type Database = {
         Row: {
           bg_color: string | null
           created_at: string
-          created_by: string | null
+          created_by: string
           id: string
+          is_system: boolean | null
           message: string | null
           order_id: string
           pin: boolean
@@ -181,6 +184,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_system?: boolean | null
           message?: string | null
           order_id: string
           pin?: boolean
@@ -191,6 +195,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_system?: boolean | null
           message?: string | null
           order_id?: string
           pin?: boolean
@@ -310,21 +315,32 @@ export type Database = {
       }
       orders_actions: {
         Row: {
-          id: string
+          id: number,
+          action_id: string
           order_id: string
+          performed: boolean | null
+          performed_at: string | null
+          performed_by: string | null
         }
         Insert: {
-          id?: string
-          order_id?: string
+          action_id: string
+          order_id: string
+          performed?: boolean | null
+          performed_at?: string | null
+          performed_by?: string | null
         }
         Update: {
-          id?: string
+          id: number,
+          action_id?: string
           order_id?: string
+          performed?: boolean | null
+          performed_at?: string | null
+          performed_by?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'public_order_actions_action_id_fkey'
-            columns: ['id']
+            foreignKeyName: 'orders_actions_action_id_fkey'
+            columns: ['action_id']
             isOneToOne: false
             referencedRelation: 'actions'
             referencedColumns: ['id']
@@ -462,18 +478,21 @@ export type Database = {
           full_name: string | null
           id: string
           is_disabled: boolean | null
+          email: string | null
         }
         Insert: {
           avatar_url?: string | null
           full_name?: string | null
           id: string
           is_disabled?: boolean | null
+          email: string | null
         }
         Update: {
           avatar_url?: string | null
           full_name?: string | null
           id?: string
           is_disabled?: boolean | null
+          email: string | null
         }
         Relationships: []
       }
@@ -603,7 +622,7 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, 'public'>]
+export type PublicSchema = Database[Extract<keyof Database, 'public'>]
 
 export type Tables<
   PublicTableNameOrOptions extends | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
@@ -628,6 +647,7 @@ export type Tables<
       ? R
       : never
     : never
+
 
 export type TablesInsert<
   PublicTableNameOrOptions extends | keyof PublicSchema['Tables']

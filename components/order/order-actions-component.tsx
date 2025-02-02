@@ -7,13 +7,18 @@ import { Pill } from '@/components/ui/pill';
 import { useActions } from '@/lib/db/useActions';
 import { cn } from '@/lib/utils';
 import { Tables } from '@/types_db';
-import { deleteOrderAction, getActionsForOrderId, postOrderAction } from '@/lib/db/orders_actions';
+import { deleteOrderAction, getActionsForOrderId, postOrderAction, putOrderAction } from '@/lib/db/orders_actions';
+import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
+import DynamicIcon from '@/components/icon/DynamicIcon';
+
+
+type OrderAction = Tables<'orders_actions'> & { actions: Tables<'actions'> }
 
 const OrderActionsComponent = (props: { orderId: string }) => {
 
     const { orderId } = props;
     const { actions, fetchActions } = useActions();
-    const [orderActions, setOrderActions] = useState<any>([]);
+    const [orderActions, setOrderActions] = useState<OrderAction[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>();
 
     const getOrderActions = async () => {
@@ -24,19 +29,48 @@ const OrderActionsComponent = (props: { orderId: string }) => {
       setOrderActions(data);
     };
 
-    const handleActionClick = (action: Tables<'actions'>) => {
-      console.log(action);
+    const handleActionClick = async (action: any) => {
+      setIsLoading(true);
+
+      await putOrderAction({
+        id: action.id,
+        action_id: action.action_id,
+        order_id: action.order_id,
+        performed: !action.performed,
+        performed_by: null,
+        performed_at: null,
+      });
+      await getOrderActions();
+      setIsLoading(false);
     };
 
-    const handleToggleAction = async (actionId: string, isSelected: boolean) => {
+    const handleToggleAction = async (action: Tables<'actions'>, isSelected: boolean) => {
       setIsLoading(true);
+
       if (isSelected) {
-        await deleteOrderAction({ id: actionId, order_id: orderId });
+        const a = orderActions.find(i => i.action_id === action.id && i.order_id === orderId);
+        if (a) {
+          await deleteOrderAction({
+            id: a.id,
+            action_id: action.id,
+            order_id: orderId,
+            performed: false,
+            performed_by: null,
+            performed_at: null
+          });
+        }
       } else {
-        await postOrderAction({ id: actionId, order_id: orderId });
+        await postOrderAction({
+          action_id: action.id,
+          order_id: orderId,
+          performed: false,
+          performed_by: null,
+          performed_at: null
+        });
       }
+
       await getOrderActions();
-      setIsLoading(false)
+      setIsLoading(false);
     };
 
     useEffect(() => {
@@ -50,9 +84,9 @@ const OrderActionsComponent = (props: { orderId: string }) => {
         <Popover.Root>
           <Popover.Trigger
             className="flex h-[38px] items-center justify-start cursor-pointer text-muted-foreground hover:bg-muted rounded p-1 px-4">
-          <div className="text-sm">
-            Akcje:
-          </div>
+            <div className="text-sm">
+              Akcje:
+            </div>
             <ChevronDown className="text-muted-foreground h-5" />
           </Popover.Trigger>
 
@@ -70,10 +104,10 @@ const OrderActionsComponent = (props: { orderId: string }) => {
               <div className="flex flex-wrap flex-auto gap-1 p-2">
                 <ul className="flex-col w-full">
                   {actions.map((a: Tables<'actions'>) => {
-                      const isSelected = orderActions.some((o: { id: string }) => o.id === a.id);
+                      const isSelected = orderActions.some((o: { action_id: string }) => o.action_id === a.id);
                       return <li key={a.id}
                                  className="h-12 px-2 cursor-pointer w-full rounded items-center inline-flex hover:bg-muted"
-                                 onClick={() => !isLoading && handleToggleAction(a.id, isSelected)}
+                                 onClick={() => !isLoading && handleToggleAction(a, isSelected)}
                       >
                         <div
                           className={cn(
@@ -87,7 +121,6 @@ const OrderActionsComponent = (props: { orderId: string }) => {
                         </div>
                         <Pill
                           size="sm"
-
                           variant={a.color_hex || 'default' as any}
                           title={a.title || ''} />
                       </li>;
@@ -102,16 +135,26 @@ const OrderActionsComponent = (props: { orderId: string }) => {
 
         <div className="flex flex-wrap flex-auto gap-1 pt-1 ml-2">
 
-          {orderActions.map((a: { actions: Tables<'actions'> }) =>
 
-            <Pill
-              size="sm"
-              key={a.actions.id}
-              variant={a.actions.color_hex || 'default' as any}
-              title={a.actions.title || ''}
-              className="cursor-pointer"
-              onClick={() => handleActionClick(a.actions)}
-            />
+          {orderActions.map((a: Tables<'orders_actions'> & { actions: Tables<'actions'> }) =>
+
+            <div key={a.id}>
+
+              <ConfirmDialog
+                triggerLabel=""
+                title={a.performed ? `Anulowanie wykonania akcji "${a.actions.title}"` : `Wykonanie akcji "${a.actions.title}"`}
+                description={a.performed ? 'Czy anulujesz wykonanie akcji ' : 'Czy potwierdzasz wykonanie akcji'}
+                onClickSubmit={() => handleActionClick(a)}
+                triggerIcon={<Pill
+                  size="sm"
+                  variant={a.performed ? 'neutral' : a.actions.color_hex || 'default' as any}
+                  title={a.actions.title || ''}
+                  iconName={a.actions.icon_name || '' }
+                  className="cursor-pointer"
+                />}
+              />
+
+            </div>
           )}
         </div>
 

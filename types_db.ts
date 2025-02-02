@@ -315,6 +315,7 @@ export type Database = {
       }
       orders_actions: {
         Row: {
+          id: number,
           action_id: string
           order_id: string
           performed: boolean | null
@@ -322,13 +323,14 @@ export type Database = {
           performed_by: string | null
         }
         Insert: {
-          action_id?: string
-          order_id?: string
+          action_id: string
+          order_id: string
           performed?: boolean | null
           performed_at?: string | null
           performed_by?: string | null
         }
         Update: {
+          id: number,
           action_id?: string
           order_id?: string
           performed?: boolean | null

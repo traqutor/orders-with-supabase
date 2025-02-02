@@ -18,7 +18,6 @@ export default async function SettingsPage() {
     return redirect('/sign-in');
   }
 
-
   return (
     <Fragment>
       <SectionUsers />

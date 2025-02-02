@@ -8,6 +8,7 @@ interface ConfirmDialogProps {
 export interface ConfirmDialogRef {
   triggerLabel: string;
   title: string;
+  triggerIcon?: React.ReactNode;
   description: string;
   cancelLabel?: string;
   submitLabel?: string;
@@ -17,7 +18,7 @@ export interface ConfirmDialogRef {
 
 
 const ConfirmDialog = forwardRef<ConfirmDialogProps, ConfirmDialogRef>((props, ref) => {
-  const { title, description, triggerLabel, cancelLabel, submitLabel, onClickSubmit } = props;
+  const { title, description, triggerLabel, triggerIcon, cancelLabel, submitLabel, onClickSubmit } = props;
 
   const handleOnClick = () => {
 
@@ -29,7 +30,7 @@ const ConfirmDialog = forwardRef<ConfirmDialogProps, ConfirmDialogRef>((props, r
     <AlertDialog.Trigger asChild>
       <button
         className="group relative flex gap-2 h-[35px] font-medium select-none items-center rounded text-[13px] leading-none cursor-pointer outline-none hover:text-green-800 ">
-        <Delete />  {triggerLabel}
+        {triggerIcon ? triggerIcon : <Delete />} {triggerLabel}
       </button>
     </AlertDialog.Trigger>
     <AlertDialog.Portal>

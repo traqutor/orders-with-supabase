@@ -7,7 +7,9 @@ const getServicePositionsForServiceId = async (serviceId: string) => {
   return db
     .from('services_positions')
     .select(`*`)
-    .eq('service_id', serviceId);
+    .eq('service_id', serviceId)
+    .order('is_done')
+    .order('seq')
 };
 
 

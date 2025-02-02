@@ -3,9 +3,10 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import DynamicIcon from '@/components/icon/DynamicIcon';
 
 const pillVariants = cva(
-  'text-xs font-medium me-2 px-2.5 py-0.5 whitespace-nowrap',
+  'flex w-min justify-start items-center gap-1 text-xs font-medium me-2 px-2.5 py-0.5 whitespace-nowrap',
   {
     variants: {
       variant: {
@@ -50,22 +51,27 @@ export interface PillProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof pillVariants> {
   loading?: boolean;
+  iconName?: string;
+  iconOnly?: boolean;
 }
 
+
 const Pill = React.forwardRef<HTMLDivElement, PillProps>(
-  ({ title, className, variant, size, loading, ...props }, ref) => {
+  ({ title, className, variant, size, loading, iconName, iconOnly, ...props }, ref) => {
 
     return (
-      <span
+      <div
         className={cn(pillVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       >
-        {title}
-      </span>
+        {iconName && <DynamicIcon iconName={iconName} />}
+        {!iconOnly && <span className="">{title}</span>}
+      </div>
     );
   }
 );
+
 Pill.displayName = 'Pill';
 
 export { Pill, pillVariants };

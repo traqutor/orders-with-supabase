@@ -21,17 +21,17 @@ export function NavSide() {
           <ShoppingCart className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/calendar" label="Callendar">
+        {/*<NavItem href="/calendar" label="Callendar">
           <Calendar1Icon className="h-5 w-5" />
-        </NavItem>
+        </NavItem>*/}
 
         <NavItem href="/customers" label="Customers">
           <Users2 className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/analytics" label="Analytics">
+       {/* <NavItem href="/analytics" label="Analytics">
           <LineChart className="h-5 w-5" />
-        </NavItem>
+        </NavItem>*/}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip>

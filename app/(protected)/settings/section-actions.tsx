@@ -18,7 +18,7 @@ const EMPTY_ACTION: Action = {
   color_hex: '',
   title: '',
   icon_name: '',
-  note_info: '',
+  note_info: ''
 };
 
 export function SectionActions() {
@@ -86,6 +86,7 @@ export function SectionActions() {
               onClick={() => handleClick(b)}
               key={b.id}
               variant={b.color_hex || 'default' as any}
+              iconName={b.icon_name || ''}
               title={b.title || ''} />)}
         </div>
 
@@ -95,6 +96,8 @@ export function SectionActions() {
           </Button>
         </div>
       </div>
+
+
       {formData.id !== '' &&
         <Form.Root
           onSubmit={(event) => handleSubmit(event)}
@@ -102,16 +105,19 @@ export function SectionActions() {
           <label htmlFor="pillSample"
                  className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
-          <Pill
-            id="pillSample"
-            size="sm"
-            variant={formData.color_hex || 'default' as any}
-            title={formData.title || ''}
-            className="mb-1"
-          />
+          <div className="w-min">
+            <Pill
+              id="pillSample"
+              size="sm"
+              variant={formData.color_hex || 'default' as any}
+              title={formData.title || ''}
+              iconName={formData.icon_name || ''}
+              className="mb-1"
+            />
 
-          <div className="flex w-full justify-start items-end gap-5">
+          </div>
 
+          <div className="flex justify-start items-end gap-5">
 
             <Form.Field name="title">
               <Form.Label htmlFor="title"
@@ -127,6 +133,25 @@ export function SectionActions() {
                   className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </Form.Control>
+            </Form.Field>
+
+            <Form.Field name="icon_name">
+              <Form.Label htmlFor="icon_name"
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Ikona</Form.Label>
+              <Form.Control asChild>
+                <input
+                  id="icon_name"
+                  type="text"
+                  name="icon_name"
+                  value={formData.icon_name || ''}
+                  onChange={handleChange}
+                  placeholder="Action Icon"
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Control>
+              <Form.Message>
+                MailIcon, PenIcon, FileIcon, PhoneIcon, PackageIcon, IdCardIcon, AtSignIcon, BellRingIcon, BellIcon, BeerIcon, BanIcon
+              </Form.Message>
             </Form.Field>
 
             <Form.Field name="color_hex">
@@ -145,7 +170,8 @@ export function SectionActions() {
 
             <Form.Field name="note_info">
               <Form.Label htmlFor="color_hex"
-                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Informacja widoczna w notatkach po wykonanoi akcji</Form.Label>
+                          className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Informacja
+                widoczna w notatkach po wykonanoi akcji</Form.Label>
 
               <Form.Control asChild>
                 <textarea

@@ -6,10 +6,7 @@ export type OrderStatus = Tables<'orders_statuses'>;
 
 export function useOrdersStatuses() {
 
-  console.log('useOrdersStatuses');
-
   const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
-
 
   useEffect(() => {
     fetchOrdersStatuses().then();

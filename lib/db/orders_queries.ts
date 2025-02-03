@@ -134,7 +134,7 @@ async function getOrdersPinned(
     .select(
       `*,
       pinned_orders(*)`, { count: 'exact', head: true }
-    ).eq('user_id', userId );
+    ).eq('user_id', userId);
 
   console.log(count);
 
@@ -183,9 +183,11 @@ async function getOrderById(
     .from('orders')
     .select(
       `*,
-        orders_actions(*, actions(*)),
         labels(*),
-        orders_statuses(*)
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
        `
     )
     .eq('id', orderId);

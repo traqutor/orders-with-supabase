@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { v4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Edit2, PlusCircle, SaveIcon, XIcon } from 'lucide-react';
+import { SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@radix-ui/react-form';
 import { Tables } from '@/types_db';
@@ -17,7 +17,9 @@ import SelectStatus from '@/components/ui/Form/select-status';
 
 
 interface OrderCreateDialogProps {
+  triggerButton: React.ReactNode;
   order?: Tables<'orders'>;
+  selectedCustomer?: Tables<'customers'>;
 }
 
 export const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> => {
@@ -45,7 +47,8 @@ export const mapOrderToFormData = (order: Tables<'orders'>): Tables<'orders'> =>
 };
 
 
-const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => {
+const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
+  { triggerButton: TriggerButton, order, selectedCustomer }) => {
 
   const [open, setOpen] = useState(false);
 
@@ -54,6 +57,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
   const { customers, fetchCustomers } = useCustomers();
   const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
   const [formData, setFormData] = useState<Tables<'orders'>>(mapOrderToFormData(order || {} as Tables<'orders'>));
+
   const computedIsEdit = useMemo(() => {
     return !!order?.customer_id;
   }, [order]);
@@ -68,6 +72,13 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
       formData.status_id = ordersStatuses[0].id;
     }
   }, [ordersStatuses]);
+
+  useEffect(() => {
+    console.log(selectedCustomer);
+    if (selectedCustomer) {
+      handleCustomerIdChange(selectedCustomer.id);
+    }
+  }, [selectedCustomer, customers]);
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -84,7 +95,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
         return;
       } else {
         setOpen(false);
-        router.push(`/order/${order.id}`);
+        router.refresh();
       }
     } else {
 
@@ -146,17 +157,9 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        {computedIsEdit ? <Button variant="outline" size="sm" className="h-8 gap-1">
-          <Edit2 className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Edytuj zamówienie
-          </span>
-        </Button> : <Button size="sm" className="h-8 gap-1">
-          <PlusCircle className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Dodaj Zamówienie
-          </span>
-        </Button>}
+        <div>
+          {TriggerButton}
+        </div>
       </Dialog.Trigger>
 
       <Dialog.Portal>

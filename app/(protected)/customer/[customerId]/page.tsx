@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowBigLeft } from 'lucide-react';
+import { ArrowBigLeft, PlusCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
@@ -7,6 +7,8 @@ import { getCustomerById } from '@/lib/db/customers';
 import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { CustomersOrdersContentTab } from '@/app/(protected)/customer/customers-orders-content-tab';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
+import OrderDialog from '@/app/(protected)/order/order-dialog';
+import { Button } from '@/components/ui/button';
 
 export default async function CustomerPage(
   props: {
@@ -52,7 +54,15 @@ export default async function CustomerPage(
               </CardDescription>
             </CardHeader>
 
-            <div className={'p-7'}>
+            <div className={'flex justify-start items-center gap-4 p-7'}>
+              <OrderDialog selectedCustomer={customer} triggerButton={
+                <Button size="sm" className="h-8 gap-1">
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Dodaj zamówienie
+            </span>
+                </Button>
+              } />
               <CustomerCreateDialog customer={customer} />
             </div>
           </div>

@@ -5,10 +5,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, User } from 'lucide-react';
+import { MoreHorizontal, Package, User } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React from 'react';
 import Link from 'next/link';
+import OrderDialog from '@/app/(protected)/order/order-dialog';
 
 
 export function CustomerRow(customer: any) {
@@ -23,10 +24,14 @@ export function CustomerRow(customer: any) {
 
   return (
     <TableRow>
-      <TableCell className="hidden sm:table-cell">
+      <TableCell className="">
+        <div className="flex justify-start items-center gap-2">
         <Link href={`/customer/${customer.id}`}>
           <User onClick={handleEdit} className="text-green-600 hover:text-green-900" />
         </Link>
+
+        <OrderDialog selectedCustomer={customer} triggerButton={<Package className="text-green-600 hover:text-green-900" />} />
+        </div>
       </TableCell>
       <TableCell className="font-medium">
         <Link href={`/customer/${customer.id}`} className="font-bold hover:text-green-900">

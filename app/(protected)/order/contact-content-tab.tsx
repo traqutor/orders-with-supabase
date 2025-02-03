@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import { MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import { Edit2, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
+import { Button } from '@/components/ui/button';
 
 
 export function ContactContentTab({ order }: any) {
@@ -29,7 +30,11 @@ export function ContactContentTab({ order }: any) {
             </ul>
 
           </div>
-          <OrderDialog order={order} />
+          <OrderDialog order={order} triggerButton={<Button variant="outline" size="sm" className="h-8 gap-1">
+            <Edit2 className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            Edytuj zamówienie
+            </span> </Button>} />
         </div>
 
         <CardDescription className="whitespace-pre-wrap">

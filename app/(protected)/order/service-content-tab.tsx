@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { ServiceTable } from '@/app/(protected)/order/service-table';
-import { getServicesForServiceId, postService, putService } from '@/lib/db/services_queries';
+import { getServicesForServiceId, postService } from '@/lib/db/services_queries';
 import { Tables } from '@/types_db';
 import { Button } from '@/components/ui/button';
 import { v4 } from 'uuid';
@@ -13,11 +13,13 @@ import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import ServiceDialog from '@/app/(protected)/order/service-dialog';
 import { ListItem } from '@/components/ui/list-item';
 import { getFormatedDateTime } from '@/utils/time';
+import { useRouter } from 'next/navigation';
 
 
 export function ServiceContentTab({ order }: any) {
 
   const [service, setService] = useState<Tables<'services'>>();
+  const router = useRouter();
 
   useEffect(() => {
     getService().then();
@@ -66,6 +68,8 @@ export function ServiceContentTab({ order }: any) {
     if (orderError) throw new Error(`Update Order for service Id ${serviceData.id} error:`, orderError);
 
     setService(serviceData);
+
+    router.refresh();
   };
 
   return (

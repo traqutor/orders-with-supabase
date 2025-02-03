@@ -451,6 +451,7 @@ export type Database = {
       }
       pinned_orders: {
         Row: {
+          id: number
           order_id: string
           user_id: string
         }
@@ -459,6 +460,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          id: number
           order_id?: string
           user_id?: string
         }

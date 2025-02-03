@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { ServiceTable } from '@/app/(protected)/order/service-table';
-import { getServicesForServiceId, postService, putService } from '@/lib/db/services_queries';
+import { getServicesForServiceId, postService } from '@/lib/db/services_queries';
 import { Tables } from '@/types_db';
 import { Button } from '@/components/ui/button';
 import { v4 } from 'uuid';

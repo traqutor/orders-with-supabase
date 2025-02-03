@@ -116,10 +116,6 @@ export function InvoiceContentTab({ order }: any) {
     setShipment(data);
   };
 
-  const handleUpdateService = async (service: Tables<'services'>) => {
-    await putService({ ...service });
-  };
-
   return (
     <div>
       {invoice ?

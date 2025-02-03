@@ -13,11 +13,13 @@ import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import ServiceDialog from '@/app/(protected)/order/service-dialog';
 import { ListItem } from '@/components/ui/list-item';
 import { getFormatedDateTime } from '@/utils/time';
+import { useRouter } from 'next/navigation';
 
 
 export function ServiceContentTab({ order }: any) {
 
   const [service, setService] = useState<Tables<'services'>>();
+  const router = useRouter();
 
   useEffect(() => {
     getService().then();
@@ -66,6 +68,8 @@ export function ServiceContentTab({ order }: any) {
     if (orderError) throw new Error(`Update Order for service Id ${serviceData.id} error:`, orderError);
 
     setService(serviceData);
+
+    router.refresh();
   };
 
   return (

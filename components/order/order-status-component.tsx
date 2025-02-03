@@ -8,11 +8,13 @@ import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import * as Select from '@radix-ui/react-select';
 import { putOrder } from '@/lib/db/orders_queries';
 import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
+import { useRouter } from 'next/navigation';
 
 const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
 
     const { order } = props;
 
+    const router = useRouter();
     const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
     const [selected, setSelected] = useState<Tables<'orders_statuses'>>();
 
@@ -24,6 +26,8 @@ const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
       setSelected(option);
 
       updateOrder(option).then();
+
+      router.refresh();
     };
 
     const updateOrder = async (status: Tables<'orders_statuses'>) => {

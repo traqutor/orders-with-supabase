@@ -12,12 +12,25 @@ import { ServiceContentTab } from '@/app/(protected)/order/service-content-tab';
 import { Button } from '@/components/ui/button';
 import OrderActionsComponent from '@/components/order/order-actions-component';
 import OrderStatusComponent from '@/components/order/order-status-component';
+import PinButton from '@/app/(protected)/order/pin-button';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
 export default async function OrderPage(
   props: {
     params: Promise<{ orderId: string }>;
   }
 ) {
+
+  const supabase = await createClient();
+
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect('/sign-in');
+  }
 
   const { orderId } = await props.params;
 
@@ -52,7 +65,12 @@ export default async function OrderPage(
           <div className="flex-auto w-8/12">
 
             <CardHeader>
-              <CardTitle className="pb-2">{order.title}</CardTitle>
+              <div className="flex justify-start items-center gap-2">
+
+                <PinButton order={order} userId={user.id} />
+
+                <CardTitle>{order.title}</CardTitle>
+              </div>
 
               <div className="flex justify-start items-center">
                 <div className=" flex-auto w-4/12">

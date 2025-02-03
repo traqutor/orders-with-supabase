@@ -84,7 +84,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo(({ order }) => 
         return;
       } else {
         setOpen(false);
-        router.push(`/order/${order.id}`);
+        router.refresh();
       }
     } else {
 

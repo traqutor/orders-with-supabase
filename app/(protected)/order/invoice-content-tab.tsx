@@ -16,6 +16,7 @@ import InvoiceDialog from '@/app/(protected)/order/invoice-dialog';
 import { getShipmentByShipmentId, postShipment } from '@/lib/db/shipment_queries';
 import ShipmentDialog from '@/app/(protected)/order/shipment-dialog';
 import { getFormatedDate } from '@/utils/time';
+import { useRouter } from 'next/navigation';
 
 
 export function InvoiceContentTab({ order }: any) {
@@ -23,6 +24,7 @@ export function InvoiceContentTab({ order }: any) {
 
   const [invoice, setInvoice] = useState<Tables<'invoices'>>();
   const [shipment, setShipment] = useState<Tables<'shipments'>>();
+  const router = useRouter();
 
   useEffect(() => {
     getInvoice().then();
@@ -84,6 +86,8 @@ export function InvoiceContentTab({ order }: any) {
     if (orderError) throw new Error(`Update Order for Invoice Id ${data.id} error:`, orderError);
 
     setInvoice(data);
+
+    router.refresh();
   };
 
   const handleAddShipment = async () => {

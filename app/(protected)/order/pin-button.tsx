@@ -15,8 +15,6 @@ const PinButton = (
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(order);
-
   const pinned = useMemo(() => {
     return order.pinned_orders.filter(p => p.user_id === userId);
   }, [userId, order]);
@@ -50,12 +48,12 @@ const PinButton = (
 
 
   const classNamesPin = cn('cursor-pointer hover:text-gray-400',
-    { 'text-tomato-900 dark:text-tomato-600 rotate-12': (pinned.length>0) },
+    { 'text-tomato-900 dark:text-tomato-600 rotate-12': (pinned.length > 0) }
   );
 
 
   return (
-    <button disabled={isLoading} onClick={handlePin} >
+    <button disabled={isLoading} onClick={handlePin}>
       <PinIcon className={classNamesPin} />
     </button>
   );

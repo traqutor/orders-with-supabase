@@ -6,36 +6,82 @@ import { Tables } from '@/types_db';
 
 const supabase = createClient();
 
-const ordersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, search?: string) =>
-  search ? supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .textSearch('title', search)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-    :
-    supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+type OrderQueryParams = {
+  offset: number,
+  limit: number,
+  search?: string,
+  statusId?: string,
+  pinnedToUserId?: string
+}
 
+const ordersListQuery = (params: OrderQueryParams) => {
+  if (params.search && params.statusId) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .eq('status_id', params.statusId)
+      .textSearch('title', params.search)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+  if (params.statusId) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .eq('status_id', params.statusId)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+  if (params.search) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .textSearch('title', params.search)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+
+  return supabase
+    .from('orders')
+    .select(
+      `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+    )
+    .order('seq', { ascending: false })
+    .range(params.offset, params.offset + params.limit - 1);
+};
 
 async function getOrders(
   search: string,
@@ -48,72 +94,17 @@ async function getOrders(
       `*`, { count: 'exact', head: true }
     );
 
-  const { data, error } = await ordersListQuery(offset, 5, search);
+  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE });
 
-  if (error) throw new Error(`Get list of Orders error:`, error);
+  if (error) throw new Error(`Get list of Orders error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
-
-  if (data) {
-    return {
-      orders: ordersList,
-      newOffset: offset + PRODUCTS_PER_PAGE - 1,
-      totalOrdersCounter: count || 0
-    };
-  }
 
   if (!data && offset === null) {
     return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
   const totalOrdersCounter = count || 0;
-  const newOffset = offset + PRODUCTS_PER_PAGE;
-
-  return {
-    orders: data,
-    newOffset,
-    totalOrdersCounter
-  };
-}
-
-async function getOrdersWithStatus(
-  search: string,
-  offset: number,
-  statusId: string
-): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
-
-
-  const { count } = await supabase
-    .from('orders')
-    .select(
-      `*`, { count: 'exact', head: true }
-    ).eq('status_id', statusId);
-
-
-  const { data, error } = await supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .eq('status_id', statusId)
-    .order('created_at', { ascending: false })
-    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
-
-  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error:`, error);
-
-  const ordersList: any = data as QueryData<any>;
-
-  if (!data && offset === null) {
-    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
-  }
-
-  const totalOrdersCounter = count || 0; // to do select count from orders
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
 
@@ -124,38 +115,21 @@ async function getOrdersWithStatus(
   };
 }
 
-async function getOrdersPinned(
-  userId: string,
-  offset: number
+async function getOrdersWithStatus(
+  search: string,
+  offset: number,
+  statusId: string
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
   const { count } = await supabase
     .from('orders')
     .select(
-      `*,
-      pinned_orders(*)`, { count: 'exact', head: true }
-    ).eq('user_id', userId);
+      `*`, { count: 'exact', head: true }
+    ).eq('status_id', statusId);
 
-  console.log(count);
+  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE, statusId });
 
-  const { data, error } = await supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .eq('user_id', userId)
-    .order('seq', { ascending: false })
-    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
-
-  if (error) throw new Error(`Get list of Orders with status_id: ${userId}  error:`, error);
-
-  console.log(data);
+  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
 
@@ -163,12 +137,57 @@ async function getOrdersPinned(
     return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
-  const totalOrdersCounter = count || 0; // to do select count from orders
+  const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
 
   return {
     orders: ordersList,
+    newOffset: newOffset,
+    totalOrdersCounter: totalOrdersCounter
+  };
+}
+
+async function getPinnedOrders(
+  search: string,
+  offset: number,
+  userId: string
+): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
+
+  const { count } = await supabase
+    .from('pinned_orders')
+    .select(
+      `orders(*)`, { count: 'exact', head: true }
+    ).eq('user_id', userId);
+
+  const { data, error } = await supabase
+    .from('pinned_orders')
+    .select(
+      `orders(*,labels(*),
+        orders_statuses(*),
+        pinned_orders(*),
+        orders_actions(*, actions(*)),
+        customers(*))
+       `
+    )
+    .eq('user_id', userId)
+    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
+
+  if (error) throw new Error(`Get list of Pinned Orders with user_id: ${userId}  error: ${JSON.stringify(error)}`);
+
+  if (!data && offset === null) {
+    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
+  }
+
+  const responseData = data?.map((item: any) => {
+    return item.orders;
+  }).sort((i: {seq: number}, j: {seq: number}) => j.seq - i.seq);
+  const totalOrdersCounter = count || 0;
+  const newOffset = offset + PRODUCTS_PER_PAGE;
+
+
+  return {
+    orders: responseData,
     newOffset: newOffset,
     totalOrdersCounter: totalOrdersCounter
   };
@@ -192,7 +211,7 @@ async function getOrderById(
     )
     .eq('id', orderId);
 
-  if (error) throw new Error(`Get Order by id: ${orderId} error:`, error);
+  if (error) throw new Error(`Get Order by id: ${orderId} error: ${JSON.stringify(error)}`);
 
   return {
     order: data[0]
@@ -220,4 +239,4 @@ const putOrder = async (order: Tables<'orders'>) => {
 };
 
 
-export { getOrders, getOrdersWithStatus, getOrdersPinned, postOrder, putOrder, getOrderById };
+export { getOrders, getOrdersWithStatus, getPinnedOrders, postOrder, putOrder, getOrderById };

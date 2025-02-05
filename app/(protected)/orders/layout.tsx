@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { File, PlusCircle } from 'lucide-react';
+import { PinIcon, PlusCircle } from 'lucide-react';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Tables } from '@/types_db';
 import { getOrdersStatuses } from '@/lib/db/orders_statuses';
@@ -21,6 +21,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
 
+
   const { data, error } = await getOrdersStatuses();
 
   if (error) {
@@ -32,10 +33,18 @@ export default async function Layout({
   return (
     <Tabs defaultValue="tab">
       <div className="flex items-center mt-2">
-        <TabsList>
 
+        <TabsList>
           <Link href="/orders">
             <TabsTrigger value="tab">Wszystkie</TabsTrigger>
+          </Link>
+
+          <Link href="/orders/pinned">
+            <TabsTrigger value="pinned">
+              <span className="relative">
+                Moje <PinIcon className="absolute bottom-2.5 left-6 text-tomato-900 dark:text-tomato-600 rotate-12" />
+              </span>
+            </TabsTrigger>
           </Link>
 
           {statuses.map((status) =>
@@ -43,15 +52,15 @@ export default async function Layout({
               <TabsTrigger value={status.id}>{status.title}</TabsTrigger>
             </Link>)
           )}
-
         </TabsList>
+
         <div className="ml-auto flex items-center gap-2 pr-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
+          {/*<Button size="sm" variant="outline" disabled className="h-8 gap-1">
             <File className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Export
             </span>
-          </Button>
+          </Button>*/}
 
           <OrderDialog triggerButton={<Button size="sm" className="h-8 gap-1">
             <PlusCircle className="h-3.5 w-3.5" />

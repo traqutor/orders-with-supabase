@@ -9,7 +9,7 @@ import * as Form from '@/components/ui/form';
 import { Tables } from '@/types_db';
 import { putService } from '@/lib/db/services_queries';
 import { Separator } from '@radix-ui/react-separator';
-import { toInputDate } from '@/utils/time';
+import { toInputDateTime } from '@/utils/time';
 
 
 interface ServiceDialogProps {
@@ -49,7 +49,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
     const key = name as keyof Tables<'services'>;
 
     if (type === 'datetime-local') {
-      const d = toInputDate(value);
+      const d = toInputDateTime(value);
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -177,7 +177,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
                   id="start_at"
                   type="datetime-local"
                   name="start_at"
-                  value={formData.start_at ? toInputDate(formData.start_at) : ''}
+                  value={formData.start_at ? toInputDateTime(formData.start_at) : ''}
                   onChange={handleChange}
                   placeholder="Rozpoczęcie"
                   className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -192,7 +192,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
                   id="end_at"
                   type="datetime-local"
                   name="end_at"
-                  value={formData.end_at ? toInputDate(formData.end_at) : ''}
+                  value={formData.end_at ? toInputDateTime(formData.end_at) : ''}
                   onChange={handleChange}
                   placeholder="Zakończenie"
                   className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

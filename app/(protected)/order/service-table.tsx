@@ -92,12 +92,12 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
       <div className="flex justify-between py-5">
         <span className="text-sm text-muted-foreground">Pozycje serwisowe</span>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1" onClick={() => alert('Not yet')}>
+          {/*<Button size="sm" variant="outline" className="h-8 gap-1" onClick={() => alert('Not yet')}>
             <File />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Wczytaj z pliku
             </span>
-          </Button>
+          </Button>*/}
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddServicePosition}>
             <LucidePlus />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

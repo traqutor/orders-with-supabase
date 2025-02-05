@@ -2,7 +2,7 @@
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
 import { Section } from '@/app/(protected)/settings/section';
-import { Pill } from '@/components/ui/pill';
+import { StatusPill } from '@/components/ui/status_pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
@@ -85,7 +85,7 @@ export function SectionOrdersStatuses() {
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
           {items.map(b =>
-            <Pill
+            <StatusPill
               onClick={() => handleClick(b)}
               key={b.id}
               variant={b.color_hex || 'default' as any}
@@ -106,7 +106,7 @@ export function SectionOrdersStatuses() {
           <label htmlFor="pillSample"
                  className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
-          <Pill
+          <StatusPill
             id="pillSample"
             variant={formData.color_hex || 'default' as any}
             title={formData.title || ''}

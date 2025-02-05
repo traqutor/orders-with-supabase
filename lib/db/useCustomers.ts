@@ -11,9 +11,6 @@ export function useCustomers() {
   useEffect(() => {
     fetchCustomers().then();
 
-    return () => {
-      console.log('Customers clean up', customers);
-    };
   }, []);
 
   const fetchCustomers = async () => {

@@ -82,8 +82,11 @@ export function CustomersTable({
               disabled={offset === productsPerPage}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
+              Wróć
             </Button>
+
+
+
             <Button
               formAction={nextPage}
               variant="ghost"
@@ -91,7 +94,7 @@ export function CustomersTable({
               type="submit"
               disabled={offset > totalProducts}
             >
-              Next
+              Dalej
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

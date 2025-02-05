@@ -9,19 +9,16 @@ export function useProfiles() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   useEffect(() => {
-    if (profiles.length <= 0){
+    if (profiles.length <= 0) {
       fetchProfiles().then();
     }
 
-    return () => {
-      console.log('Profiles clean up', profiles);
-    };
   }, []);
 
   const fetchProfiles = async () => {
     const { data, error } = await getProfiles();
 
-    if (error) throw new Error(`Get list of Labels error:`, error);
+    if (error) throw new Error(`Get list of Labels error: ${JSON.stringify(error)}`);
 
     setProfiles(data);
 
@@ -34,7 +31,7 @@ export function useProfiles() {
       ps = await fetchProfiles();
     }
 
-    const profile =  ps.find((profile) => profile.id === id);
+    const profile = ps.find((profile) => profile.id === id);
 
     return profile || null;
   };
@@ -42,7 +39,7 @@ export function useProfiles() {
   const updateProfile = async (payload: Profile) => {
     const { error } = await putProfil(payload);
 
-    if (error) throw new Error(`Get list of Labels error:`, error);
+    if (error) throw new Error(`Get list of Labels error: ${JSON.stringify(error)}`);
     const pfs = profiles.filter(profile => profile.id !== payload.id);
 
     setProfiles([...pfs, payload]);

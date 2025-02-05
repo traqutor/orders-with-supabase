@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Edit2, SaveIcon, XIcon } from 'lucide-react';
+import { Edit2, Package, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 
 import { Tables } from '@/types_db';
-import { toInputDate } from '@/utils/time';
+import { toInputDate, toInputDateTime } from '@/utils/time';
 import { putShipment } from '@/lib/db/shipment_queries';
 
 
@@ -47,7 +47,7 @@ const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fe
     const key = name as keyof Tables<'shipments'>;
 
     if (type === 'date') {
-      const d = toInputDate(value);
+      const d = toInputDateTime(value);
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -67,7 +67,7 @@ const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fe
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <Button variant="outline" size="sm" className="h-8 gap-1">
-          <Edit2 className="h-3.5 w-3.5" />
+          <Package className="h-3.5 w-3.5" />
           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Edytuj wysyłkę
           </span>

@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import { Label, useLabels } from '@/lib/db/useLabels';
 import { Section } from '@/app/(protected)/settings/section';
 
-import { Pill } from '@/components/ui/pill';
+import { StatusPill } from '@/components/ui/status_pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { COLOR_OPTIONS } from '@/lib/utils';
@@ -61,7 +61,7 @@ export function SectionLabels() {
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
           {labels.map(b =>
-            <Pill
+            <StatusPill
               onClick={() => handleLabelClick(b)}
               key={b.id}
               variant={b.color_hex || 'default' as any}

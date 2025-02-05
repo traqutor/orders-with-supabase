@@ -12,16 +12,12 @@ export function useActions() {
   useEffect(() => {
     fetchActions().then();
 
-    return () => {
-      console.log('Actions clean up', actions);
-
-    };
   }, []);
 
   const fetchActions = async () => {
     const { data, error } = await getActions();
 
-    if (error) throw new Error(`Get list of Actions error:`, error);
+    if (error) throw new Error(`Get list of Actions error: ${JSON.stringify(error)}`);
 
     setActions(data);
 

@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { CheckIcon, ChevronDown, XIcon } from 'lucide-react';
-import { Pill } from '@/components/ui/pill';
 import { useActions } from '@/lib/db/useActions';
 import { cn } from '@/lib/utils';
 import { Tables } from '@/types_db';
 import { deleteOrderAction, getActionsForOrderId, postOrderAction, putOrderAction } from '@/lib/db/orders_actions';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
+import { ActionPill } from '@/components/ui/action_pill';
 
 
 type OrderAction = Tables<'orders_actions'> & { actions: Tables<'actions'> }
@@ -37,7 +37,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
         order_id: action.order_id,
         performed: !action.performed,
         performed_by: null,
-        performed_at: null,
+        performed_at: null
       });
       await getOrderActions();
       setIsLoading(false);
@@ -118,9 +118,9 @@ const OrderActionsComponent = (props: { orderId: string }) => {
                         >
                           <CheckIcon className="h-4 w-4" />
                         </div>
-                        <Pill
-                          size="sm"
+                        <ActionPill
                           variant={a.color_hex || 'default' as any}
+                          iconName={a.icon_name || ''}
                           title={a.title || ''} />
                       </li>;
                     }
@@ -144,13 +144,13 @@ const OrderActionsComponent = (props: { orderId: string }) => {
                 title={a.performed ? `Anulowanie wykonania akcji "${a.actions.title}"` : `Wykonanie akcji "${a.actions.title}"`}
                 description={a.performed ? 'Czy anulujesz wykonanie akcji ' : 'Czy potwierdzasz wykonanie akcji'}
                 onClickSubmit={() => handleActionClick(a)}
-                triggerIcon={<Pill
-                  size="sm"
-                  variant={a.performed ? 'neutral' : a.actions.color_hex || 'default' as any}
-                  title={a.actions.title || ''}
-                  iconName={a.actions.icon_name || '' }
-                  className="cursor-pointer"
-                />}
+                triggerIcon={
+                  <ActionPill
+                    variant={a.performed ? 'neutral' : a.actions.color_hex || 'default' as any}
+                    title={a.actions.title || ''}
+                    iconName={a.actions.icon_name || ''}
+                    className="cursor-pointer"
+                  />}
               />
 
             </div>

@@ -3,7 +3,7 @@ import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDownIcon } from 'lucide-react';
 import { Tables } from '@/types_db';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
-import { Pill } from '@/components/ui/pill';
+import { StatusPill } from '@/components/ui/status_pill';
 
 type OrderStatus = Tables<'orders_statuses'>;
 
@@ -49,12 +49,13 @@ const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required
         {required && <span className="text-xs">Pole wymagane</span>}
       </div>
       <Select.Trigger
-        className="flex h-10 w-full justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-full justify-between items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Select.Value
           aria-label={name ? name : selected?.title}
         >
-          <Pill
+          <StatusPill
+            size="sm"
             variant={selected?.color_hex || 'gray' as any}
             title={selected?.title || 'no selected  '} />
         </Select.Value>
@@ -67,7 +68,8 @@ const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required
               <Select.Item key={orderStatus.id} value={orderStatus.id}
                            className="relative flex h-[32px] hover:bg-green-50 select-none items-center rounded-[3px] pl-[25px] pr-[35px] text-[13px] leading-none text-muted-foreground data-[disabled]:pointer-events-none data-[disabled]:text-grey-300 data-[highlighted]:text-green-900 data-[highlighted]:outline-none">
                 <Select.ItemText>
-                  <Pill
+                  <StatusPill
+                    size="sm"
                     variant={orderStatus.color_hex || 'default' as any}
                     title={orderStatus.title || ''} />
                 </Select.ItemText>

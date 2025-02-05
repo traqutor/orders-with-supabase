@@ -85,8 +85,7 @@ const ordersListQuery = (params: OrderQueryParams) => {
 
 async function getOrders(
   search: string,
-  offset: number,
-  statusId: string
+  offset: number
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
   const { count } = await supabase
@@ -97,7 +96,7 @@ async function getOrders(
 
   const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE });
 
-  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error: ${JSON.stringify(error)}`);
+  if (error) throw new Error(`Get list of Orders error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
 

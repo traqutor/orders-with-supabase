@@ -4,6 +4,7 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { DynamicIcon } from '@/components/icon/dynamic-icon';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const actionVariants = cva(
   'flex w-min justify-start items-center gap-1 rounded-md border-2 px-2.5 whitespace-nowrap',
@@ -61,20 +62,39 @@ const ActionPill = React.forwardRef<HTMLDivElement, ActionPillProps>(
 
     return (
 
-      <div
-        className={cn(actionVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
-        {iconName &&
-          <DynamicIcon
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {iconName &&
+            <div
+              className={cn(actionVariants({ variant, size, className }))}
+              ref={ref}
+              {...props}
+            >
+              <DynamicIcon
+                iconName={iconName}
+                className={cn('w-[18px] h-[18px]',
+                  size === 'lg' && 'w-[24px] h-[24px]',
+                  size === 'sm' && 'w-[16px] h-[16px]'
+                )} />
+              {!iconOnly && <span className="">{title}</span>}
+            </div>
+          }
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          {iconName && <div
+            className={cn(actionVariants({ variant, size, className }))}
+            ref={ref}
+            {...props}
+          ><DynamicIcon
             iconName={iconName}
-            className={cn('w-[18px] h-[18px]',
-              size === 'lg' && 'w-[24px] h-[24px]',
-              size === 'sm' && 'w-[16px] h-[16px]'
-            )} />}
-        {!iconOnly && <span className="">{title}</span>}
-      </div>
+            className="w-[18px] h-[18px]" />
+            <span className="">{title}</span>
+          </div>}
+        </TooltipContent>
+      </Tooltip>
+
+
     );
   }
 );
@@ -82,3 +102,5 @@ const ActionPill = React.forwardRef<HTMLDivElement, ActionPillProps>(
 ActionPill.displayName = 'ActionPill';
 
 export { ActionPill, actionVariants };
+
+

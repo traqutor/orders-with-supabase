@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -7,7 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export const PRODUCTS_PER_PAGE = 9;
 
-export const COLOR_OPTIONS = ['green',
+export const COLOR_OPTIONS = [
+  'green',
   'yellow',
   'indigo',
   'purple',
@@ -28,7 +29,8 @@ export const COLOR_OPTIONS = ['green',
   'violet',
   'fuchsia',
   'rose',
-  'red'];
+  'red'
+];
 
 
-const ICON_NAMES = ['']
+const ICON_NAMES = [''];

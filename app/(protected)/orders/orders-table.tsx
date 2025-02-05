@@ -4,7 +4,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { OrderRow } from './order-row';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PinIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 
@@ -50,6 +50,7 @@ export function OrdersTable({
               <TableHead className="">Status</TableHead>
               <TableHead className="">Z dnia</TableHead>
               <TableHead className="">Akcje</TableHead>
+              <TableHead className=""><PinIcon className="text-tomato-900 dark:text-tomato-600 rotate-12" /> </TableHead>
               <TableHead>
                 <span className="sr-only">Menu</span>
               </TableHead>

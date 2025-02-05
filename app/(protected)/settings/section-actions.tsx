@@ -6,12 +6,12 @@ import { v4 } from 'uuid';
 
 import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
-import { StatusPill } from '@/components/ui/status_pill';
 import { Button } from '@/components/ui/button';
 import { Action, useActions } from '@/lib/db/useActions';
 import { deleteAction, postAction, putAction } from '@/lib/db/actions';
 import { Tables } from '@/types_db';
 import { COLOR_OPTIONS } from '@/lib/utils';
+import { ActionPill } from '@/components/ui/action_pill';
 
 const EMPTY_ACTION: Action = {
   id: '',
@@ -81,8 +81,7 @@ export function SectionActions() {
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
           {actions.map(b =>
-            <StatusPill
-              size="sm"
+            <ActionPill
               onClick={() => handleClick(b)}
               key={b.id}
               variant={b.color_hex || 'default' as any}
@@ -106,9 +105,8 @@ export function SectionActions() {
                  className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
           <div className="w-min">
-            <StatusPill
+            <ActionPill
               id="pillSample"
-              size="sm"
               variant={formData.color_hex || 'default' as any}
               title={formData.title || ''}
               iconName={formData.icon_name || ''}

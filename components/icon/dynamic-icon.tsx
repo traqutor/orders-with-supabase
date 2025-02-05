@@ -12,7 +12,8 @@ import {
   PackageIcon,
   PenIcon,
   PhoneIcon,
-  PizzaIcon
+  PizzaIcon,
+  WrenchIcon,
 } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -96,7 +97,8 @@ export const Icons: Record<string, React.ElementType> = {
   BellIcon,
   BeerIcon,
   BanIcon,
-  Package
+  Package,
+  WrenchIcon,
 };
 
 

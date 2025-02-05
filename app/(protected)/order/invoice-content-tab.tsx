@@ -3,7 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import { Clock, IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import {
+  Clock,
+  FilePlus,
+  IdCardIcon,
+  LucidePlus,
+  MailIcon,
+  PackagePlusIcon,
+  PhoneIcon,
+  UserCircle2
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import { Tables } from '@/types_db';
@@ -134,7 +143,7 @@ export function InvoiceContentTab({ order }: any) {
                   <Button size="sm" variant="outline" className="h-8 gap-1"
                           onClick={handleAddShipment}
                   >
-                    <LucidePlus />
+                    <PackagePlusIcon className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap"> Dodaj wysyłkę</span>
                   </Button>}
               </div>
@@ -226,7 +235,7 @@ export function InvoiceContentTab({ order }: any) {
         </Card> :
         <div>
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddInvoice}>
-            <LucidePlus />
+            <FilePlus className="h-5 w-5 min-h-5 min-w-5"/>
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Dodaj Fakturę
             </span>

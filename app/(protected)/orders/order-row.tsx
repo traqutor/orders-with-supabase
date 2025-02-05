@@ -13,6 +13,7 @@ import React from 'react';
 import Link from 'next/link';
 import { getFormatedDate } from '@/utils/time';
 import { ActionPill } from '@/components/ui/action_pill';
+import AvatarProfile from '@/components/profile/avatar-profile';
 
 
 export function OrderRow(order: any) {
@@ -53,6 +54,15 @@ export function OrderRow(order: any) {
               iconName={action.actions.icon_name || ''}
               iconOnly={true}
             />
+          ))}
+        </div>
+      </TableCell>
+      <TableCell className="">
+        <div className="flex justify-start">
+          {order.pinned_orders.map((pin: Tables<'pinned_orders'>) => (
+            <span key={pin.id} className="ml-[-8px]">
+            <AvatarProfile profileId={pin?.user_id} />
+              </span>
           ))}
         </div>
       </TableCell>

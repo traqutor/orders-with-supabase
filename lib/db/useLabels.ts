@@ -12,15 +12,12 @@ export function useLabels() {
   useEffect(() => {
     fetchLabels().then();
 
-    return () => {
-      console.log('Labels clean up', labels);
-    };
   }, []);
 
   const fetchLabels = async () => {
     const { data, error } = await getLabels();
 
-    if (error) throw new Error(`Get list of Labels error:`, error);
+    if (error) throw new Error(`Get list of Labels error: ${JSON.stringify(error)}`);
 
     setLabels(data);
   };

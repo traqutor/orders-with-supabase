@@ -59,10 +59,10 @@ export function OrderRow(order: any) {
       </TableCell>
       <TableCell className="">
         <div className="flex justify-start">
-          {order.pinned_orders.map((pin: Tables<'pinned_orders'>) => (
+          {order.pinned_orders?.map((pin: Tables<'pinned_orders'>) => (
             <span key={pin.id} className="ml-[-8px]">
-            <AvatarProfile profileId={pin?.user_id} />
-              </span>
+              <AvatarProfile profileId={pin?.user_id} />
+            </span>
           ))}
         </div>
       </TableCell>

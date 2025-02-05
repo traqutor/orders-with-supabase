@@ -96,7 +96,7 @@ async function getOrders(
 
   const { data, error } = await ordersListQuery({ offset, limit: PRODUCTS_PER_PAGE, search });
 
-  if (error) throw new Error(`Get list of Orders error:`, error);
+  if (error) throw new Error(`Get list of Orders error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
 
@@ -136,7 +136,7 @@ async function getOrdersWithStatus(
 
   const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE, statusId });
 
-  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error:`, error);
+  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
 
@@ -144,7 +144,7 @@ async function getOrdersWithStatus(
     return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
-  const totalOrdersCounter = count || 0; // to do select count from orders
+  const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
 
@@ -155,51 +155,46 @@ async function getOrdersWithStatus(
   };
 }
 
-async function getOrdersPinned(
-  userId: string,
-  offset: number
+async function getPinnedOrders(
+  search: string,
+  offset: number,
+  userId: string
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
   const { count } = await supabase
-    .from('orders')
+    .from('pinned_orders')
     .select(
-      `*,
-      pinned_orders(*)`, { count: 'exact', head: true }
+      `orders(*)`, { count: 'exact', head: true }
     ).eq('user_id', userId);
 
-  console.log(count);
-
   const { data, error } = await supabase
-    .from('orders')
+    .from('pinned_orders')
     .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
+      `orders(*,labels(*),
         orders_statuses(*),
+        pinned_orders(*),
         orders_actions(*, actions(*)),
-        customers(*)
+        customers(*))
        `
     )
     .eq('user_id', userId)
-    .order('seq', { ascending: false })
     .range(offset, offset + PRODUCTS_PER_PAGE - 1);
 
-  if (error) throw new Error(`Get list of Orders with status_id: ${userId}  error:`, error);
-
-  console.log(data);
-
-  const ordersList: any = data as QueryData<any>;
+  if (error) throw new Error(`Get list of Pinned Orders with user_id: ${userId}  error: ${JSON.stringify(error)}`);
 
   if (!data && offset === null) {
     return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
   }
 
-  const totalOrdersCounter = count || 0; // to do select count from orders
+  const responseData = data?.map((item: any) => {
+    return item.orders;
+  });
+  const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
 
   return {
-    orders: ordersList,
+    orders: responseData,
     newOffset: newOffset,
     totalOrdersCounter: totalOrdersCounter
   };
@@ -223,7 +218,7 @@ async function getOrderById(
     )
     .eq('id', orderId);
 
-  if (error) throw new Error(`Get Order by id: ${orderId} error:`, error);
+  if (error) throw new Error(`Get Order by id: ${orderId} error: ${JSON.stringify(error)}`);
 
   return {
     order: data[0]
@@ -251,4 +246,4 @@ const putOrder = async (order: Tables<'orders'>) => {
 };
 
 
-export { getOrders, getOrdersWithStatus, getOrdersPinned, postOrder, putOrder, getOrderById };
+export { getOrders, getOrdersWithStatus, getPinnedOrders, postOrder, putOrder, getOrderById };

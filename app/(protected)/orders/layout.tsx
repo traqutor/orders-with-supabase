@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { File, PlusCircle } from 'lucide-react';
+import { PinIcon, PlusCircle } from 'lucide-react';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Tables } from '@/types_db';
 import { getOrdersStatuses } from '@/lib/db/orders_statuses';
@@ -36,6 +36,14 @@ export default async function Layout({
         <TabsList>
           <Link href="/orders">
             <TabsTrigger value="tab">Wszystkie</TabsTrigger>
+          </Link>
+
+          <Link href="/orders/pinned">
+            <TabsTrigger value="pinned">
+              <span className="relative">
+                Moje <PinIcon className="absolute bottom-2.5 left-6 text-tomato-900 dark:text-tomato-600 rotate-12" />
+              </span>
+            </TabsTrigger>
           </Link>
 
           {statuses.map((status) =>

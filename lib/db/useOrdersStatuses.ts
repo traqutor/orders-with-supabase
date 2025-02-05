@@ -11,15 +11,12 @@ export function useOrdersStatuses() {
   useEffect(() => {
     fetchOrdersStatuses().then();
 
-    return () => {
-      console.log('Order Statuses clean up', ordersStatuses);
-    };
   }, []);
 
   const fetchOrdersStatuses = async () => {
     const { data, error } = await getOrdersStatuses();
 
-    if (error) throw new Error(`Get list of Orders Statuses error:`, error);
+    if (error) throw new Error(`Get list of Orders Statuses error: ${JSON.stringify(error)}`);
 
     setOrdersStatuses(data);
 

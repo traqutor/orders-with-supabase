@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 
 import { Tables } from '@/types_db';
-import { toInputDate } from '@/utils/time';
+import { toInputDateTime } from '@/utils/time';
 import { putInvoice } from '@/lib/db/invoices_queries';
 import * as Checkbox from '@radix-ui/react-checkbox';
 
@@ -49,7 +49,7 @@ const InvoiceDialog: React.FC<InvoiceDialogProps> = React.memo(({ invoice, fetch
     const key = name as keyof Tables<'invoices'>;
 
     if (type === 'date') {
-      const d = toInputDate(value);
+      const d = toInputDateTime(value);
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -218,7 +218,7 @@ const InvoiceDialog: React.FC<InvoiceDialogProps> = React.memo(({ invoice, fetch
                   id="payment_at"
                   type="date"
                   name="payment_at"
-                  value={formData.payment_at ? toInputDate(formData.payment_at) : ''}
+                  value={formData.payment_at ? toInputDateTime(formData.payment_at) : ''}
                   onChange={handleChange}
                   placeholder="Płatnosć"
                   className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

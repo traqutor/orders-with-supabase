@@ -85,7 +85,8 @@ const ordersListQuery = (params: OrderQueryParams) => {
 
 async function getOrders(
   search: string,
-  offset: number
+  offset: number,
+  statusId: string
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
   const { count } = await supabase
@@ -94,19 +95,11 @@ async function getOrders(
       `*`, { count: 'exact', head: true }
     );
 
-  const { data, error } = await ordersListQuery({ offset, limit: PRODUCTS_PER_PAGE, search });
+  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE });
 
-  if (error) throw new Error(`Get list of Orders error: ${JSON.stringify(error)}`);
+  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error: ${JSON.stringify(error)}`);
 
   const ordersList: any = data as QueryData<any>;
-
-  if (data) {
-    return {
-      orders: ordersList,
-      newOffset: offset + PRODUCTS_PER_PAGE - 1,
-      totalOrdersCounter: count || 0
-    };
-  }
 
   if (!data && offset === null) {
     return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
@@ -115,10 +108,11 @@ async function getOrders(
   const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
 
+
   return {
-    orders: data,
-    newOffset,
-    totalOrdersCounter
+    orders: ordersList,
+    newOffset: newOffset,
+    totalOrdersCounter: totalOrdersCounter
   };
 }
 
@@ -188,7 +182,7 @@ async function getPinnedOrders(
 
   const responseData = data?.map((item: any) => {
     return item.orders;
-  });
+  }).sort((i: {seq: number}, j: {seq: number}) => j.seq - i.seq);
   const totalOrdersCounter = count || 0;
   const newOffset = offset + PRODUCTS_PER_PAGE;
 

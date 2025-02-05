@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 
 import { Tables } from '@/types_db';
-import { toInputDate } from '@/utils/time';
+import { toInputDate, toInputDateTime } from '@/utils/time';
 import { putShipment } from '@/lib/db/shipment_queries';
 
 
@@ -47,7 +47,7 @@ const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fe
     const key = name as keyof Tables<'shipments'>;
 
     if (type === 'date') {
-      const d = toInputDate(value);
+      const d = toInputDateTime(value);
 
       setFormData((prevFormData) => ({
         ...prevFormData,

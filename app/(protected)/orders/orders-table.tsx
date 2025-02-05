@@ -67,11 +67,11 @@ export function OrdersTable({
       <CardFooter>
         <form className="flex items-center w-full justify-between">
           <div className="text-xs text-muted-foreground">
-            Showing{' '}
+            Widoczne {' '}
             <strong>
               {Math.max(0, Math.min(offset - productsPerPage, totalProducts) + 1)}-{offset}
             </strong>{' '}
-            of <strong>{totalProducts}</strong> orders
+            z <strong>{totalProducts}</strong> zamówień
           </div>
           <div className="flex">
             <Button
@@ -82,7 +82,7 @@ export function OrdersTable({
               disabled={offset === productsPerPage}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
+              Wróć
             </Button>
 
             <Button
@@ -92,7 +92,7 @@ export function OrdersTable({
               type="submit"
               disabled={offset > totalProducts}
             >
-              Next
+              Dalej
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

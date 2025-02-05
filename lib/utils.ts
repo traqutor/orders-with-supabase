@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const PRODUCTS_PER_PAGE = 9;
+export const PRODUCTS_PER_PAGE = 11;
 
 export const COLOR_OPTIONS = [
   'green',

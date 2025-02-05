@@ -21,6 +21,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
 
+
   const { data, error } = await getOrdersStatuses();
 
   if (error) {

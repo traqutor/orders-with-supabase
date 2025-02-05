@@ -1,4 +1,4 @@
-import { DateTime, Interval } from 'luxon';
+import { DateTime } from 'luxon';
 
 type DateTimeConvertible = string | Date | DateTime | number | null;
 
@@ -23,10 +23,16 @@ export function toDateTimeObject(spec: DateTimeConvertible | undefined): DateTim
 /**
  * Returns DateTime as a string for in ISO acceptable for <input type="datetime-local" />
  */
-export function toInputDate(value: string) {
+export function toInputDateTime(value: string) {
   return new Date(value).toISOString().slice(0, 16);
 }
 
+/**
+ * Returns DateTime as a string for in ISO acceptable for <input type="datetime-local" />
+ */
+export function toInputDate(value: string) {
+  return new Date(value).toISOString().slice(0, 10);
+}
 
 /**
  * Returns DateTime as a string format '2023-12-01 1:28:08PM'

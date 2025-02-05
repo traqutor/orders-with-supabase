@@ -138,7 +138,7 @@ export function ServiceContentTab({ order }: any) {
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddService}>
             <LucidePlus />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dotaj serwis
+              Dodaj serwis
             </span>
           </Button>
         </div>}

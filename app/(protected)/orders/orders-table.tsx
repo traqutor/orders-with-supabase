@@ -21,11 +21,11 @@ export function OrdersTable({
   const router = useRouter();
   const productsPerPage = PRODUCTS_PER_PAGE;
 
-  function prevPage() {
+  function handlePrevPage() {
     router.back();
   }
 
-  function nextPage() {
+  function handleNextPage() {
     const path = `?offset=${offset}`;
     router.push(path, { scroll: false });
   }
@@ -74,7 +74,7 @@ export function OrdersTable({
           </div>
           <div className="flex">
             <Button
-              formAction={prevPage}
+              formAction={handlePrevPage}
               variant="ghost"
               size="sm"
               type="submit"
@@ -83,8 +83,9 @@ export function OrdersTable({
               <ChevronLeft className="mr-2 h-4 w-4" />
               Prev
             </Button>
+
             <Button
-              formAction={nextPage}
+              formAction={handleNextPage}
               variant="ghost"
               size="sm"
               type="submit"

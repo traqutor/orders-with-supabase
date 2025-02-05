@@ -8,10 +8,11 @@ import {
 import { MoreHorizontal, Package } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Tables } from '@/types_db';
-import { Pill } from '@/components/ui/pill';
+import { StatusPill } from '@/components/ui/status_pill';
 import React from 'react';
 import Link from 'next/link';
 import { getFormatedDate } from '@/utils/time';
+import { ActionPill } from '@/components/ui/action_pill';
 
 
 export function OrderRow(order: any) {
@@ -34,7 +35,7 @@ export function OrderRow(order: any) {
       </TableCell>
       <TableCell className="font-medium">{order.customers.name}</TableCell>
       <TableCell>
-        <Pill
+        <StatusPill
           key={order.orders_statuses.id}
           variant={order.orders_statuses.color_hex || 'default' as any}
           title={order.orders_statuses.title || ''} />
@@ -45,8 +46,7 @@ export function OrderRow(order: any) {
       <TableCell className="">
         <div className="flex gap-x-0.5 space-x-2">
           {order.orders_actions.map((action: Tables<'orders_actions'> & { actions: Tables<'actions'> }) => (
-            <Pill
-              size="sm"
+            <ActionPill
               key={action.actions.id}
               variant={action.performed ? 'neutral' : action.actions.color_hex || 'default' as any}
               title={action.actions.title || ''}

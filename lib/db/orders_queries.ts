@@ -6,36 +6,82 @@ import { Tables } from '@/types_db';
 
 const supabase = createClient();
 
-const ordersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, search?: string) =>
-  search ? supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .textSearch('title', search)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-    :
-    supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+type OrderQueryParams = {
+  offset: number,
+  limit: number,
+  search?: string,
+  statusId?: string,
+  pinnedToUserId?: string
+}
 
+const ordersListQuery = (params: OrderQueryParams) => {
+  if (params.search && params.statusId) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .eq('status_id', params.statusId)
+      .textSearch('title', params.search)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+  if (params.statusId) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .eq('status_id', params.statusId)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+  if (params.search) {
+    return supabase
+      .from('orders')
+      .select(
+        `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+      )
+      .textSearch('title', params.search)
+      .order('seq', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  }
+
+
+  return supabase
+    .from('orders')
+    .select(
+      `*,
+        labels(*),
+        pinned_orders(*),
+        orders_statuses(*),
+        orders_actions(*, actions(*)),
+        customers(*)
+       `
+    )
+    .order('seq', { ascending: false })
+    .range(params.offset, params.offset + params.limit - 1);
+};
 
 async function getOrders(
   search: string,
@@ -48,7 +94,7 @@ async function getOrders(
       `*`, { count: 'exact', head: true }
     );
 
-  const { data, error } = await ordersListQuery(offset, 5, search);
+  const { data, error } = await ordersListQuery({ offset, limit: PRODUCTS_PER_PAGE, search });
 
   if (error) throw new Error(`Get list of Orders error:`, error);
 
@@ -82,28 +128,13 @@ async function getOrdersWithStatus(
   statusId: string
 ): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
 
-
   const { count } = await supabase
     .from('orders')
     .select(
       `*`, { count: 'exact', head: true }
     ).eq('status_id', statusId);
 
-
-  const { data, error } = await supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .eq('status_id', statusId)
-    .order('created_at', { ascending: false })
-    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
+  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE, statusId });
 
   if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error:`, error);
 

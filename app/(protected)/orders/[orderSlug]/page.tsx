@@ -14,12 +14,12 @@ export default async function OrdersPage(
   const offset = searchParams.offset ?? 0;
 
 
-  const { orderSlug } = await props.params;
+  const { orderSlug: orderStatusId } = await props.params;
 
   const { orders, newOffset, totalOrdersCounter } = await getOrdersWithStatus(
     search,
     Number(offset),
-    orderSlug
+    orderStatusId
   );
 
   return (

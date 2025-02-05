@@ -1,4 +1,4 @@
-import { Hammer, Save } from 'lucide-react';
+import { CheckIcon, Hammer, Save } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React, { useState } from 'react';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
@@ -93,12 +93,11 @@ export function ServiceRow(props: {
         <div className="flex gap-4">
           <ConfirmDialog
             triggerLabel=""
-            triggerIcon={
-              <Hammer
-                className={cn(' text-green-600 hover:text-green-800',
-                  position.is_done ? ' text-gray-600 hover:text-gray-800'
-                    : 'rotate-y-180 '
-                )}
+            triggerIcon={position.is_done ?
+              <CheckIcon
+                className={'text-green-600 hover:text-green-800  '}
+              /> : <Hammer
+                className={'text-gray-600 hover:text-gray-800 rotate-y-180 '}
               />}
             title={position.is_done ? 'Powrót do czynności serwisowej.' : 'Zakończenie czynności serwisowej.'}
             description="Czy potwierdzasz?"

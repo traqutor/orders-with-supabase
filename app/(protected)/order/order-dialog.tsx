@@ -74,7 +74,6 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   }, [ordersStatuses]);
 
   useEffect(() => {
-    console.log(selectedCustomer);
     if (selectedCustomer) {
       handleCustomerIdChange(selectedCustomer.id);
     }

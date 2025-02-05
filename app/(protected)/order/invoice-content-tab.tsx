@@ -7,7 +7,6 @@ import { Clock, IdCardIcon, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 
 import { Button } from '@/components/ui/button';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import { Tables } from '@/types_db';
-import { putService } from '@/lib/db/services_queries';
 import { v4 } from 'uuid';
 import { putOrder } from '@/lib/db/orders_queries';
 import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
@@ -171,33 +170,36 @@ export function InvoiceContentTab({ order }: any) {
                 </div>
               </div>
 
-              {shipment ? <div className="w-full">
-                <CardDescription className=" pb-2">
-                  Wysyłka:
-                </CardDescription>
-                <div>
-                  <ul className="list-unstyled mb-5">
-                    <ListItem className="mb-3">
-                      <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.contact}
-                    </ListItem>
+              {shipment ?
+                <div className="w-full">
+                  <CardDescription className=" pb-2">
+                    Wysyłka:
+                  </CardDescription>
+                  <div>
+                    <ul className="list-unstyled mb-5">
+                      <ListItem className="mb-3">
+                        <UserCircle2 className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.contact}
+                      </ListItem>
 
-                    <ListItem>
-                      <PhoneIcon className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.phone}
-                    </ListItem>
-                    <ListItem>
-                      <MailIcon className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.address}
-                    </ListItem>
-                    <CardDescription className="pt-3 pb-2">
-                      Wysłać do końca dnia:
-                    </CardDescription>
-                    <ListItem>
-                      <Clock
-                        className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {getFormatedDate(shipment.due_at)}
-                    </ListItem>
-                  </ul>
+                      <ListItem>
+                        <PhoneIcon className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.phone}
+                      </ListItem>
+                      <ListItem>
+                        <MailIcon className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {shipment.address}
+                      </ListItem>
+                      <CardDescription className="pt-3 pb-2">
+                        Wysłać do końca dnia:
+                      </CardDescription>
+                      <ListItem>
+                        <Clock
+                          className="h-5 w-5 min-h-5 min-w-5 text-muted-foreground" /> {getFormatedDate(shipment.due_at)}
+                      </ListItem>
+                    </ul>
+                  </div>
                 </div>
-
-              </div> : <div className="w-full"></div>}
+                :
+                <div className="w-full"></div>
+              }
             </div>
 
             <div className="flex pb-3 gap-2 justify-start items-center flex-wrap text-md text-muted-foreground">
@@ -226,7 +228,7 @@ export function InvoiceContentTab({ order }: any) {
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddInvoice}>
             <LucidePlus />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Dotaj Fakturę
+              Dodaj Fakturę
             </span>
           </Button>
         </div>}

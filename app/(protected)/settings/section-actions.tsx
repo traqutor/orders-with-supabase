@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
-import { Pill } from '@/components/ui/pill';
+import { StatusPill } from '@/components/ui/status_pill';
 import { Button } from '@/components/ui/button';
 import { Action, useActions } from '@/lib/db/useActions';
 import { deleteAction, postAction, putAction } from '@/lib/db/actions';
@@ -81,7 +81,7 @@ export function SectionActions() {
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
           {actions.map(b =>
-            <Pill
+            <StatusPill
               size="sm"
               onClick={() => handleClick(b)}
               key={b.id}
@@ -106,7 +106,7 @@ export function SectionActions() {
                  className="flex text-sm text-muted-foreground items-baseline justify-between py-1">Przykłąd</label>
 
           <div className="w-min">
-            <Pill
+            <StatusPill
               id="pillSample"
               size="sm"
               variant={formData.color_hex || 'default' as any}

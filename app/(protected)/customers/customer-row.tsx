@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Package, User } from 'lucide-react';
+import { MoreHorizontal, PackagePlusIcon, User } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React from 'react';
 import Link from 'next/link';
@@ -25,12 +25,12 @@ export function CustomerRow(customer: any) {
   return (
     <TableRow>
       <TableCell className="">
-        <div className="flex justify-start items-center gap-2">
+        <div className="flex justify-start items-center gap-4">
         <Link href={`/customer/${customer.id}`}>
           <User onClick={handleEdit} className="text-green-600 hover:text-green-900" />
         </Link>
 
-        <OrderDialog selectedCustomer={customer} triggerButton={<Package className="text-green-600 hover:text-green-900" />} />
+        <OrderDialog selectedCustomer={customer} triggerButton={<PackagePlusIcon className="cursor-pointer text-green-600 hover:text-green-900" />} />
         </div>
       </TableCell>
       <TableCell className="font-medium">

@@ -32,8 +32,8 @@ export default async function Layout({
   return (
     <Tabs defaultValue="tab">
       <div className="flex items-center mt-2">
-        <TabsList>
 
+        <TabsList>
           <Link href="/orders">
             <TabsTrigger value="tab">Wszystkie</TabsTrigger>
           </Link>
@@ -43,15 +43,15 @@ export default async function Layout({
               <TabsTrigger value={status.id}>{status.title}</TabsTrigger>
             </Link>)
           )}
-
         </TabsList>
+
         <div className="ml-auto flex items-center gap-2 pr-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
+          {/*<Button size="sm" variant="outline" disabled className="h-8 gap-1">
             <File className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Export
             </span>
-          </Button>
+          </Button>*/}
 
           <OrderDialog triggerButton={<Button size="sm" className="h-8 gap-1">
             <PlusCircle className="h-3.5 w-3.5" />

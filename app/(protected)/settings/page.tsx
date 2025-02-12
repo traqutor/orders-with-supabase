@@ -19,12 +19,12 @@ export default async function SettingsPage() {
   }
 
   return (
-    <Fragment>
+    <div className="flex flex-col justify-start items-center gap-7 mx-auto">
       <SectionUsers />
       <SectionOrdersStatuses />
       <SectionActions />
       <SectionLabels />
-    </Fragment>
+    </div>
 
   );
 }

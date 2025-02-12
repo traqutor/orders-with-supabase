@@ -30,7 +30,7 @@ const AvatarProfile = (props: { profileId?: string }) => {
               {user.avatar_url ?
                 <Avatar.Image
                   className="size-full rounded-[inherit] object-cover"
-                  src={user.avatar_url}
+                  src={`https://grokxcrznknfvpnzpmuk.supabase.co/storage/v1/object/public/avatars/${user.avatar_url}`}
                   alt={user.full_name?.substring(0, 2)}
                 /> : <Avatar.Fallback
                   className="leading-1 flex size-full items-center justify-center text-[10px] font-medium bg-gray-300 text-violet-800 dark:bg-violet-800 dark:text-gray-300">

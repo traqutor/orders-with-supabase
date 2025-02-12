@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Tables } from '@/types_db';
-import { getProfiles, putProfil } from '@/lib/db/users_queries';
+import { getProfiles, postProfile, putProfile } from '@/lib/db/users_queries';
 
 export type Profile = Tables<'profiles'>;
+
+export type UserProfile = {
+  create: boolean;
+  email: string,
+  password: string,
+  first_name: string,
+  last_name: string,
+  phone: string
+}
 
 export function useProfiles() {
 
@@ -36,10 +45,20 @@ export function useProfiles() {
     return profile || null;
   };
 
-  const updateProfile = async (payload: Profile) => {
-    const { error } = await putProfil(payload);
 
-    if (error) throw new Error(`Get list of Labels error: ${JSON.stringify(error)}`);
+  const addProfile = async (profile: UserProfile) => {
+    const { error } = await postProfile(profile);
+
+    if (error) throw new Error(`Post Profile for user email ${profile.email} error: ${JSON.stringify(error)}`);
+
+
+    await fetchProfiles();
+  };
+
+  const updateProfile = async (payload: Profile) => {
+    const { error } = await putProfile(payload);
+
+    if (error) throw new Error(`Put Profile error: ${JSON.stringify(error)}`);
     const pfs = profiles.filter(profile => profile.id !== payload.id);
 
     setProfiles([...pfs, payload]);
@@ -48,6 +67,7 @@ export function useProfiles() {
 
   return {
     profiles,
+    addProfile,
     fetchProfiles,
     getProfileById,
     updateProfile

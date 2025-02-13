@@ -146,7 +146,7 @@ const Note = (
             {attachments.map(attachment => (
               <li
                 key={attachment.id}
-                className="group flex w-full gap-2 justify-start items-center text-xs cursor-pointer text-muted hover:text-green-800 text-nowrap text-ellipsis">
+                className="group flex w-full gap-2 justify-start items-center text-xs cursor-pointer text-muted-foreground hover:text-green-800 text-nowrap text-ellipsis">
 
                 <span
                   onClick={() => handleDownloadFile(attachment)}

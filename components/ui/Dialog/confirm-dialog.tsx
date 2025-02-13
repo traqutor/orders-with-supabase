@@ -21,7 +21,6 @@ const ConfirmDialog = forwardRef<ConfirmDialogProps, ConfirmDialogRef>((props, r
   const { title, description, triggerLabel, triggerIcon, cancelLabel, submitLabel, onClickSubmit } = props;
 
   const handleOnClick = () => {
-
     onClickSubmit();
   };
 

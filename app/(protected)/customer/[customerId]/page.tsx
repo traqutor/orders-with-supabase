@@ -23,7 +23,7 @@ export default async function CustomerPage(
   );
 
   return (
-    <Tabs defaultValue="customer" className="max-w-[1240px] mx-auto">
+    <Tabs defaultValue="customer" className="w-[1240px] mx-auto">
       <div className="flex items-center mt-2">
         <TabsList>
 

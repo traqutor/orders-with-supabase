@@ -162,7 +162,9 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
 
 
             <Form.Field>
+              <Form.Message>Wyszukaj lub dodaj</Form.Message>
               <Form.Label htmlFor="nameId">Nazwa</Form.Label>
+
               <input
                 id="nameId"
                 type="text"

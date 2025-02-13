@@ -20,7 +20,7 @@ export default async function Layout({
 
 
   return (
-    <Tabs defaultValue="tab">
+    <Tabs defaultValue="tab" className="max-w-[1240px] mx-auto">
       <div className="flex items-center mt-2">
         <TabsList>
 

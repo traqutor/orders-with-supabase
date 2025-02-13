@@ -12,7 +12,7 @@ export function Section({
 }>) {
 
   return (
-    <Card>
+    <Card className='w-full'>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>

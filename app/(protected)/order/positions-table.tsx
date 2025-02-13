@@ -45,7 +45,7 @@ export function PositionsTable({
       id: v4(),
       order_id: order.id,
       created_at: new Date().toISOString(),
-      position_type: '',
+      position_type: 'sell',
       description: '',
       is_optima: false,
       price: null,

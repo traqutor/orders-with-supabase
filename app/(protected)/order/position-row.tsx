@@ -36,7 +36,7 @@ export function PositionRow(props: {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value === '' ? null : value
     }));
     setIsChanged(true);
     onUpdatePosition(formData);
@@ -96,7 +96,7 @@ export function PositionRow(props: {
         <input
           type="number"
           name="quantity"
-          value={formData.quantity || 0}
+          value={formData.quantity || ''}
           onChange={handleChange}
           className="flex text-right rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
@@ -106,9 +106,9 @@ export function PositionRow(props: {
         <input
           type="number"
           name="price"
-          value={formData.price || 0}
+          value={formData.price || ''}
           onChange={handleChange}
-          className=" text-right flex rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-right flex rounded-md border border-input bg-background px-1 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
       </TableCell>
 

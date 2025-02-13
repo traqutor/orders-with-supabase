@@ -1,17 +1,44 @@
 import { Tables } from '@/types_db';
 import { createClient } from '@/utils/supabase/client';
 
+const db = createClient();
+
 const getProfiles = async () => {
-  const db = createClient();
 
   return db
     .from('profiles')
     .select(`*`)
-    .eq('is_disabled', false)
+    .eq('is_disabled', false);
 };
 
-const putProfil = async (payload: Tables<'profiles'>) => {
-  const db = createClient();
+
+const postProfile = async (payload: {
+  email: string,
+  password: string,
+  first_name: string,
+  last_name: string,
+  phone: string
+}) => {
+
+
+  return db.auth.signUp(
+    {
+      email: payload.email,
+      password: payload.password,
+      options: {
+        data: {
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          phone_number: payload.phone
+        }
+      }
+    }
+  );
+
+
+};
+
+const putProfile = async (payload: Tables<'profiles'>) => {
 
   return db
     .from('profiles')
@@ -20,8 +47,7 @@ const putProfil = async (payload: Tables<'profiles'>) => {
     .select();
 };
 
-const deleteProfil = async (payload: Tables<'profiles'>) => {
-  const db = createClient();
+const deleteProfile = async (payload: Tables<'profiles'>) => {
 
   return db
     .from('profiles')
@@ -30,4 +56,4 @@ const deleteProfil = async (payload: Tables<'profiles'>) => {
     .select();
 };
 
-export { getProfiles, putProfil, deleteProfil };
+export { getProfiles, postProfile, putProfile, deleteProfile };

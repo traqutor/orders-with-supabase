@@ -97,17 +97,6 @@ export function SectionUsers() {
     setUserData({ ...EMPTY_USER });
   };
 
-  const listBuckets = async () => {
-    const { data, error } = await supabase
-      .storage
-      .listBuckets();
-
-    console.log('listBuckets');
-    console.error(error);
-    console.log(data);
-    console.log('-----------------------');
-  };
-
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>, user: Tables<'profiles'>) => {
 
     const { files } = event.target;
@@ -117,18 +106,15 @@ export function SectionUsers() {
     const { data, error } = await supabase
       .storage
       .from('avatars')
-      .upload(`images/avatar-${user.id}.png`, files[0]);
 
+      .upload(`images/avatar-${user.id}.png`, files[0]);
 
     if (error) {
       throw new Error(`Upload file error: ${JSON.stringify(error)}`);
     }
 
-    console.log('Upload file data:', data);
-
     await updateProfile({ ...user, avatar_url: data?.path });
     await fetchProfiles();
-
   };
 
 

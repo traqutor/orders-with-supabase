@@ -20,7 +20,7 @@ export default async function Layout({
 
 
   return (
-    <Tabs defaultValue="tab" className="max-w-[1240px] mx-auto">
+    <Tabs defaultValue="tab" className="w-[1240px] mx-auto">
       <div className="flex items-center mt-2">
         <TabsList>
 
@@ -29,7 +29,7 @@ export default async function Layout({
           </Link>
 
         </TabsList>
-        <div className="ml-auto flex items-center gap-2 pr-2">
+        <div className="ml-7 flex items-center gap-2 pr-2">
           {/*<Button size="sm" variant="outline" className="h-8 gap-1">
             <File className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

@@ -15,7 +15,7 @@ const customersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, s
        `
       )
       .textSearch('name', search)
-      .order('name', { ascending: false })
+      .order('name', { ascending: true })
       .range(offset, offset + limit - 1)
     :
     supabase
@@ -25,7 +25,7 @@ const customersListQuery = (offset: number, limit: number = PRODUCTS_PER_PAGE, s
         customers_types(*)
        `
       )
-      .order('name', { ascending: false })
+      .order('name', { ascending: true })
       .range(offset, offset + limit - 1);
 
 
@@ -37,7 +37,7 @@ async function getCustomers(
     .from('customers')
     .select(
       `*`, { count: 'exact', head: true }
-    );
+    )
 
   const { data, error } = await customersListQuery(offset, 5, search);
 

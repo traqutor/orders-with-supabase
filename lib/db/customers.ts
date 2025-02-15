@@ -39,7 +39,7 @@ async function getCustomers(
       `*`, { count: 'exact', head: true }
     )
 
-  const { data, error } = await customersListQuery(offset, 5, search);
+  const { data, error } = await customersListQuery(offset, PRODUCTS_PER_PAGE, search);
 
   if (error) throw new Error(`Get list of Customers error:`, error);
 

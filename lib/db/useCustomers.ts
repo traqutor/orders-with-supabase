@@ -13,9 +13,11 @@ export function useCustomers() {
 
   }, []);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async ():Promise<Customer[]> => {
     const { customers } = await getAllCustomers();
     setCustomers(customers);
+
+    return customers;
   };
 
   return {

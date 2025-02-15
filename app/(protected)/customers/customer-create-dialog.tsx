@@ -1,22 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Edit2, PlusCircle, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
-import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
 import { postCustomer, putCustomer } from '@/lib/db/customers';
-import * as RadioGroup from '@radix-ui/react-radio-group';
+import { RadioGroup, RadioGroupIndicator, RadioGroupItem } from '@radix-ui/react-radio-group';
+import { Customer } from '@/lib/db/useCustomers';
 
 
 interface CustomerCreateDialogProps {
-  customer?: Tables<'customers'>;
+  customer?: Customer;
+  name?: string;
+  redirect?: true;
+  onSubmit?: (customer: Customer) => void;
 }
 
-const emptyCustomer: Tables<'customers'> = {
+export const emptyCustomer: Customer = {
   id: '',
   name: '',
   description: '',
@@ -28,65 +31,117 @@ const emptyCustomer: Tables<'customers'> = {
   phone: ''
 };
 
-const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ customer }) => {
+const customerEntryData = (customer?: Customer, customerName?: string) => {
+  let c: Customer;
+  if (customer && customerName) {
+    c = { ...customer, name: customerName };
+  } else if (customer && !customerName) {
+    c = { ...customer };
+  } else if (!customer && customerName) {
+    c = {
+      ...emptyCustomer,
+      name: customerName
+    };
+  } else {
+    c = {
+      ...emptyCustomer
+    };
+  }
+
+  return { ...Object.assign({}, c) };
+};
+
+const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({
+                                                                                customer,
+                                                                                name,
+                                                                                redirect,
+                                                                                onSubmit
+                                                                              }) => {
+
   const router = useRouter();
-
   const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState<Customer>();
 
 
-  const [formData, setFormData] = useState<Tables<'customers'>>(customer ? customer : { ...Object.assign({}, emptyCustomer) });
+  useEffect(() => {
+    setFormData(customerEntryData(customer, name));
+  }, [customer, name]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    const key = name as keyof Tables<'customers'>;
+    const key = name as keyof Customer;
 
+    setFormData((prevFormData) => {
+      if (prevFormData) {
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [key]: value
-    }));
+        return {
+          ...prevFormData,
+          [key]: value
+        };
+      }
+    });
   };
 
 
   const handleCustomerTypeChange = (value: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      customer_type_id: Number(value)
-    }));
+    setFormData((prevFormData) => {
+      if (prevFormData) {
+
+        return {
+          ...prevFormData,
+          customer_type_id: Number(value)
+        };
+      }
+    });
+
   };
+
+
+  const handleUpdateCustomer = (customer: Customer) => {
+    if (onSubmit) {
+      onSubmit(customer);
+    } else {
+      router.refresh();
+    }
+  };
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    event.stopPropagation();
 
-    if (customer?.id) {
-      const { error } = await putCustomer({
+    if (customer?.id && formData) {
+      const c = {
         ...formData,
         id: customer.id
-      });
+      };
+
+      const { error } = await putCustomer(c);
 
       if (error) {
-        console.error(`Update customer with payload: ${formData} error`, error);
-        return;
-      } else {
-        setOpen(false);
-        router.push(`/customer/${customer.id}`);
+        throw new Error(`Update customer with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}` );
       }
-    } else {
-      const { error } = await postCustomer({
+
+      handleUpdateCustomer(c);
+
+    } else if (formData) {
+      const c = {
         ...formData,
         id: v4()
-      });
+      };
+      const { error } = await postCustomer(c);
 
       if (error) {
-        console.error(`Create customer with payload: ${formData} error`, error);
-        return;
-      } else {
-        setOpen(false);
-        router.push('/customers');
+        throw new Error(`Create customer with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}` );
       }
+
+      handleUpdateCustomer(c);
     }
+
+    setOpen(false);
+
   };
 
   return (
@@ -119,21 +174,23 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
             onSubmit={handleSubmit}
           >
 
-            <RadioGroup.Root
+            <RadioGroup
               className="flex mt-3 mb-5 gap-5"
               defaultValue={`${formData?.customer_type_id || 1}`}
               aria-label="Rodzaj klienta"
               onValueChange={handleCustomerTypeChange}
             >
-              <div className="flex items-center">
-                <RadioGroup.Item
-                  className="size-[14px] cursor-default rounded-full shadow-[0_2px_10px] shadow-black outline-none hover:bg-violet-50 focus:shadow-[0_0_0_2px] focus:shadow-black"
+
+
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  className="size-[21px] cursor-default rounded-full shadow-[0_2px_10px] shadow-blackA4 outline-none hover:bg-green-600 focus:shadow-[0_0_0_2px] focus:shadow-black"
                   value="1"
                   id="r1"
                 >
-                  <RadioGroup.Indicator
-                    className="relative flex size-full items-center justify-center after:block after:size-[11px] after:rounded-full after:bg-violet11" />
-                </RadioGroup.Item>
+                  <RadioGroupIndicator
+                    className="relative flex size-full items-center justify-center after:block after:size-[11px] after:rounded-full after:bg-green-800" />
+                </RadioGroupItem>
                 <label
                   className="pl-[15px] text-[15px] leading-none "
                   htmlFor="r1"
@@ -141,28 +198,29 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({ 
                   Firma
                 </label>
               </div>
-              <div className="flex items-center">
-                <RadioGroup.Item
-                  className="size-[14px] cursor-default rounded-full bg-white shadow-[0_2px_10px] shadow-blackA4 outline-none hover:bg-violet3 focus:shadow-[0_0_0_2px] focus:shadow-black"
+
+
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  className="size-[21px] cursor-default rounded-full shadow-[0_2px_10px] shadow-blackA4 outline-none hover:bg-green-600 focus:shadow-[0_0_0_2px] focus:shadow-black"
                   value="2"
                   id="r2"
                 >
-                  <RadioGroup.Indicator
-                    className="relative flex size-full items-center justify-center after:block after:size-[11px] after:rounded-full after:bg-violet11" />
-                </RadioGroup.Item>
+                  <RadioGroupIndicator
+                    className="relative flex size-full items-center justify-center after:block after:size-[11px] after:rounded-full after:bg-green-800" />
+                </RadioGroupItem>
                 <label
-                  className="pl-[15px] text-[15px] leading-none"
+                  className="pl-[15px] text-[15px] leading-none "
                   htmlFor="r2"
                 >
                   Osoba fizyczna
                 </label>
               </div>
 
-            </RadioGroup.Root>
+            </RadioGroup>
 
 
             <Form.Field>
-              <Form.Message>Wyszukaj lub dodaj</Form.Message>
               <Form.Label htmlFor="nameId">Nazwa</Form.Label>
 
               <input

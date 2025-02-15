@@ -50,8 +50,8 @@ export default async function OrderPage(
           <TabsTrigger value="service">Montaż</TabsTrigger>
 
         </TabsList>
-        <div className="ml-auto flex items-center gap-2 pr-2">
-          <BackButton size="sm" variant="outline" className="h-8 gap-1">
+        <div className="ml-7 flex items-center gap-2 pr-2">
+          <BackButton size="sm" className="h-8 gap-1">
             <ArrowBigLeft className="h-5 w-5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Wróć do listy zamówień
@@ -63,6 +63,7 @@ export default async function OrderPage(
         className="mt-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         <Card className="flex">
           <div className="flex-auto w-8/12">
+
 
             <CardHeader>
               <div className="flex justify-start items-center gap-2">

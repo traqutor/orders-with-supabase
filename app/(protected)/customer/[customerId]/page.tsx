@@ -9,6 +9,7 @@ import { CustomersOrdersContentTab } from '@/app/(protected)/customer/customers-
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Button } from '@/components/ui/button';
+import { Customer } from '@/lib/db/useCustomers';
 
 export default async function CustomerPage(
   props: {
@@ -31,7 +32,7 @@ export default async function CustomerPage(
           <TabsTrigger value="customers_orders">Zamówienia Kontrahenta</TabsTrigger>
 
         </TabsList>
-        <div className="ml-auto flex items-center gap-2 pr-2">
+        <div className="ml-7 flex items-center gap-2 pr-2">
           <BackButton size="sm" variant="outline" className="h-8 gap-1">
             <ArrowBigLeft className="h-5 w-5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

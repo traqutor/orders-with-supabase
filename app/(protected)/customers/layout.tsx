@@ -1,8 +1,6 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { File } from 'lucide-react';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 
 const title = 'Zamówienia';
@@ -18,7 +16,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
 
-
   return (
     <Tabs defaultValue="tab" className="w-[1240px] mx-auto">
       <div className="flex items-center mt-2">
@@ -30,12 +27,7 @@ export default async function Layout({
 
         </TabsList>
         <div className="ml-7 flex items-center gap-2 pr-2">
-          {/*<Button size="sm" variant="outline" className="h-8 gap-1">
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>*/}
+
           <CustomerCreateDialog />
 
         </div>

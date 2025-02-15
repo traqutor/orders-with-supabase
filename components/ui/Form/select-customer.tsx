@@ -13,7 +13,7 @@ export interface SelectCustomerProps {
 }
 
 
-export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, required, onChange }) => {
+export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, onChange }) => {
 
   const { customers, fetchCustomers } = useCustomers();
   const [search, setSearch] = useState('');
@@ -50,7 +50,7 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, re
   };
 
 
-  const handleOnSubmit = async (customer: Customer) => {
+  const handleOnSubmit = async () => {
     await fetchCustomers();
   };
 

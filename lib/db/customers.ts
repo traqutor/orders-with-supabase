@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/client';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 import { QueryData } from '@supabase/supabase-js';
 import { Tables } from '@/types_db';
+import { Customer } from '@/lib/db/useCustomers';
 
 const supabase = createClient();
 
@@ -83,7 +84,7 @@ async function getAllCustomers(): Promise<{ customers: any }> {
 
 async function getCustomerById(
   customerId: string
-): Promise<{ customer: any }> {
+): Promise<{ customer: Customer }> {
   const { data, error } = await supabase
     .from('customers')
     .select(

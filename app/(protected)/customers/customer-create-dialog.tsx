@@ -54,7 +54,6 @@ const customerEntryData = (customer?: Customer, customerName?: string) => {
 const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React.memo(({
                                                                                 customer,
                                                                                 name,
-                                                                                redirect,
                                                                                 onSubmit
                                                                               }) => {
 

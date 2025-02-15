@@ -9,7 +9,6 @@ import { CustomersOrdersContentTab } from '@/app/(protected)/customer/customers-
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Button } from '@/components/ui/button';
-import { Customer } from '@/lib/db/useCustomers';
 
 export default async function CustomerPage(
   props: {

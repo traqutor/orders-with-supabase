@@ -22,7 +22,6 @@ const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, required,
 
   const handleChange = (event: string) => {
     const option = options.find((option) => option.value === event);
-    console.log('selected option:', option);
 
     if (!option) return null;
 
@@ -31,8 +30,6 @@ const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, required,
   };
 
   return (
-
-
     <Select.Root value={value} onValueChange={handleChange}>
 
       <div className="flex justify-between align-bottom mb-1 text-muted-foreground">

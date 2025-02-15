@@ -10,10 +10,9 @@ import { Tables } from '@/types_db';
 import { useRouter } from 'next/navigation';
 import { useCustomers } from '@/lib/db/useCustomers';
 import { postOrder, putOrder } from '@/lib/db/orders_queries';
-import SelectField from '@/components/ui/Form/select-field';
-import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
+import { SelectCustomer } from '@/components/ui/Form/select-customer';
 
 
 interface OrderCreateDialogProps {
@@ -81,7 +80,9 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+
     event.preventDefault();
+    event.stopPropagation();
 
     if (order?.id) {
       const { error } = await putOrder({
@@ -90,12 +91,9 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
       });
 
       if (error) {
-        console.error(`Update order with payload: ${formData} error`, error);
-        return;
-      } else {
-        setOpen(false);
-        router.refresh();
+        throw new Error(`Update order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
       }
+
     } else {
 
       const { error } = await postOrder({
@@ -104,13 +102,13 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
       });
 
       if (error) {
-        console.error(`Create order with payload: ${formData} error`, error);
-        return;
-      } else {
-        setOpen(false);
-        router.push('/orders');
+        throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
       }
+
     }
+
+    setOpen(false);
+    router.refresh();
   };
 
   const handleChange = (
@@ -127,23 +125,25 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   };
 
   const handleCustomerIdChange = (value: string) => {
-    const customer = customers.find((c) => c.id === value);
+    fetchCustomers().then(response => {
+      const customer = response.find((c) => c.id === value);
 
-    if (!customer) {
-      return;
-    }
+      if (!customer) {
+        return;
+      }
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      customer_id: customer.id,
-      name: customer.name,
-      phone: customer.phone,
-      email: customer.email,
-      address: customer.address,
-      nip: customer.nip,
-      regon: customer.regon,
-      description: customer.description
-    }));
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        customer_id: customer.id,
+        name: customer.name,
+        phone: customer.phone,
+        email: customer.email,
+        address: customer.address,
+        nip: customer.nip,
+        regon: customer.regon,
+        description: customer.description
+      }));
+    });
   };
 
   const handleStatusChange = (value: string) => {
@@ -154,7 +154,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} modal={true} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <div>
           {TriggerButton}
@@ -188,12 +188,12 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
             <Form.Field name={'title'} className="mb-5">
               <div className="flex justify-between align-middle mb-1 text-muted-foreground text-xs">
-                <label htmlFor="customerId">Tytuł lub nazwa zamówienia</label>
+                <label htmlFor="title">Tytuł lub nazwa zamówienia</label>
                 <span>Pole wymagane</span>
               </div>
               <Form.Control asChild>
                 <input
-                  id="titleId"
+                  id="title"
                   type="text"
                   name="title"
                   value={formData?.title || ''}
@@ -204,128 +204,119 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
               </Form.Control>
             </Form.Field>
 
-            {computedIsEdit ? <div>
-                <Form.Field name="name" className="pb-2">
-                  <Form.Label htmlFor="nameId" className="text-muted-foreground text-xs">
-                    Nazwa klienta
-                  </Form.Label>
+            <div>
+              <Form.Field name="customer">
+                <Form.Label className="text-muted-foreground text-xs">Kontrachent</Form.Label>
+                <SelectCustomer
+                  label="Wybierz lub dodaj"
+                  value={formData.customer_id || ''}
+                  onChange={handleCustomerIdChange}
+                  required
+                />
+              </Form.Field>
+
+              <Form.Field name="name" className="pb-2">
+                <Form.Label htmlFor="nameId" className="text-muted-foreground text-xs">
+                  Nazwa klienta
+                </Form.Label>
+                <input
+                  id="nameId"
+                  type="text"
+                  name="name"
+                  value={formData?.name || ''}
+                  onChange={handleChange}
+                  placeholder="Nazwa"
+                  required
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Field>
+
+              <div className="flex w-full items-center justify-evenly gap-2 pb-2">
+
+                <Form.Field name="nip" className="flex flex-col w-full">
+                  <Form.Label htmlFor="nipId" className="text-muted-foreground text-xs mb-0.5">NIP</Form.Label>
                   <input
-                    id="nameId"
+                    id="nipId"
                     type="text"
-                    name="name"
-                    value={formData?.name || ''}
+                    name="nip"
+                    value={formData?.nip || ''}
                     onChange={handleChange}
-                    placeholder="Nazwa"
-                    required
+                    placeholder="NIP"
                     className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </Form.Field>
 
-                <div className="flex w-full items-center justify-evenly gap-2 pb-2">
-
-                  <Form.Field name="nip" className="flex flex-col w-full">
-                    <Form.Label htmlFor="nipId" className="text-muted-foreground text-xs mb-0.5">NIP</Form.Label>
-                    <input
-                      id="nipId"
-                      type="text"
-                      name="nip"
-                      value={formData?.nip || ''}
-                      onChange={handleChange}
-                      placeholder="NIP"
-                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </Form.Field>
-
-                  <Form.Field name="regon" className="flex flex-col w-full">
-                    <Form.Label htmlFor="regonId" className="text-muted-foreground text-xs mb-0.5">Regon</Form.Label>
-                    <input
-                      id="regonId"
-                      type="text"
-                      name="regon"
-                      value={formData?.regon || ''}
-                      onChange={handleChange}
-                      placeholder="Regon"
-                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </Form.Field>
-
-                </div>
-
-                <div className="flex w-full items-center justify-evenly gap-2 ">
-
-                  <Form.Field name="phone" className="flex flex-col w-full">
-                    <Form.Label htmlFor="phoneId" className="text-muted-foreground text-xs mb-0.5">Telefon</Form.Label>
-                    <input
-                      id="phoneId"
-                      type="text"
-                      name="phone"
-                      value={formData?.phone || ''}
-                      onChange={handleChange}
-                      placeholder="Telefon"
-                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </Form.Field>
-
-
-                  <Form.Field name="email" className="flex flex-col w-full">
-                    <Form.Label htmlFor="emailId" className="text-muted-foreground text-xs mb-0.5">Email</Form.Label>
-                    <input
-                      id="emailId"
-                      type="text"
-                      name="email"
-                      value={formData?.email || ''}
-                      onChange={handleChange}
-                      placeholder="Email"
-                      className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    />
-                  </Form.Field>
-                </div>
-
-                <Form.Field name="address">
-                  <Form.Label htmlFor="addressId" className="text-muted-foreground text-xs">Adres</Form.Label>
-                  <textarea
-                    id="addressId"
-                    name="address"
-                    value={formData?.address || ''}
+                <Form.Field name="regon" className="flex flex-col w-full">
+                  <Form.Label htmlFor="regonId" className="text-muted-foreground text-xs mb-0.5">Regon</Form.Label>
+                  <input
+                    id="regonId"
+                    type="text"
+                    name="regon"
+                    value={formData?.regon || ''}
                     onChange={handleChange}
-                    placeholder="Adres"
-                    rows={3}
+                    placeholder="Regon"
                     className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </Form.Field>
 
-
-                <Form.Field name="description">
-                  <Form.Label htmlFor="descriptionId" className="text-muted-foreground text-xs">Opis</Form.Label>
-                  <textarea
-                    id="descriptionId"
-                    name="description"
-                    value={formData?.description || ''}
-                    onChange={handleChange}
-                    placeholder="Opis"
-                    rows={5}
-                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </Form.Field>
-              </div> :
-
-              <div className="pt-4">
-                <div className="mb-5">
-                  <SelectField
-                    label="Wybierz klienta"
-                    name={formData.name || ''}
-                    value={formData.customer_id || ''}
-                    onChange={handleCustomerIdChange}
-                    required
-                    options={customers.map((c) => {
-                      return { value: c.id, label: c.name || '' };
-                    })}
-                  />
-                </div>
-
-                <CustomerContentTab customer={formData} />
               </div>
-            }
+
+              <div className="flex w-full items-center justify-evenly gap-2 ">
+
+                <Form.Field name="phone" className="flex flex-col w-full">
+                  <Form.Label htmlFor="phoneId" className="text-muted-foreground text-xs mb-0.5">Telefon</Form.Label>
+                  <input
+                    id="phoneId"
+                    type="text"
+                    name="phone"
+                    value={formData?.phone || ''}
+                    onChange={handleChange}
+                    placeholder="Telefon"
+                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>
+
+
+                <Form.Field name="email" className="flex flex-col w-full">
+                  <Form.Label htmlFor="emailId" className="text-muted-foreground text-xs mb-0.5">Email</Form.Label>
+                  <input
+                    id="emailId"
+                    type="text"
+                    name="email"
+                    value={formData?.email || ''}
+                    onChange={handleChange}
+                    placeholder="Email"
+                    className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </Form.Field>
+              </div>
+
+              <Form.Field name="address">
+                <Form.Label htmlFor="addressId" className="text-muted-foreground text-xs">Adres</Form.Label>
+                <textarea
+                  id="addressId"
+                  name="address"
+                  value={formData?.address || ''}
+                  onChange={handleChange}
+                  placeholder="Adres"
+                  rows={3}
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Field>
+
+              <Form.Field name="description">
+                <Form.Label htmlFor="descriptionId" className="text-muted-foreground text-xs">Opis</Form.Label>
+                <textarea
+                  id="descriptionId"
+                  name="description"
+                  value={formData?.description || ''}
+                  onChange={handleChange}
+                  placeholder="Opis"
+                  rows={5}
+                  className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </Form.Field>
+            </div>
 
             <div className="mt-[25px] flex justify-end gap-2">
               <Dialog.Close asChild>

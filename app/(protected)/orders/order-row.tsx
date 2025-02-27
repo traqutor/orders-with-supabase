@@ -19,7 +19,7 @@ import AvatarProfile from '@/components/profile/avatar-profile';
 export function OrderRow(order: any) {
 
   const deleteOrderRecord = (order: Tables<'orders'>) => {
-    console.log('Delete order', order);
+    console.log('Delete orders', order);
   };
 
   return (

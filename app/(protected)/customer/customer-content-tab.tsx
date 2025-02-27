@@ -10,11 +10,11 @@ export function CustomerContentTab({ customer }: any) {
 
 
   const handleEdit = (position: any) => {
-    console.log('Edit order', position);
+    console.log('Edit orders', position);
   };
 
   const handleDelete = (position: any) => {
-    console.log('Delete order', position);
+    console.log('Delete orders', position);
   };
 
   return (

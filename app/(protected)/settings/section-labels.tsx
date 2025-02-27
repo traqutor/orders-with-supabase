@@ -9,12 +9,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
-import { deleteLabel, postLabel, putLabel } from '@/lib/db/labels';
 
 export function SectionLabels() {
 
   const [item, setItem] = useState<Label>();
-  const { labels, getLabels } = useLabels();
+  const { labels, createLabel, deleteLabel, getLabels, updateLabel } = useLabels();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -22,9 +21,9 @@ export function SectionLabels() {
 
     if (item)
       if (item.id === '') {
-        await postLabel({ ...item, id: v4() });
+        await createLabel({ ...item, id: v4() });
       } else {
-        await putLabel(item);
+        await updateLabel({ ...item });
       }
 
     await getLabels();

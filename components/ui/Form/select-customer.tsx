@@ -1,19 +1,23 @@
+'use client';
+
 import { Check, ChevronDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Customer, useCustomers } from '@/lib/db/useCustomers';
+import {  useCustomers } from '@/lib/db/useCustomers';
 
 import * as Popover from '@radix-ui/react-popover';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
+import { Customer } from '@/lib/db/schema';
+
 
 export interface SelectCustomerProps {
   label: string;
   value: string | undefined;
-  onChange: (value: string) => void;
+  onSelectItemAction: (value: string) => void;
   required?: boolean;
 }
 
 
-export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, onChange }) => {
+export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, onSelectItemAction }) => {
 
   const { customers, fetchCustomers } = useCustomers();
   const [search, setSearch] = useState('');
@@ -25,10 +29,12 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
   );
 
   useEffect(() => {
+    console.log('tu');
     fetchCustomers().then();
   }, []);
 
   useEffect(() => {
+    console.log('czy tu');
     if (value) {
       fetchCustomers().then((response) => {
         if (response) {
@@ -41,12 +47,13 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
   }, [value]);
 
   const handleChange = (id: string) => {
+    console.log('handleChange');
     const option = customers.find((option) => option.id === id);
 
     if (!option) return null;
 
     setSelected(option);
-    onChange(option.id);
+    onSelectItemAction(option.id);
   };
 
 

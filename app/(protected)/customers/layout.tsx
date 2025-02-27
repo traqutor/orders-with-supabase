@@ -10,11 +10,8 @@ export const metadata = {
 };
 
 
-export default async function Layout({
-                                       children
-                                     }: {
-  children: React.ReactNode;
-}) {
+export default async function Layout(
+  { children }: { children: React.ReactNode; }) {
 
   return (
     <Tabs defaultValue="tab" className="w-[1240px] mx-auto">

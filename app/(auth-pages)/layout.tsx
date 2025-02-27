@@ -1,8 +1,5 @@
-export default async function Layout({
-                                       children
-                                     }: {
-  children: React.ReactNode;
-}) {
+export default async function Layout(
+  { children }: { children: React.ReactNode; }) {
   return (
 
     <main className="min-h-screen flex flex-col items-center">
@@ -15,6 +12,5 @@ export default async function Layout({
       </div>
 
     </main>
-  )
-    ;
+  );
 }

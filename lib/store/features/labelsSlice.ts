@@ -32,10 +32,12 @@ const labelsSlice = createSlice({
       }
     ),
     fetchLabels: create.asyncThunk(
+
       async (id: string, thunkApi) => {
         const res = await fetch(`myApi/todos?id=${id}`);
         return (await res.json()) as Label;
       },
+
       {
         pending: (state) => {
           state.loading = true;

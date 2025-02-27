@@ -21,7 +21,7 @@ export default async function CustomersPage(
     <CustomersTable
       customers={customers}
       offset={newOffset ?? 0}
-      totalProducts={totalOrdersCounter}
+      total={totalOrdersCounter}
     />
   );
 }

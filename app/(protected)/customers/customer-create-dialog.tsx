@@ -9,7 +9,8 @@ import * as Form from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { postCustomer, putCustomer } from '@/lib/db/customers';
 import { RadioGroup, RadioGroupIndicator, RadioGroupItem } from '@radix-ui/react-radio-group';
-import { Customer } from '@/lib/db/useCustomers';
+import { Customer } from '@/lib/db/schema';
+
 
 
 interface CustomerCreateDialogProps {

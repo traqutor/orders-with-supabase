@@ -22,7 +22,7 @@ const SelectActions: React.FC<SelectFieldProps> = ({ label, value, onChange }) =
 
     if (!options.length) return null;
 
-    onChange(options.map((i) => i.id));
+    onChange(options.map((i) => i.id || ''));
   };
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const SelectActions: React.FC<SelectFieldProps> = ({ label, value, onChange }) =
 
   return (
     <MultiSelect
-      options={actions.map((action) => ({ label: action.title || 'Label', value: action.id }))}
+      options={actions.map((action) => ({ label: action.title || 'Label', value: action.id || '' }))}
       onValueChange={handleChange}
       placeholder={label}
       variant="inverted"

@@ -2,6 +2,8 @@ import { getOrdersWithStatus, getPinnedOrders } from '@/lib/db/orders_queries';
 import { OrdersTable } from '@/app/(protected)/orders/orders-table';
 import React from 'react';
 import { createClient } from '@/utils/supabase/server';
+import { sBase } from '@/lib/db/db';
+import { labels } from '@/lib/db/schema';
 
 export default async function OrdersPage(
   props: {
@@ -9,6 +11,9 @@ export default async function OrdersPage(
     params: Promise<{ orderSlug: string }>;
   }
 ) {
+
+  const result = await sBase.select().from(labels);
+
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

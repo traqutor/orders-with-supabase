@@ -2,18 +2,19 @@
 
 import React, { useState } from 'react';
 import { Plus, SaveIcon } from 'lucide-react';
-import { v4 } from 'uuid';
 
 import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
 import { Button } from '@/components/ui/button';
-import { Action, useActions } from '@/lib/db/useActions';
-import { deleteAction, postAction, putAction } from '@/lib/db/actions';
 import { Tables } from '@/types_db';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import { ActionPill } from '@/components/ui/action_pill';
+import { useActions } from '@/lib/db/useActions';
+import { v4 } from 'uuid';
+import { Action, NewAction } from '@/lib/db/schema';
 
-const EMPTY_ACTION: Action = {
+
+const EMPTY_ACTION: Action | NewAction = {
   id: '',
   color_hex: '',
   title: '',
@@ -23,8 +24,8 @@ const EMPTY_ACTION: Action = {
 
 export function SectionActions() {
 
-  const { actions, fetchActions } = useActions();
-  const [formData, setFormData] = useState<Tables<'actions'>>({ ...EMPTY_ACTION });
+  const { actions, createAction, updateAction, deleteAction, fetchActions } = useActions();
+  const [formData, setFormData] = useState<Action | NewAction>({ ...EMPTY_ACTION });
 
 
   const handleChange = (
@@ -41,18 +42,19 @@ export function SectionActions() {
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement | HTMLInputElement | HTMLSelectElement>) => {
-    event.preventDefault();
+      event.preventDefault();
 
-    if (formData)
-      if (formData.id === 'new') {
-        await postAction({ ...formData, id: v4() });
-      } else {
-        await putAction({ ...formData });
-      }
+      if (formData)
+        if (formData.id === 'new') {
+          await createAction({ ...formData, id: v4() });
+        } else {
+          await updateAction({ ...formData } as Action);
+        }
 
-    await fetchActions();
-    setFormData({ ...EMPTY_ACTION });
-  };
+      await fetchActions();
+      setFormData({ ...EMPTY_ACTION });
+    }
+  ;
 
   const handleClick = (action: Action) => {
     setFormData(action);
@@ -69,7 +71,7 @@ export function SectionActions() {
 
   const handleDelete = async () => {
     if (formData.id !== '') {
-      await deleteAction(formData);
+      await deleteAction({ ...formData } as Action);
       handleCancel();
     }
   };
@@ -148,7 +150,8 @@ export function SectionActions() {
                 />
               </Form.Control>
               <Form.Message>
-                MailIcon, PenIcon, FileIcon, PhoneIcon, PackageIcon, IdCardIcon, AtSignIcon, BellRingIcon, BellIcon, BeerIcon, BanIcon
+                MailIcon, PenIcon, FileIcon, PhoneIcon, PackageIcon, IdCardIcon, AtSignIcon, BellRingIcon, BellIcon,
+                BeerIcon, BanIcon
               </Form.Message>
             </Form.Field>
 
@@ -213,6 +216,6 @@ export function SectionActions() {
     </Section>
   );
 
-}
+};
 
 

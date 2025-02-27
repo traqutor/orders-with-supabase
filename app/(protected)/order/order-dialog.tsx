@@ -76,7 +76,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
     if (selectedCustomer) {
       handleCustomerIdChange(selectedCustomer.id);
     }
-  }, [selectedCustomer, customers]);
+  }, [selectedCustomer]);
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -125,6 +125,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   };
 
   const handleCustomerIdChange = (value: string) => {
+    
     fetchCustomers().then(response => {
       const customer = response.find((c) => c.id === value);
 
@@ -210,7 +211,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
                 <SelectCustomer
                   label="Wybierz lub dodaj"
                   value={formData.customer_id || ''}
-                  onChange={handleCustomerIdChange}
+                  onSelectItemAction={handleCustomerIdChange}
                   required
                 />
               </Form.Field>

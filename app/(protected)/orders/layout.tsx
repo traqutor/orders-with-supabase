@@ -15,18 +15,15 @@ export const metadata = {
 
 type OrderStatus = Tables<'orders_statuses'>;
 
-export default async function Layout({
-                                       children
-                                     }: {
-  children: React.ReactNode;
-}) {
-
+export default async function Layout(
+  { children }: { children: React.ReactNode; }) {
 
   const { data, error } = await getOrdersStatuses();
 
   if (error) {
     throw new Error(`Get list of Orders Statuses error:`, error);
   }
+
 
   const statuses: OrderStatus[] = data as OrderStatus[];
 

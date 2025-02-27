@@ -13,11 +13,11 @@ import { CustomerRow } from '@/app/(protected)/customers/customer-row';
 export function CustomersTable({
                                  customers,
                                  offset,
-                                 totalProducts
+                                 total
                                }: {
   customers: any[];
   offset: number;
-  totalProducts: number;
+  total: number;
 }) {
   const router = useRouter();
   const productsPerPage = PRODUCTS_PER_PAGE;
@@ -69,9 +69,9 @@ export function CustomersTable({
           <div className="text-xs text-muted-foreground">
             Lista{' '}
             <strong>
-              {Math.max(0, Math.min(offset - productsPerPage, totalProducts) + 1)}-{offset}
+              {Math.max(0, Math.min(offset - productsPerPage, total) + 1)}-{offset}
             </strong>{' '}
-            z <strong>{totalProducts}</strong> klientów
+            z <strong>{total}</strong> klientów
           </div>
           <div className="flex">
             <Button
@@ -92,7 +92,7 @@ export function CustomersTable({
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset > totalProducts}
+              disabled={offset > total}
             >
               Dalej
               <ChevronRight className="ml-2 h-4 w-4" />

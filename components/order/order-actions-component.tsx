@@ -3,78 +3,88 @@
 import React, { useEffect, useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { CheckIcon, ChevronDown, XIcon } from 'lucide-react';
-import { useActions } from '@/lib/db/useActions';
 import { cn } from '@/lib/utils';
-import { Tables } from '@/types_db';
-import { deleteOrderAction, getActionsForOrderId, postOrderAction, putOrderAction } from '@/lib/db/orders_actions';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
 import { ActionPill } from '@/components/ui/action_pill';
+import { Action, NewOrderAction, OrderAction } from '@/lib/db/schema';
+import { deleteData, getData, postData, putData } from '@/utils/helpers';
+import { OrderActionItem } from '@/app/api/orders_actions/[orderId]/route';
 
-
-type OrderAction = Tables<'orders_actions'> & { actions: Tables<'actions'> }
 
 const OrderActionsComponent = (props: { orderId: string }) => {
 
     const { orderId } = props;
-    const { actions, fetchActions } = useActions();
-    const [orderActions, setOrderActions] = useState<OrderAction[]>([]);
+    const [actions, setActions] = useState<Action[]>([]);
+    const [orderActions, setOrderActions] = useState<OrderActionItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>();
 
-    const getOrderActions = async () => {
-      const { data, error } = await getActionsForOrderId(orderId);
 
-      if (error) throw new Error(`Get list of Order Actions for Order Id ${orderId} error:`, error);
-
-      setOrderActions(data);
-    };
-
-    const handleActionClick = async (action: any) => {
+    const getActions = () => {
       setIsLoading(true);
-
-      await putOrderAction({
-        id: action.id,
-        action_id: action.action_id,
-        order_id: action.order_id,
-        performed: !action.performed,
-        performed_by: null,
-        performed_at: null
+      getData<Action[]>({ url: '/api/actions' }).then((response) => {
+        setActions(response.data);
+      }).finally(() => {
+        setIsLoading(false);
       });
-      await getOrderActions();
-      setIsLoading(false);
     };
 
-    const handleToggleAction = async (action: Tables<'actions'>, isSelected: boolean) => {
+    const getOrderActions = () => {
+      setIsLoading(true);
+      getData<OrderActionItem[]>({ url: `/api/orders_actions/${orderId}` }).then((response) => {
+        setOrderActions(response.data);
+      }).finally(() => {
+        setIsLoading(false);
+      });
+    };
+
+    const handleActionClick = async (action: OrderAction) => {
       setIsLoading(true);
 
+      putData<OrderAction>({
+        url: `/api/orders_actions/${orderId}/${action.id}`,
+        data: { ...action, performed: !action.performed }
+      }).then(() => {
+        getOrderActions();
+      }).finally(() => {
+        setIsLoading(false);
+      });
+
+    };
+
+    const handleToggleAction = async (action: Action, isSelected: boolean) => {
+      setIsLoading(true);
       if (isSelected) {
-        const a = orderActions.find(i => i.action_id === action.id && i.order_id === orderId);
-        if (a) {
-          await deleteOrderAction({
-            id: a.id,
-            action_id: action.id,
-            order_id: orderId,
-            performed: false,
-            performed_by: null,
-            performed_at: null
-          });
-        }
+
+        const selected = orderActions.find((o) => o.orders_actions.action_id === action.id);
+
+        deleteData<OrderAction>({
+          url: `/api/orders_actions/${orderId}/${selected?.orders_actions.id}`
+        }).then(() => {
+          getOrderActions();
+        }).finally(() => {
+          setIsLoading(false);
+        });
       } else {
-        await postOrderAction({
-          action_id: action.id,
-          order_id: orderId,
-          performed: false,
-          performed_by: null,
-          performed_at: null
+        postData<NewOrderAction>({
+          url: `/api/orders_actions/${orderId}`,
+          data: {
+            order_id: orderId,
+            action_id: action.id,
+            performed: false
+          }
+        }).then(() => {
+          getOrderActions();
+        }).finally(() => {
+          setIsLoading(false);
         });
       }
-
-      await getOrderActions();
+      getOrderActions();
       setIsLoading(false);
     };
 
     useEffect(() => {
-      fetchActions().then();
-      getOrderActions().then();
+      getActions();
+      getOrderActions();
     }, []);
 
     return (
@@ -102,8 +112,8 @@ const OrderActionsComponent = (props: { orderId: string }) => {
 
               <div className="flex flex-wrap flex-auto gap-1 p-2">
                 <ul className="flex-col w-full">
-                  {actions.map((a: Tables<'actions'>) => {
-                      const isSelected = orderActions.some((o: { action_id: string }) => o.action_id === a.id);
+                  {actions.map((a: Action) => {
+                      const isSelected = orderActions.some((o) => o.orders_actions.action_id === a.id);
                       return <li key={a.id}
                                  className="h-12 px-2 cursor-pointer w-full rounded items-center inline-flex hover:bg-muted"
                                  onClick={() => !isLoading && handleToggleAction(a, isSelected)}
@@ -135,20 +145,20 @@ const OrderActionsComponent = (props: { orderId: string }) => {
         <div className="flex flex-wrap flex-auto gap-1 pt-1 ml-2">
 
 
-          {orderActions.map((a: Tables<'orders_actions'> & { actions: Tables<'actions'> }) =>
+          {orderActions.map(({ orders_actions: o, actions: a }) =>
 
             <div key={a.id}>
 
               <ConfirmDialog
                 triggerLabel=""
-                title={a.performed ? `Anulowanie wykonania akcji "${a.actions.title}"` : `Wykonanie akcji "${a.actions.title}"`}
-                description={a.performed ? 'Czy anulujesz wykonanie akcji ' : 'Czy potwierdzasz wykonanie akcji'}
-                onClickSubmit={() => handleActionClick(a)}
+                title={o.performed ? `Anulowanie wykonania akcji "${a.title}"` : `Wykonanie akcji "${a.title}"`}
+                description={o.performed ? 'Czy anulujesz wykonanie akcji ' : 'Czy potwierdzasz wykonanie akcji'}
+                onClickSubmit={() => handleActionClick(o)}
                 triggerIcon={
                   <ActionPill
-                    variant={a.performed ? 'neutral' : a.actions.color_hex || 'default' as any}
-                    title={a.actions.title || ''}
-                    iconName={a.actions.icon_name || ''}
+                    variant={o.performed ? 'neutral' : a.color_hex || 'default' as any}
+                    title={a.title || ''}
+                    iconName={a.icon_name || ''}
                     className="cursor-pointer"
                   />}
               />

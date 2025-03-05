@@ -22,19 +22,27 @@ export const getURL = (path: string = '') => {
   return path ? `${url}/${path}` : url;
 };
 
+
+export interface apiRequestResponse<T> {
+  code: number;
+  data: T;
+  status: string;
+}
+
 export const getData = async <T>(
-  { url }: { url: string; }) => {
+  { url }: { url: string; }): Promise<apiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'GET',
     headers: new Headers({ 'Content-Type': 'application/json' }),
     credentials: 'same-origin'
   });
 
-  return res.json();
+  return await res.json();
 };
 
 export const postData = async <T>(
-  { url, data }: { url: string; data?: T }) => {
+  { url, data }: { url: string; data?: T }) : Promise<apiRequestResponse<T>> => {
+
   const res = await fetch(url, {
     method: 'POST',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -52,7 +60,7 @@ export const putData = async <T>({
                                  }: {
   url: string;
   data?: T
-}) => {
+}): Promise<apiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'PUT',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -69,7 +77,7 @@ export const deleteData = async <T>({
                                     }: {
   url: string;
   data?: T
-}) => {
+}) : Promise<apiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'DELETE',
     headers: new Headers({ 'Content-Type': 'application/json' }),

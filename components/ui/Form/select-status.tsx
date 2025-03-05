@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDownIcon } from 'lucide-react';
-import { Tables } from '@/types_db';
 import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import { StatusPill } from '@/components/ui/status_pill';
+import { OrderStatus } from '@/lib/db/schema';
 
-type OrderStatus = Tables<'orders_statuses'>;
 
 interface SelectFieldProps {
   label: string;
@@ -52,7 +51,7 @@ const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required
         className="flex h-10 w-full justify-between items-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Select.Value
-          aria-label={name ? name : selected?.title}
+          aria-label={name || selected?.title || 'No value'}
         >
           <StatusPill
             size="sm"

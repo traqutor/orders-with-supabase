@@ -5,6 +5,7 @@ const db = createClient();
 
 const getProfiles = async () => {
 
+
   return db
     .from('profiles')
     .select(`*`)

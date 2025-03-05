@@ -1,10 +1,14 @@
-import { Action, actions, NewAction } from '@/lib/db/schema';
+import { actions, NewAction } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
-import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
+/**
+ * GET list of Actions url: /api/actions
+ */
 
 export async function GET() {
-  const data = await sBase.select().from(actions);
+  const data = await sBase
+    .select()
+    .from(actions);
 
   return Response.json({
     status: 'success',
@@ -13,32 +17,15 @@ export async function GET() {
   });
 }
 
+/**
+ * POST new Action url: /api/actions, {data: Action}
+ */
 
 export async function POST(request: Request) {
   const action = await request.json() as NewAction;
-  const data = await sBase.insert(actions).values({ ...action });
-
-  return Response.json({
-    status: 'success',
-    code: 200,
-    data: data
-  });
-}
-
-export async function PUT(request: Request) {
-  const action = await request.json() as Action;
-  const data = await sBase.update(actions).set(action).where(eq(actions.id, action.id));
-
-  return Response.json({
-    status: 'success',
-    code: 200,
-    data: data
-  });
-}
-
-export async function DELETE(request: Request) {
-  const action = await request.json() as Action;
-  const data = await sBase.delete(actions).where(eq(actions.id, action.id));
+  const data = await sBase
+    .insert(actions)
+    .values({ ...action });
 
   return Response.json({
     status: 'success',

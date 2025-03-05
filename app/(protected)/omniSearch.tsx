@@ -1,13 +1,19 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Form from '@radix-ui/react-form';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 export function OmniSearch() {
   const [query, setQuery] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  const queryParam = searchParams.get('query') || '';
+
+  useEffect(() => {
+    setQuery(queryParam);
+  }, [queryParam]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -15,8 +21,7 @@ export function OmniSearch() {
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(event);
-    router.push(`?q=${query}`);
+    router.push(`?query=${query}`);
   };
 
   return (<Form.Root

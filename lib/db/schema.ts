@@ -1,6 +1,7 @@
 import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core/columns/integer';
-import { double } from 'drizzle-orm/mysql-core';
+import { sql } from 'drizzle-orm';
+
 
 
 /**
@@ -201,13 +202,12 @@ export type OrderLabel = typeof orders_labels.$inferSelect;
 /**
  * Orders Actions
  **/
+
 export const orders_actions = pgTable('orders_actions', {
-  id: integer().primaryKey(),
+  id: integer("id").primaryKey().default(sql`nextval('orders_actions_id_seq')`),
   order_id: text().primaryKey(),
   action_id: text().primaryKey(),
   performed: boolean(),
-  performed_by: text(),
-  performed_at: text()
 });
 
 export type NewOrderAction = typeof orders_actions.$inferInsert;
@@ -273,9 +273,16 @@ export type Invoice = typeof invoices.$inferSelect;
  **/
 export const customers_types = pgTable('customers_types', {
   id: integer().primaryKey(),
-  type_name: text(),
+  type_name: text()
 
 });
 
 export type NewCustomerType = typeof customers_types.$inferInsert;
 export type CustomerType = typeof customers_types.$inferSelect;
+
+
+/**
+ * Customers list item response
+ */
+
+export type CustomersGetResponseData = { customers: Customer, customers_types: CustomerType }

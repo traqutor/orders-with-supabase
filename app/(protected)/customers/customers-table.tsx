@@ -1,38 +1,65 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 import { CustomerRow } from '@/app/(protected)/customers/customer-row';
+import { getData } from '@/utils/helpers';
+import { CustomerItem, CustomersResponse } from '@/app/api/customers/route';
+import { Customer } from '@/lib/db/schema';
+import ClientOrderDialog from '@/app/(protected)/customers/customer-order-dialog';
 
 
-export function CustomersTable({
-                                 customers,
-                                 offset,
-                                 total
-                               }: {
-  customers: any[];
-  offset: number;
-  total: number;
-}) {
+export function CustomersTable() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [customers, setCustomers] = useState<CustomerItem[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer>();
+  const [total, setTotal] = useState(0);
+  const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+
+
   const productsPerPage = PRODUCTS_PER_PAGE;
+  const query = searchParams.get('query');
+  const offset = Number(searchParams.get('offset')) || 1;
+  const url = query ? `api/customers?offset=${offset}&query=${query}` : `api/customers?offset=${offset}`;
+  const urlCounter = query ? `api/customers?counter=true&query=${query}` : `api/customers?counter=true`;
+  const nextUrl = query ? `?offset=${offset + 1}&query=${query}` : `?offset=${offset + 1}`;
+
+
+  useEffect(() => {
+    getData<CustomersResponse<CustomerItem[]>>({ url }).then(response => {
+      setCustomers(response.data);
+    });
+    getData<CustomersResponse<CustomerItem[]>>({ url: urlCounter }).then((response) => {
+      setTotal(response.data.length);
+    });
+  }, [offset, query]);
+
+
+  const handleToggleEditDialog = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsOrderDialogOpen(!isOrderDialogOpen);
+  };
 
   function prevPage() {
     router.back();
   }
 
   function nextPage() {
-    const path = `?offset=${offset}`;
-    router.push(path, { scroll: false });
+    router.push(nextUrl, { scroll: false });
   }
 
   return (
     <Card>
+      {selectedCustomer &&
+        <ClientOrderDialog isOpen={isOrderDialogOpen} customer={selectedCustomer}
+                           onToggleOpen={handleToggleEditDialog} />}
       <CardHeader>
         <CardTitle>Lista klientów</CardTitle>
         <CardDescription>
@@ -58,8 +85,8 @@ export function CustomersTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(customer => (
-              <CustomerRow key={customer.id} {...customer} />
+            {customers.map(cus => (
+              <CustomerRow key={cus.customers.id} customer={cus} onToggleEditDialog={handleToggleEditDialog} />
             ))}
           </TableBody>
         </Table>
@@ -84,7 +111,6 @@ export function CustomersTable({
               <ChevronLeft className="mr-2 h-4 w-4" />
               Wróć
             </Button>
-
 
 
             <Button

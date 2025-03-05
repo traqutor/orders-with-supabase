@@ -1,117 +1,66 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog';
 import { SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@radix-ui/react-form';
+
 import { useRouter } from 'next/navigation';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
-import { SelectCustomer } from '@/components/ui/Form/select-customer';
-import { getData, postData, putData } from '@/utils/helpers';
-import { CustomerItem, CustomersResponse } from '@/app/api/customers/route';
 import { Customer, Order } from '@/lib/db/schema';
+import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { postData } from '@/utils/helpers';
 
 
-interface OrderCreateDialogProps {
-  triggerButton: React.ReactNode;
-  order?: Order;
-  selectedCustomer?: Customer;
+interface CustomerOrderCreateDialogProps {
+  isOpen: boolean;
+  customer: Customer;
+  onToggleOpen: (customer: Customer) => void;
 }
 
-export const mapOrderToFormData = (order: Order): Order => {
-  return {
-    id: order.id,
-    customer_id: order.customer_id,
-    status_id: order.status_id,
-    title: order.title,
-    name: order.name,
-    phone: order.phone,
-    email: order.email,
-    address: order.address,
-    nip: order.nip,
-    regon: order.regon,
-    description: order.description,
-    created_by: order.created_by,
-    created_at: order.created_at,
-    reference_number: order.reference_number,
-    due_at: order.due_at,
-    shipment_id: order.shipment_id,
-    assigned_to: order.assigned_to,
-    invoice_id: order.invoice_id,
-    service_id: order.service_id,
-    seq: order.seq
-  };
-};
 
-
-const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
-  { triggerButton: TriggerButton, order, selectedCustomer }) => {
-
-  const [open, setOpen] = useState(false);
+const ClientOrderDialog: React.FC<CustomerOrderCreateDialogProps> = React.memo((
+  { isOpen, customer, onToggleOpen }) => {
 
   const router = useRouter();
-
+  const [formData, setFormData] = useState<Order>({} as Order);
   const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
-  const [formData, setFormData] = useState<Order>(mapOrderToFormData(order ? order : {} as Order));
-
-  const computedIsEdit = useMemo(() => {
-    return !!order?.customer_id;
-  }, [order]);
 
   useEffect(() => {
-    fetchOrdersStatuses().then();
+    if (customer) {
+      handleCustomerChange(customer);
+    }
+  }, [customer]);
+
+
+  useEffect(() => {
+    fetchOrdersStatuses();
   }, []);
 
   useEffect(() => {
-    if (!computedIsEdit && ordersStatuses.length > 0) {
+    if (ordersStatuses.length > 0) {
       formData.status_id = ordersStatuses[0].id;
     }
   }, [ordersStatuses]);
 
-  useEffect(() => {
-    if (selectedCustomer) {
-      handleCustomerIdChange(selectedCustomer.id);
-    }
-  }, [selectedCustomer]);
-
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-
     event.preventDefault();
     event.stopPropagation();
 
-    if (order?.id) {
-
-      const { error } = await putData<Order>({
-        url: `/api/orders/${order.id}`, data: {
-          ...formData,
-          id: order.id
-        }
-      });
-
-      if (error) {
-        throw new Error(`Update order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
+    const { error } = await postData<Order>({
+      url: `/api/orders`, data: {
+        ...formData,
+        id: v4()
       }
+    });
 
-    } else {
-
-      const { error } = await postData<Order>({
-        url: `/api/orders`, data: {
-          ...formData,
-          id: v4()
-        }
-      });
-
-      if (error) {
-        throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
-      }
-
+    if (error) {
+      throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
     }
 
-    setOpen(false);
+    onToggleOpen(customer);
     router.refresh();
   };
 
@@ -128,31 +77,18 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
     }));
   };
 
-  const handleCustomerIdChange = async (value: string) => {
-
-    const { data } = await getData<CustomersResponse<CustomerItem[]>>({ url: '/api/customers?counter' });
-
-    if (data) {
-
-      const cus = data.find((c) => c.customers.id === value);
-
-      if (!cus) {
-        return;
-      }
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        customer_id: cus.customers.id,
-        name: cus.customers.name,
-        phone: cus.customers.phone,
-        email: cus.customers.email,
-        address: cus.customers.address,
-        nip: cus.customers.nip,
-        regon: cus.customers.regon,
-        description: cus.customers.description
-      }));
-
-    }
+  const handleCustomerChange = (customer: Customer) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      customer_id: customer.id,
+      name: customer.name,
+      phone: customer.phone,
+      email: customer.email,
+      address: customer.address,
+      nip: customer.nip,
+      regon: customer.regon,
+      description: customer.description
+    }));
   };
 
   const handleStatusChange = (value: string) => {
@@ -163,13 +99,10 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   };
 
   return (
-    <Dialog.Root open={open} modal={true} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <div>
-          {TriggerButton}
-        </div>
-      </Dialog.Trigger>
-
+    <Dialog.Root
+      open={isOpen}
+      modal={true}
+    >
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Content
@@ -178,7 +111,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
             Zamówienie
           </Dialog.Title>
           <Dialog.Description className="mb-5 mt-2.5 text-[13px] leading-normal text-muted-foreground ">
-            {computedIsEdit ? 'Edytujesz dane klienta przypisane do do zamówienia. Nie możesz zmienić klienta ale możesz edytować jego dane w zamówieniu' : 'Dodajesz nowe Zamówienie, wypełnij wymagane pola.'}
+            Dodajesz nowe Zamówienie, wypełnij wymagane pola.
           </Dialog.Description>
 
           <Form.Root
@@ -189,7 +122,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
               <SelectStatus
                 label="Status zamówienia"
                 name=""
-                value={formData.status_id || ''}
+                value={formData.status_id || undefined}
                 required
                 onChange={handleStatusChange}
               />
@@ -214,15 +147,6 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
             </Form.Field>
 
             <div>
-              <Form.Field name="customer">
-                <Form.Label className="text-muted-foreground text-xs">Kontrachent</Form.Label>
-                <SelectCustomer
-                  label="Wybierz lub dodaj"
-                  value={formData.customer_id || ''}
-                  onSelectItemAction={handleCustomerIdChange}
-                  required
-                />
-              </Form.Field>
 
               <Form.Field name="name" className="pb-2">
                 <Form.Label htmlFor="nameId" className="text-muted-foreground text-xs">
@@ -321,7 +245,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
                   value={formData?.description || ''}
                   onChange={handleChange}
                   placeholder="Opis"
-                  rows={2}
+                  rows={5}
                   className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </Form.Field>
@@ -329,8 +253,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
             <div className="mt-[25px] flex justify-end gap-2">
               <Dialog.Close asChild>
-                <Button size="sm" variant="outline" className="h-8 gap-1" type="submit">
-
+                <Button onClick={() => onToggleOpen(customer)} size="sm" variant="outline" className="h-8 gap-1">
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Cancel</span>
                 </Button>
               </Dialog.Close>
@@ -344,6 +267,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
             <Dialog.Close asChild>
               <button
+                onClick={() => onToggleOpen(customer)}
                 className="absolute right-4 top-5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-violet11 hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-hidden"
                 aria-label="Close"
               >
@@ -360,4 +284,4 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 });
 
 
-export default OrderDialog;
+export default ClientOrderDialog;

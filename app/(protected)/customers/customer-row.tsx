@@ -9,10 +9,14 @@ import { MoreHorizontal, PackagePlusIcon, User } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React from 'react';
 import Link from 'next/link';
-import OrderDialog from '@/app/(protected)/order/order-dialog';
+import { CustomerItem } from '@/app/api/customers/route';
+import { Customer } from '@/lib/db/schema';
 
 
-export function CustomerRow(customer: any) {
+export const CustomerRow: React.FC<{
+  customer: CustomerItem,
+  onToggleEditDialog: (customer: Customer) => void
+}> = ({ customer, onToggleEditDialog }) => {
 
   const handleDelete = () => {
     console.log('Delete customer', customer);
@@ -26,27 +30,28 @@ export function CustomerRow(customer: any) {
     <TableRow>
       <TableCell className="">
         <div className="flex justify-start items-center gap-4">
-        <Link href={`/customer/${customer.id}`}>
-          <User onClick={handleEdit} className="text-green-600 hover:text-green-900" />
-        </Link>
-
-        <OrderDialog selectedCustomer={customer} triggerButton={<PackagePlusIcon className="cursor-pointer text-green-600 hover:text-green-900" />} />
+          <Link href={`/customer/${customer.customers.id}`}>
+            <User onClick={handleEdit} className="text-green-600 hover:text-green-900" />
+          </Link>
+          <PackagePlusIcon
+            onClick={() => onToggleEditDialog(customer.customers)}
+            className="cursor-pointer text-green-600 hover:text-green-900" />
         </div>
       </TableCell>
       <TableCell className="font-medium">
-        <Link href={`/customer/${customer.id}`} className="font-bold hover:text-green-900">
-          <span>{customer.name}</span>
+        <Link href={`/customer/${customer.customers.id}`} className="font-bold hover:text-green-900">
+          <span>{customer.customers.name}</span>
         </Link>
       </TableCell>
       <TableCell className="w-[100px]">{customer.customers_types.type_name}</TableCell>
       <TableCell className="w-[100px]">
-        {customer.contact} {customer.email} {customer.phone}
+        {customer.customers.address} {customer.customers.email} {customer.customers.phone}
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        {customer.nip}
+        {customer.customers.nip}
       </TableCell>
       <TableCell className="hidden md:table-cell">
-        {customer.regon}
+        {customer.customers.regon}
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -64,4 +69,4 @@ export function CustomerRow(customer: any) {
       </TableCell>
     </TableRow>
   );
-}
+};

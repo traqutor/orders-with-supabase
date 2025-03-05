@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Tables } from '@/types_db';
-import { getAllCustomers } from '@/lib/db/customers';
+import { getData } from '@/utils/helpers';
+import { CustomerItem, CustomersResponse } from '@/app/api/customers/route';
 
-export type Customer = Tables<'customers'>;
 
 export function useCustomers() {
 
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<CustomerItem[]>([]);
 
   useEffect(() => {
     fetchCustomers().then();
 
   }, []);
 
-  const fetchCustomers = async ():Promise<Customer[]> => {
-    const { customers } = await getAllCustomers();
-    setCustomers(customers);
+  const fetchCustomers = async (): Promise<CustomerItem[]> => {
+    const { data } = await getData<CustomersResponse<CustomerItem[]>>({ url: '/api/customers' });
 
-    return customers;
+    setCustomers(data);
+    return data;
   };
 
   return {

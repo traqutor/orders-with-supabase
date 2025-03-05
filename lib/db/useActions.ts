@@ -9,20 +9,7 @@ export function useActions() {
   const [actions, setActions] = useState<Action[]>([]);
 
 
-  useEffect(() => {
-    fetchActions().then();
 
-  }, []);
-
-  const fetchActions = async () => {
-    const { data, error } = await getData({ url });
-
-    if (error) throw new Error(`Get list of Actions Error: ${JSON.stringify(error)}`);
-
-    setActions(data);
-
-    return data;
-  };
 
   const createAction = async (action: NewAction) => {
     let { data, error } = await postData({ url, data: action });
@@ -53,7 +40,7 @@ export function useActions() {
     actions,
     createAction,
     deleteAction,
-    fetchActions,
+
     updateAction
   };
 

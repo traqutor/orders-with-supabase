@@ -1,14 +1,16 @@
 import React from 'react';
 import { ArrowBigLeft, PlusCircle } from 'lucide-react';
+import { eq } from 'drizzle-orm/sql/expressions/conditions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
-import { getCustomerById } from '@/lib/db/customers';
 import { CustomerContentTab } from '@/app/(protected)/customer/customer-content-tab';
 import { CustomersOrdersContentTab } from '@/app/(protected)/customer/customers-orders-content-tab';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
 import { Button } from '@/components/ui/button';
+import { sBase } from '@/lib/db/db';
+import { Customer, customers } from '@/lib/db/schema';
 
 export default async function CustomerPage(
   props: {
@@ -18,9 +20,12 @@ export default async function CustomerPage(
 
   const { customerId } = await props.params;
 
-  const { customer } = await getCustomerById(
-    customerId
-  );
+  const cs: Customer[] = await sBase
+    .select()
+    .from(customers)
+    .where(eq(customers.id, customerId));
+
+  const customer: Customer = cs[0];
 
   return (
     <Tabs defaultValue="customer" className="w-[1240px] mx-auto">
@@ -31,6 +36,7 @@ export default async function CustomerPage(
           <TabsTrigger value="customers_orders">Zamówienia Kontrahenta</TabsTrigger>
 
         </TabsList>
+
         <div className="ml-7 flex items-center gap-2 pr-2">
           <BackButton size="sm" variant="outline" className="h-8 gap-1">
             <ArrowBigLeft className="h-5 w-5" />
@@ -42,7 +48,7 @@ export default async function CustomerPage(
       </div>
       <div
         className="mt-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-        <Card>
+        {customer && <Card>
 
           <div className={'flex flex-auto justify-between'}>
 
@@ -78,7 +84,7 @@ export default async function CustomerPage(
           </CardContent>
 
 
-        </Card>
+        </Card>}
       </div>
     </Tabs>
 

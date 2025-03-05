@@ -2,7 +2,7 @@
 
 import { Check, ChevronDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import {  useCustomers } from '@/lib/db/useCustomers';
+import { useCustomers } from '@/lib/db/useCustomers';
 
 import * as Popover from '@radix-ui/react-popover';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
@@ -25,21 +25,19 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
   const [selected, setSelected] = React.useState<Customer>();
 
   const filteredOptions = customers.filter((option) =>
-    option.name?.toLowerCase().includes(search.toLowerCase())
+    option.customers.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
-    console.log('tu');
     fetchCustomers().then();
   }, []);
 
   useEffect(() => {
-    console.log('czy tu');
     if (value) {
       fetchCustomers().then((response) => {
         if (response) {
-          const c = response.find((option) => option.id === value);
-          setSelected(c);
+          const c = response.find((option) => option.customers.id === value);
+          setSelected(c?.customers);
         }
       });
     }
@@ -47,13 +45,12 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
   }, [value]);
 
   const handleChange = (id: string) => {
-    console.log('handleChange');
-    const option = customers.find((option) => option.id === id);
+    const option = customers.find((option) => option.customers.id === id);
 
     if (!option) return null;
 
-    setSelected(option);
-    onSelectItemAction(option.id);
+    setSelected(option.customers);
+    onSelectItemAction(option.customers.id);
   };
 
 
@@ -96,14 +93,14 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <div
-                  key={option.id}
+                  key={option.customers.id}
                   className="flex items-center justify-between p-2 text-sm cursor-pointer "
                   onClick={() => {
-                    handleChange(option.id);
+                    handleChange(option.customers.id);
                   }}
                 >
-                  {option.name}
-                  {selected?.name === option?.name && <Check className="w-4 h-4" />}
+                  {option.customers.name}
+                  {selected?.name === option?.customers.name && <Check className="w-4 h-4" />}
                 </div>
               ))
             ) : (

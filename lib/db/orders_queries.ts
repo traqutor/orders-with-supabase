@@ -1,242 +1,189 @@
-import { createClient } from '@/utils/supabase/client';
+import { PgSelect } from 'drizzle-orm/pg-core';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
+import { desc } from 'drizzle-orm/sql/expressions/select';
+import {
+  Action,
+  actions,
+  Customer,
+  customers,
+  Order,
+  OrderAction,
+  orders,
+  orders_actions,
+  orders_statuses,
+  OrderStatus,
+  pinned_orders,
+  PinnedOrder
+} from '@/lib/db/schema';
+import { and, eq, ilike, inArray } from 'drizzle-orm/sql/expressions/conditions';
+import { sBase } from '@/lib/db/db';
+import { SQLWrapper } from 'drizzle-orm';
 
-import { QueryData } from '@supabase/supabase-js';
-import { Tables } from '@/types_db';
 
-const supabase = createClient();
-
-type OrderQueryParams = {
-  offset: number,
-  limit: number,
-  search?: string,
+type qParams = {
+  offsetPage?: number,
+  queryText?: string,
+  pinnedUserId?: string,
   statusId?: string,
-  pinnedToUserId?: string
+  ordersIds?: string[]
 }
 
-const ordersListQuery = (params: OrderQueryParams) => {
-  if (params.search && params.statusId) {
-    return supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .eq('status_id', params.statusId)
-      .textSearch('title', params.search)
-      .order('seq', { ascending: false })
-      .range(params.offset, params.offset + params.limit - 1);
+type OrderActionItem = OrderAction & { action: Action };
+
+export type OrderItem = Order & {
+  status: OrderStatus,
+  customer: Customer,
+  orders_actions: OrderActionItem[],
+  pinned_users?: PinnedOrder[];
+};
+
+
+function withConditions<T extends PgSelect>(
+  qb: T,
+  conditions: SQLWrapper[]
+) {
+  return qb.where(conditions.length > 0 ? and(...conditions) : undefined);
+}
+
+
+function buildQuery<T extends PgSelect>(qb: T, params: qParams) {
+  let conditions: SQLWrapper[] = [];
+
+  if (params.ordersIds && params.ordersIds.length > 0) {
+    conditions.push(inArray(orders.id, params.ordersIds));
+  }
+
+  if (params.queryText) {
+    const text = params.queryText.toLowerCase();
+    conditions.push(ilike(orders.name, `%${text}%`));
+  }
+
+  if (params.pinnedUserId) {
+    conditions.push(eq(pinned_orders.user_id, params.pinnedUserId));
   }
 
   if (params.statusId) {
-    return supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .eq('status_id', params.statusId)
-      .order('seq', { ascending: false })
-      .range(params.offset, params.offset + params.limit - 1);
+    conditions.push(eq(orders.status_id, params.statusId));
   }
 
-  if (params.search) {
-    return supabase
-      .from('orders')
-      .select(
-        `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-      )
-      .textSearch('title', params.search)
-      .order('seq', { ascending: false })
-      .range(params.offset, params.offset + params.limit - 1);
-  }
+  qb = withConditions(qb, conditions);
 
-
-  return supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .order('seq', { ascending: false })
-    .range(params.offset, params.offset + params.limit - 1);
-};
-
-async function getOrders(
-  search: string,
-  offset: number
-): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
-
-  const { count } = await supabase
-    .from('orders')
-    .select(
-      `*`, { count: 'exact', head: true }
-    );
-
-  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE });
-
-  if (error) throw new Error(`Get list of Orders error: ${JSON.stringify(error)}`);
-
-  const ordersList: any = data as QueryData<any>;
-
-  if (!data && offset === null) {
-    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
-  }
-
-  const totalOrdersCounter = count || 0;
-  const newOffset = offset + PRODUCTS_PER_PAGE;
-
-
-  return {
-    orders: ordersList,
-    newOffset: newOffset,
-    totalOrdersCounter: totalOrdersCounter
-  };
+  return qb;
 }
 
-async function getOrdersWithStatus(
-  search: string,
-  offset: number,
-  statusId: string
-): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
+async function getDistinctOrdersIds(params: qParams): Promise<string[]> {
 
-  const { count } = await supabase
-    .from('orders')
-    .select(
-      `*`, { count: 'exact', head: true }
-    ).eq('status_id', statusId);
+  let query = sBase
+    .select()
+    .from(orders)
+    .orderBy(desc(orders.seq))
+    .$dynamic();
 
-  const { data, error } = await ordersListQuery({ offset, search, limit: PRODUCTS_PER_PAGE, statusId });
+  query = buildQuery(query, params);
 
-  if (error) throw new Error(`Get list of Orders with status_id: ${statusId}  error: ${JSON.stringify(error)}`);
+  const ordersIds: Order [] = await (query);
 
-  const ordersList: any = data as QueryData<any>;
-
-  if (!data && offset === null) {
-    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
-  }
-
-  const totalOrdersCounter = count || 0;
-  const newOffset = offset + PRODUCTS_PER_PAGE;
-
-
-  return {
-    orders: ordersList,
-    newOffset: newOffset,
-    totalOrdersCounter: totalOrdersCounter
-  };
-}
-
-async function getPinnedOrders(
-  search: string,
-  offset: number,
-  userId: string
-): Promise<{ orders: any[]; newOffset: number; totalOrdersCounter: number }> {
-
-  const { count } = await supabase
-    .from('pinned_orders')
-    .select(
-      `orders(*)`, { count: 'exact', head: true }
-    ).eq('user_id', userId);
-
-  const { data, error } = await supabase
-    .from('pinned_orders')
-    .select(
-      `orders(*,labels(*),
-        orders_statuses(*),
-        pinned_orders(*),
-        orders_actions(*, actions(*)),
-        customers(*))
-       `
-    )
-    .eq('user_id', userId)
-    .range(offset, offset + PRODUCTS_PER_PAGE - 1);
-
-  if (error) throw new Error(`Get list of Pinned Orders with user_id: ${userId}  error: ${JSON.stringify(error)}`);
-
-  if (!data && offset === null) {
-    return { orders: data, newOffset: 0, totalOrdersCounter: 0 };
-  }
-
-  const responseData = data?.map((item: any) => {
-    return item.orders;
-  }).sort((i: {seq: number}, j: {seq: number}) => j.seq - i.seq);
-  const totalOrdersCounter = count || 0;
-  const newOffset = offset + PRODUCTS_PER_PAGE;
-
-
-  return {
-    orders: responseData,
-    newOffset: newOffset,
-    totalOrdersCounter: totalOrdersCounter
-  };
+  return ordersIds.map(o => o.id);
 }
 
 
-async function getOrderById(
-  orderId: string
-): Promise<{ order: any }> {
+function withPagination(
+  ordersIds: string[],
+  page: number = 1,
+  pageSize: number = PRODUCTS_PER_PAGE
+): string[] {
 
-  const { data, error } = await supabase
-    .from('orders')
-    .select(
-      `*,
-        labels(*),
-        pinned_orders(*),
-        orders_statuses(*),
-        orders_actions(*, actions(*)),
-        customers(*)
-       `
-    )
-    .eq('id', orderId);
-
-  if (error) throw new Error(`Get Order by id: ${orderId} error: ${JSON.stringify(error)}`);
-
-  return {
-    order: data[0]
-  };
-
+  return ordersIds.slice((page - 1) * pageSize, page * pageSize);
 }
 
-const postOrder = async (order: Tables<'orders'>) => {
-  const db = createClient();
 
-  return db
-    .from('orders')
-    .insert(order)
-    .select();
-};
+const getOrders = async ({ offsetPage, queryText, pinnedUserId, statusId }: {
+  offsetPage?: number,
+  queryText?: string,
+  pinnedUserId?: string,
+  statusId?: string,
+}): Promise<{
+  orders: OrderItem[], totalOrdersCounter: number
+}> => {
 
-const putOrder = async (order: Tables<'orders'>) => {
-  const db = createClient();
 
-  return db
-    .from('orders')
-    .update(order)
-    .eq('id', order.id)
-    .select();
+  // First fetch for all available distinguish orders id sorted by seq no limit
+  const allOrdersIds = await getDistinctOrdersIds({ queryText, pinnedUserId, statusId });
+
+  // Next sake of pagination splice
+  const ordersIds = withPagination(allOrdersIds, offsetPage);
+
+  // Now fetch for all records multiplied by joined actions and pinned_orders
+
+  let query = sBase
+    .select({
+      orders,
+      pinned_orders,
+      orders_statuses,
+      orders_actions,
+      actions,
+      customers
+    })
+    .from(orders)
+    .leftJoin(pinned_orders, eq(orders.id, pinned_orders.order_id))
+    .leftJoin(orders_statuses, eq(orders.status_id, orders_statuses.id))
+    .leftJoin(orders_actions, eq(orders.id, orders_actions.order_id))
+    .leftJoin(actions, eq(orders_actions.action_id, actions.id))
+    .leftJoin(customers, eq(orders.customer_id, customers.id))
+    .orderBy(desc(orders.seq))
+    .$dynamic();
+
+  query = buildQuery(query, { queryText, pinnedUserId, statusId, ordersIds });
+
+  const data = await (query);
+
+
+  // Finally rebuild query result to proper OrderItem array
+  const ordersMap = new Map();
+
+  data.forEach((row) => {
+
+    if (!ordersMap.has(row.orders.id)) {
+      ordersMap.set(row.orders.id, {
+        ...row.orders,
+        status: { ...row.orders_statuses },
+        customer: { ...row.customers },
+        orders_actions: new Map(),
+        pinned_users: new Map()
+      });
+    }
+
+
+    if (row.orders_actions?.order_id) {
+      if (!ordersMap.get(row.orders.id).orders_actions.has(row.orders_actions.action_id)) {
+        ordersMap.get(row.orders.id).orders_actions.set(row.orders_actions.action_id, {
+          ...row.orders_actions,
+          action: { ...row.actions }
+        });
+      }
+    }
+
+    if (row.pinned_orders?.order_id) {
+      if (!ordersMap.get(row.orders.id).pinned_users.has(row.pinned_orders.user_id)) {
+        ordersMap.get(row.orders.id).pinned_users.set(row.pinned_orders.user_id, {
+          ...row.pinned_orders
+        });
+      }
+    }
+
+  });
+
+  const items: OrderItem[] = Array.from(ordersMap.values());
+
+  const ordersItems = items.map((o) => {
+      const pinned: PinnedOrder[] = o.pinned_users ? [...o.pinned_users.values()] : [];
+      const actions: OrderActionItem[] = [...o.orders_actions.values()];
+      return { ...o, pinned_users: pinned, orders_actions: actions };
+    }
+  );
+
+  return { orders: ordersItems, totalOrdersCounter: allOrdersIds.length };
 };
 
 
-export { getOrders, getOrdersWithStatus, getPinnedOrders, postOrder, putOrder, getOrderById };
+export { getOrders };

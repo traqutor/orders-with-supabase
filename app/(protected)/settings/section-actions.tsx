@@ -2,15 +2,14 @@
 
 import React, { useState } from 'react';
 import { Plus, SaveIcon } from 'lucide-react';
+import { v4 } from 'uuid';
 
 import * as Form from '@radix-ui/react-form';
 import { Section } from '@/app/(protected)/settings/section';
 import { Button } from '@/components/ui/button';
-import { Tables } from '@/types_db';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import { ActionPill } from '@/components/ui/action_pill';
-import { useActions } from '@/lib/db/useActions';
-import { v4 } from 'uuid';
+import { useActions } from '@/lib/client/useActions';
 import { Action, NewAction } from '@/lib/db/schema';
 
 
@@ -32,7 +31,7 @@ export function SectionActions() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    const key = name as keyof Tables<'actions'>;
+    const key = name as keyof Action;
 
     setFormData((prevFormData) => ({
       ...prevFormData,

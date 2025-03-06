@@ -1,25 +1,27 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+
 import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ServiceTable } from '@/app/(protected)/order/service-table';
-import { getServicesForServiceId, postService } from '@/lib/db/services_queries';
-import { Tables } from '@/types_db';
 import { Button } from '@/components/ui/button';
-import { v4 } from 'uuid';
-import { putOrder } from '@/lib/db/orders_queries';
-import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import ServiceDialog from '@/app/(protected)/order/service-dialog';
 import { ListItem } from '@/components/ui/list-item';
 import { getFormatedDateTime } from '@/utils/time';
-import { useRouter } from 'next/navigation';
+import { NewService, Service } from '@/lib/db/schema';
+import { useOrders } from '@/lib/client/useOrders';
+import { useServices } from '@/lib/client/useServices';
 
 
 export function ServiceContentTab({ order }: any) {
 
-  const [service, setService] = useState<Tables<'services'>>();
+  const [service, setService] = useState<Service>();
   const router = useRouter();
+  const { fetchService, createService, updateService } = useServices();
+  const { updateOrder } = useOrders();
+
 
   useEffect(() => {
     getService().then();
@@ -30,15 +32,12 @@ export function ServiceContentTab({ order }: any) {
       return;
     }
 
-    const { data, error } = await getServicesForServiceId(order.service_id);
-    if (error) throw new Error(`Get Service for Order Service Id ${order.service_id} error:`, error);
-
-    setService(data);
+    const data = await fetchService(order.service_id);
+    setService(data[0]);
   };
 
   const handleAddService = async () => {
-    const payload: Tables<'services'> = {
-      id: v4(),
+    const payload: NewService = {
       description: '',
       contact: order.name,
       address: order.address,
@@ -50,24 +49,20 @@ export function ServiceContentTab({ order }: any) {
       start_at: null
     };
 
-    const { data, error } = await postService(payload);
+    const serviceData = await createService(payload);
 
-    if (error) throw new Error(`Create Service for ${payload} error:`, error);
+    if (serviceData) {
+      console.log(serviceData);
+      await updateOrder(
+        {
+          ...order,
+          service_id: serviceData[0].id
+        }
+      );
 
-    const { data: serviceData, error: serviceError } = await getServicesForServiceId(data.id);
+      setService(serviceData[0]);
 
-    if (serviceError) throw new Error(`Create Service for ${payload} error:`, serviceError);
-
-    const { error: orderError } = await putOrder(
-      {
-        ...mapOrderToFormData(order),
-        service_id: serviceData.id
-      }
-    );
-
-    if (orderError) throw new Error(`Update Order for service Id ${serviceData.id} error:`, orderError);
-
-    setService(serviceData);
+    }
 
     router.refresh();
   };

@@ -6,45 +6,32 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { PositionRow } from '@/app/(protected)/order/position-row';
 import { Button } from '@/components/ui/button';
 import { LucidePlus } from 'lucide-react';
-import { Tables } from '@/types_db';
-import {
-  deleteOrderPosition,
-  getPositionsForOrderId,
-  postOrderPosition,
-  putOrderPosition
-} from '@/lib/db/orders_positions';
 import { v4 } from 'uuid';
+import { NewOrderPosition, Order, OrderPosition } from '@/lib/db/schema';
+import { useOrdersPositions } from '@/lib/client/useOrdersPositions';
 
-
-type OrderPosition = Tables<'orders_positions'>
 
 export function PositionsTable({
                                  order,
                                  asInvoice
                                }: {
-  order: Tables<'orders'>,
+  order: Order,
   asInvoice: boolean
 }) {
 
   const [positions, setPositions] = useState<OrderPosition[]>();
 
-
-  useEffect(() => {
-    getPositions().then();
-  }, []);
+  const { fetchOrderPositions, createOrderPosition, updateOrderPosition, deleteOrderPosition } = useOrdersPositions();
 
   const getPositions = async () => {
-    const { data, error } = await getPositionsForOrderId(order.id);
-    if (error) throw new Error(`Get list of Order Positions for Order Id ${order.id} error:`, error);
-
-    setPositions(data);
+    const positions = await fetchOrderPositions(order.id);
+    setPositions(positions);
   };
 
   const handleAddPosition = async () => {
-    const position: OrderPosition = {
+    const position: NewOrderPosition = {
       id: v4(),
       order_id: order.id,
-      created_at: new Date().toISOString(),
       position_type: 'sell',
       description: '',
       is_optima: false,
@@ -53,18 +40,22 @@ export function PositionsTable({
       unit: 'szt',
       quantity: null
     };
-    await postOrderPosition({ ...position });
+    await createOrderPosition({ ...position });
     await getPositions();
   };
 
   const handleUpdatePosition = async (position: OrderPosition) => {
-    await putOrderPosition({ ...position });
+    await updateOrderPosition({ ...position });
   };
 
   const handleDeletePosition = async (position: OrderPosition) => {
     await deleteOrderPosition({ ...position });
     await getPositions();
   };
+
+  useEffect(() => {
+    getPositions();
+  }, []);
 
   return (
     <Card className="border-none">
@@ -76,9 +67,9 @@ export function PositionsTable({
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Nazwa</TableHead>
-              <TableHead className="w-[140px] text-center" >Rodzaj</TableHead>
+              <TableHead className="w-[140px] text-center">Rodzaj</TableHead>
               <TableHead className="w-[90px] text-center">Jedn.</TableHead>
-              <TableHead className="w-[90px] text-right" >Ilość</TableHead>
+              <TableHead className="w-[90px] text-right">Ilość</TableHead>
               <TableHead className="w-[140px] text-right">Cena</TableHead>
               <TableHead className="w-[90px]"></TableHead>
               {asInvoice && <TableHead className="w-[90px] text-center">Optima</TableHead>}

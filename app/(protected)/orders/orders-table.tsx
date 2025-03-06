@@ -7,14 +7,14 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, PinIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
-
+import { OrderItem } from '@/lib/db/orders_queries';
 
 export function OrdersTable({
                               orders,
                               offset,
                               totalProducts
                             }: {
-  orders: any[];
+  orders: OrderItem[];
   offset: number;
   totalProducts: number;
 }) {
@@ -22,11 +22,13 @@ export function OrdersTable({
   const productsPerPage = PRODUCTS_PER_PAGE;
 
   function handlePrevPage() {
-    router.back();
+
+    const path = offset > 1 ? `?offset=${offset - 1}` : '/orders';
+    router.push(path, { scroll: false });
   }
 
   function handleNextPage() {
-    const path = `?offset=${offset}`;
+    const path = `?offset=${offset + 1}`;
     router.push(path, { scroll: false });
   }
 
@@ -50,7 +52,8 @@ export function OrdersTable({
               <TableHead className="">Status</TableHead>
               <TableHead className="">Z dnia</TableHead>
               <TableHead className="">Akcje</TableHead>
-              <TableHead className=""><PinIcon className="text-tomato-900 dark:text-tomato-600 rotate-12" /> </TableHead>
+              <TableHead className=""><PinIcon className="text-tomato-900 dark:text-tomato-600 rotate-12" />
+              </TableHead>
               <TableHead>
                 <span className="sr-only">Menu</span>
               </TableHead>
@@ -69,7 +72,7 @@ export function OrdersTable({
           <div className="text-xs text-muted-foreground">
             Widoczne {' '}
             <strong>
-              {Math.max(0, Math.min(offset - productsPerPage, totalProducts) + 1)}-{offset}
+              {Math.max(0, Math.min((offset - 1) * productsPerPage, totalProducts) + 1)}-{offset * productsPerPage}
             </strong>{' '}
             z <strong>{totalProducts}</strong> zamówień
           </div>
@@ -79,7 +82,7 @@ export function OrdersTable({
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset === productsPerPage}
+              disabled={offset <= 1}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Wróć
@@ -90,7 +93,7 @@ export function OrdersTable({
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset > totalProducts}
+              disabled={offset*productsPerPage > totalProducts}
             >
               Dalej
               <ChevronRight className="ml-2 h-4 w-4" />

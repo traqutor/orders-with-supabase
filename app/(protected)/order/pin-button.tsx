@@ -2,27 +2,29 @@
 
 import React, { useMemo, useState } from 'react';
 import { PinIcon } from 'lucide-react';
-import { Tables } from '@/types_db';
 import cn from 'clsx';
 import { useRouter } from 'next/navigation';
-import { pinOrder, unPinOrder } from '@/lib/db/pinned_orders_queries';
+import { OrderItem } from '@/lib/db/orders_queries';
+import { useOrderPins } from '@/lib/client/useOrderPins';
+
 
 const PinButton = (
   props:
-  { order: Tables<'orders'> & { pinned_orders: Tables<'pinned_orders'>[] }, userId: string }) => {
+  { order: OrderItem, userId: string }) => {
 
   const { order, userId } = props;
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { pinOrder, unPinOrder } = useOrderPins();
 
   const pinned = useMemo(() => {
-    return order.pinned_orders.filter(p => p.user_id === userId);
+    return order.pinned_users?.filter(p => p.user_id === userId);
   }, [userId, order]);
 
   const handlePin = async () => {
     setIsLoading(true);
 
-    if (pinned.length > 0) {
+    if (pinned && pinned.length > 0) {
       pinned.forEach((pin) => {
         unPinOrder(pin).then(() => {
           setIsLoading(false);
@@ -31,24 +33,21 @@ const PinButton = (
       });
 
     } else {
-      const { error } = await pinOrder({
+      await pinOrder({
         user_id: userId,
         order_id: order.id
       });
 
-      if (error) {
-        console.error('error', error);
-        return;
-      } else {
-        router.refresh();
-      }
+
+      router.refresh();
+
     }
     setIsLoading(false);
   };
 
 
   const classNamesPin = cn('cursor-pointer hover:text-gray-400',
-    { 'text-tomato-900 dark:text-tomato-600 rotate-12': (pinned.length > 0) }
+    { 'text-tomato-900 dark:text-tomato-600 rotate-12': (!!pinned) }
   );
 
 

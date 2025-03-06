@@ -7,11 +7,11 @@ import { SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@radix-ui/react-form';
 import { useRouter } from 'next/navigation';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
 import { SelectCustomer } from '@/components/ui/Form/select-customer';
 import { getData, postData, putData } from '@/utils/helpers';
-import { CustomerItem, CustomersResponse } from '@/app/api/customers/route';
+import { CustomerItem } from '@/app/api/customers/route';
 import { Customer, Order } from '@/lib/db/schema';
 
 
@@ -21,30 +21,6 @@ interface OrderCreateDialogProps {
   selectedCustomer?: Customer;
 }
 
-export const mapOrderToFormData = (order: Order): Order => {
-  return {
-    id: order.id,
-    customer_id: order.customer_id,
-    status_id: order.status_id,
-    title: order.title,
-    name: order.name,
-    phone: order.phone,
-    email: order.email,
-    address: order.address,
-    nip: order.nip,
-    regon: order.regon,
-    description: order.description,
-    created_by: order.created_by,
-    created_at: order.created_at,
-    reference_number: order.reference_number,
-    due_at: order.due_at,
-    shipment_id: order.shipment_id,
-    assigned_to: order.assigned_to,
-    invoice_id: order.invoice_id,
-    service_id: order.service_id,
-    seq: order.seq
-  };
-};
 
 
 const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
@@ -55,7 +31,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   const router = useRouter();
 
   const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
-  const [formData, setFormData] = useState<Order>(mapOrderToFormData(order ? order : {} as Order));
+  const [formData, setFormData] = useState<Order>(order || {} as Order);
 
   const computedIsEdit = useMemo(() => {
     return !!order?.customer_id;
@@ -85,28 +61,28 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
     if (order?.id) {
 
-      const { error } = await putData<Order>({
+      const response = await putData<Order>({
         url: `/api/orders/${order.id}`, data: {
           ...formData,
           id: order.id
         }
       });
 
-      if (error) {
-        throw new Error(`Update order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
+      if (response.status !== 'success') {
+        throw new Error(`Update order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
       }
 
     } else {
 
-      const { error } = await postData<Order>({
+      const response = await postData<Order>({
         url: `/api/orders`, data: {
           ...formData,
           id: v4()
         }
       });
 
-      if (error) {
-        throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
+      if (response.status !== 'success') {
+        throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
       }
 
     }
@@ -130,7 +106,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
   const handleCustomerIdChange = async (value: string) => {
 
-    const { data } = await getData<CustomersResponse<CustomerItem[]>>({ url: '/api/customers?counter' });
+    const { data } = await getData<CustomerItem[]>({ url: '/api/customers?counter' });
 
     if (data) {
 

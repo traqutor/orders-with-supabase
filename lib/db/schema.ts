@@ -1,6 +1,7 @@
 import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core/columns/integer';
 import { sql } from 'drizzle-orm';
+import { v4 } from 'uuid';
 
 
 
@@ -33,10 +34,9 @@ export const customers = pgTable('customers', {
   phone: text(),
   email: text(),
   address: text(),
-  customer_type_id: integer()
+  customer_type_id: integer().default(1)
 });
 
-export type NewCustomer = typeof customers.$inferInsert;
 export type Customer = typeof customers.$inferSelect;
 
 /**
@@ -93,7 +93,7 @@ export type Shipment = typeof shipments.$inferSelect;
  * Services *
  */
 export const services = pgTable('services', {
-  id: text().primaryKey(),
+  id: text().primaryKey().default(v4()),
   description: text(),
   location: text(),
   start_at: text(),
@@ -113,15 +113,15 @@ export type Service = typeof services.$inferSelect;
  * Services *
  */
 export const services_positions = pgTable('services_positions', {
-  id: text().primaryKey(),
+  id: text().primaryKey().default(v4()),
   service_id: text(),
   description: text(),
   vehicle_vin: text(),
   car_plate: text(),
   technician: text(),
   serial_no: text(),
-  is_done: text(),
-  is_confirmed: text(),
+  is_done: boolean(),
+  is_confirmed: boolean(),
   seq: text()
 });
 
@@ -147,7 +147,7 @@ export type Profile = typeof profiles.$inferSelect;
  * Pinned Orders *
  */
 export const pinned_orders = pgTable('pinned_orders', {
-  id: text().primaryKey(),
+  id: text().primaryKey().default(v4()),
   user_id: text(),
   order_id: text()
 });
@@ -179,7 +179,6 @@ export const orders_positions = pgTable('orders_positions', {
   unit: text(),
   price: integer(),
   is_optima: boolean(),
-  created_at: text(),
   price_type: text(),
   seq: integer()
 });
@@ -248,7 +247,7 @@ export type Order = typeof orders.$inferSelect;
  * Invoices
  **/
 export const invoices = pgTable('invoices', {
-  id: integer().primaryKey(),
+  id: text().primaryKey(),
   invoice_number: text(),
   description: text(),
   total_amount: integer(),

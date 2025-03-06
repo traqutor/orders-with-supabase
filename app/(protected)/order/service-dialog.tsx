@@ -6,14 +6,15 @@ import { Edit2, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
 
-import { Tables } from '@/types_db';
-import { putService } from '@/lib/db/services_queries';
+
 import { Separator } from '@radix-ui/react-separator';
 import { toInputDateTime } from '@/utils/time';
+import { Service } from '@/lib/db/schema';
+import { useServices } from '@/lib/client/useServices';
 
 
 interface ServiceDialogProps {
-  service: Tables<'services'>;
+  service: Service;
   fetchDataOnSubmit: () => void;
 }
 
@@ -21,24 +22,22 @@ interface ServiceDialogProps {
 const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetchDataOnSubmit }) => {
 
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState<Tables<'services'>>(service);
+  const [formData, setFormData] = useState<Service>(service);
+  const { updateService, fetchService } = useServices();
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { error } = await putService({
+    await updateService({
       ...formData,
       id: service.id
     });
 
-    if (error) {
-      console.error(`Update Service with payload: ${formData} error`, error);
-      return;
-    } else {
-      fetchDataOnSubmit();
-      setOpen(false);
-    }
+
+    fetchDataOnSubmit();
+    setOpen(false);
+
   };
 
 
@@ -46,7 +45,7 @@ const ServiceDialog: React.FC<ServiceDialogProps> = React.memo(({ service, fetch
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-    const key = name as keyof Tables<'services'>;
+    const key = name as keyof Service;
 
     if (type === 'datetime-local') {
       const d = toInputDateTime(value);

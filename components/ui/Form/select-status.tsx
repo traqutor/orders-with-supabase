@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDownIcon } from 'lucide-react';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import { StatusPill } from '@/components/ui/status_pill';
 import { OrderStatus } from '@/lib/db/schema';
 

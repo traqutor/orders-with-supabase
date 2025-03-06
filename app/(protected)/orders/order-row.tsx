@@ -7,18 +7,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Package } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Tables } from '@/types_db';
 import { StatusPill } from '@/components/ui/status_pill';
 import React from 'react';
 import Link from 'next/link';
 import { getFormatedDate } from '@/utils/time';
 import { ActionPill } from '@/components/ui/action_pill';
 import AvatarProfile from '@/components/profile/avatar-profile';
+import { Order, PinnedOrder } from '@/lib/db/schema';
+import { OrderItem } from '@/lib/db/orders_queries';
 
 
-export function OrderRow(order: any) {
+export function OrderRow(order: OrderItem) {
 
-  const deleteOrderRecord = (order: Tables<'orders'>) => {
+  const deleteOrderRecord = (order: Order) => {
     console.log('Delete orders', order);
   };
 
@@ -34,24 +35,24 @@ export function OrderRow(order: any) {
           {order.title}
         </Link>
       </TableCell>
-      <TableCell className="font-medium">{order.customers.name}</TableCell>
+      <TableCell className="font-medium">{order.customer.name}</TableCell>
       <TableCell>
         <StatusPill
-          key={order.orders_statuses.id}
-          variant={order.orders_statuses.color_hex || 'default' as any}
-          title={order.orders_statuses.title || ''} />
+          key={order.status.id}
+          variant={order.status.color_hex || 'default' as any}
+          title={order.status.title || ''} />
       </TableCell>
       <TableCell className="">
         {getFormatedDate(order.created_at)}
       </TableCell>
       <TableCell className="">
         <div className="flex gap-x-0.5 space-x-2">
-          {order.orders_actions.map((action: Tables<'orders_actions'> & { actions: Tables<'actions'> }) => (
+          {order.orders_actions?.map((order_action) => (
             <ActionPill
-              key={action.actions.id}
-              variant={action.performed ? 'neutral' : action.actions.color_hex || 'default' as any}
-              title={action.actions.title || ''}
-              iconName={action.actions.icon_name || ''}
+              key={order_action.action.id}
+              variant={order_action.performed ? 'neutral' : order_action.action.color_hex || 'default' as any}
+              title={order_action.action.title || ''}
+              iconName={order_action.action.icon_name || ''}
               iconOnly={true}
             />
           ))}
@@ -59,9 +60,9 @@ export function OrderRow(order: any) {
       </TableCell>
       <TableCell className="">
         <div className="flex justify-start">
-          {order.pinned_orders?.map((pin: Tables<'pinned_orders'>) => (
+          {order.pinned_users?.map((pin: PinnedOrder) => (
             <span key={pin.id} className="ml-[-8px]">
-              <AvatarProfile profileId={pin?.user_id} />
+              <AvatarProfile profileId={pin.user_id || ''} />
             </span>
           ))}
         </div>

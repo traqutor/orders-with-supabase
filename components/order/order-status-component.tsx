@@ -3,20 +3,21 @@
 import React, { useEffect, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { StatusPill } from '@/components/ui/status_pill';
-import { Tables } from '@/types_db';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import * as Select from '@radix-ui/react-select';
-import { putOrder } from '@/lib/db/orders_queries';
 import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import { useRouter } from 'next/navigation';
+import { Order, OrderStatus } from '@/lib/db/schema';
+import { useOrders } from '@/lib/client/useOrders';
 
-const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
+const OrderStatusComponent = (props: { order: Order }) => {
 
     const { order } = props;
 
     const router = useRouter();
+    const [selected, setSelected] = useState<OrderStatus>();
     const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
-    const [selected, setSelected] = useState<Tables<'orders_statuses'>>();
+    const { updateOrder: putOrder } = useOrders();
 
     const handleChange = (event: string) => {
       const option = ordersStatuses.find((option) => option.id === event);
@@ -30,16 +31,11 @@ const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
       router.refresh();
     };
 
-    const updateOrder = async (status: Tables<'orders_statuses'>) => {
-      const { error } = await putOrder({
+    const updateOrder = async (status: OrderStatus) => {
+      await putOrder({
         ...mapOrderToFormData(order),
         status_id: status.id
       });
-
-      if (error) {
-        console.error(`Update order with Status: ${status} error`, error);
-        return;
-      }
     };
 
     useEffect(() => {
@@ -51,7 +47,7 @@ const OrderStatusComponent = (props: { order: Tables<'orders'> }) => {
     }, []);
 
     return (
-      <Select.Root value={order.status_id} onValueChange={handleChange}>
+      <Select.Root value={order.status_id || undefined} onValueChange={handleChange}>
 
         <Select.Trigger
           className="flex bg-background  hover:bg-muted rounded cursor-pointer px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

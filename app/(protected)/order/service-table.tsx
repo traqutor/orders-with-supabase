@@ -3,37 +3,31 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ServiceRow } from '@/app/(protected)/order/service-row';
-import { Tables } from '@/types_db';
-import { v4 } from 'uuid';
-import {
-  getServicePositionsForServiceId,
-  postServicePosition,
-  putServicePosition,
-  deleteServicePosition,
-} from '@/lib/db/services_positions_queries';
+
 import { Button } from '@/components/ui/button';
 import { File, LucidePlus } from 'lucide-react';
+import { NewServicePosition, ServicePosition } from '@/lib/db/schema';
+import { useServicesPositions } from '@/lib/client/useServicesPositions';
 
-type ServicePosition = Tables<'services_positions'>
+
 
 export function ServiceTable({ serviceId }: { serviceId: string }) {
 
   const [positions, setPositions] = useState<ServicePosition[]>();
+  const { fetchServicePositions, updateServicePosition, deleteServicePosition, createServicePosition} = useServicesPositions();
 
   useEffect(() => {
     getServicePositions().then();
   }, []);
 
   const getServicePositions = async () => {
-    const { data, error } = await getServicePositionsForServiceId(serviceId);
-    if (error) throw new Error(`Get list of Service Positions for Service Id ${serviceId} error:`, error);
-
+    const data = await fetchServicePositions(serviceId);
+    console.log(data);
     setPositions(data);
   };
 
   const handleAddServicePosition = async () => {
-    const position: ServicePosition = {
-      id: v4(),
+    const position: NewServicePosition = {
       service_id: serviceId,
       car_plate: '',
       is_confirmed: false,
@@ -43,13 +37,13 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
       vehicle_vin: '',
       description: ''
     };
-    await postServicePosition({ ...position });
+    await createServicePosition({ ...position });
     await getServicePositions();
 
   };
 
   const handleUpdatePosition = async (position: ServicePosition) => {
-    await putServicePosition({ ...position });
+    await updateServicePosition({ ...position });
     await getServicePositions();
   };
 

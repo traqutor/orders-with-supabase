@@ -1,7 +1,7 @@
 'use client';
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
-import { Label, useLabels } from '@/lib/db/useLabels';
+import { Label, useLabels } from '@/lib/client/useLabels';
 import { Section } from '@/app/(protected)/settings/section';
 
 import { StatusPill } from '@/components/ui/status_pill';

@@ -1,5 +1,5 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { Label } from '@/lib/db/useLabels';
+import { Label } from '@/lib/client/useLabels';
 
 
 interface LabelsState {

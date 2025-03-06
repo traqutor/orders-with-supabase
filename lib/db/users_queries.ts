@@ -1,5 +1,5 @@
-import { Tables } from '@/types_db';
 import { createClient } from '@/utils/supabase/client';
+import { Profile } from '@/lib/db/schema';
 
 const db = createClient();
 
@@ -39,7 +39,7 @@ const postProfile = async (payload: {
 
 };
 
-const putProfile = async (payload: Tables<'profiles'>) => {
+const putProfile = async (payload: Profile) => {
 
   return db
     .from('profiles')
@@ -48,7 +48,7 @@ const putProfile = async (payload: Tables<'profiles'>) => {
     .select();
 };
 
-const deleteProfile = async (payload: Tables<'profiles'>) => {
+const deleteProfile = async (payload: Profile) => {
 
   return db
     .from('profiles')

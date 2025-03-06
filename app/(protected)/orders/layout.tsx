@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PinIcon, PlusCircle } from 'lucide-react';
 import OrderDialog from '@/app/(protected)/order/order-dialog';
-import { Tables } from '@/types_db';
-import { getOrdersStatuses } from '@/lib/db/orders_statuses';
+import { orders_statuses, OrderStatus } from '@/lib/db/schema';
+import { sBase } from '@/lib/db/db';
+
 
 const title = 'Zamówienia';
 
@@ -13,19 +14,13 @@ export const metadata = {
   title
 };
 
-type OrderStatus = Tables<'orders_statuses'>;
 
 export default async function Layout(
   { children }: { children: React.ReactNode; }) {
 
-  const { data, error } = await getOrdersStatuses();
-
-  if (error) {
-    throw new Error(`Get list of Orders Statuses error:`, error);
-  }
-
-
-  const statuses: OrderStatus[] = data as OrderStatus[];
+  const statuses: OrderStatus[] = await sBase
+    .select()
+    .from(orders_statuses);
 
   return (
     <Tabs defaultValue="tab">

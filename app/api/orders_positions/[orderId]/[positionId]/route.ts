@@ -1,4 +1,4 @@
-import { NewOrderPosition, OrderPosition, orders_positions } from '@/lib/db/schema';
+import { OrderPosition, orders_positions } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
@@ -19,19 +19,6 @@ export async function GET(request: Request,
   });
 }
 
-export async function POST(request: Request,
-                           { params }: { params: Promise<{ positionId: string }> }) {
-  const positionId = (await params).positionId;
-  const position = await request.json() as NewOrderPosition;
-
-  const data = await sBase.insert(orders_positions).values({ ...position, id: positionId });
-
-  return Response.json({
-    status: 'success',
-    code: 200,
-    data: data
-  });
-}
 
 export async function PUT(request: Request,
                           { params }: { params: Promise<{ positionId: string }> }) {

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 import { CustomerRow } from '@/app/(protected)/customers/customer-row';
 import { getData } from '@/utils/helpers';
-import { CustomerItem, CustomersResponse } from '@/app/api/customers/route';
+import { CustomerItem } from '@/app/api/customers/route';
 import { Customer } from '@/lib/db/schema';
 import ClientOrderDialog from '@/app/(protected)/customers/customer-order-dialog';
 
@@ -33,10 +33,10 @@ export function CustomersTable() {
 
 
   useEffect(() => {
-    getData<CustomersResponse<CustomerItem[]>>({ url }).then(response => {
-      setCustomers(response.data);
+    getData<CustomerItem[]>({ url }).then(({ data }) => {
+      setCustomers(data);
     });
-    getData<CustomersResponse<CustomerItem[]>>({ url: urlCounter }).then((response) => {
+    getData<CustomerItem[]>({ url: urlCounter }).then((response) => {
       setTotal(response.data.length);
     });
   }, [offset, query]);

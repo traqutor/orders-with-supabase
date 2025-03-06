@@ -15,10 +15,10 @@ export const getURL = (path: string = '') => {
   url = url.replace(/\/+$/, '');
   // Make sure to include `https://` when not localhost.
   url = url.includes('http') ? url : `https://${url}`;
-  // Ensure api starts without a slash to avoid double slashes in the final URL.
+  // Ensure client starts without a slash to avoid double slashes in the final URL.
   path = path.replace(/^\/+/, '');
 
-  // Concatenate the URL and the api.
+  // Concatenate the URL and the client.
   return path ? `${url}/${path}` : url;
 };
 

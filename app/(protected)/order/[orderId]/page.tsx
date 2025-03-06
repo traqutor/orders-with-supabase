@@ -1,6 +1,5 @@
 import React from 'react';
 import { ArrowBigLeft, Notebook } from 'lucide-react';
-import { getOrderById } from '@/lib/db/orders_queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
@@ -13,8 +12,11 @@ import { Button } from '@/components/ui/button';
 import OrderActionsComponent from '@/components/order/order-actions-component';
 import OrderStatusComponent from '@/components/order/order-status-component';
 import PinButton from '@/app/(protected)/order/pin-button';
-import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { sBase } from '@/lib/db/db';
+import { Order, orders, profiles } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm/sql/expressions/conditions';
+
 
 export default async function OrderPage(
   props: {
@@ -22,11 +24,9 @@ export default async function OrderPage(
   }
 ) {
 
-  const supabase = await createClient();
-
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  const user = await sBase
+    .select()
+    .from(profiles);
 
   if (!user) {
     return redirect('/sign-in');
@@ -34,9 +34,12 @@ export default async function OrderPage(
 
   const { orderId } = await props.params;
 
-  const { order } = await getOrderById(
-    orderId
-  );
+  const response = await sBase
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId));
+
+  const order: Order = response[0];
 
   return (
     <Tabs defaultValue="contact">
@@ -68,7 +71,7 @@ export default async function OrderPage(
             <CardHeader>
               <div className="flex justify-start items-center gap-2">
 
-                <PinButton order={order} userId={user.id} />
+                <PinButton order={order} userId={user[0].id} />
 
                 <CardTitle>{order.title}</CardTitle>
               </div>

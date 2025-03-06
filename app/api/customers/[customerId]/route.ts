@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
 import { sBase } from '@/lib/db/db';
 
-import { Customer, customers, NewCustomer } from '@/lib/db/schema';
+import { Customer, customers } from '@/lib/db/schema';
 
 export async function GET(request: Request,
                           { params }: { params: Promise<{ customerId: string }> }) {

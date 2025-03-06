@@ -14,7 +14,7 @@ export async function GET() {
 
 
 export async function POST(request: Request) {
-  const customer_type = await request.json() as NewCustomerType;
+  const customer_type = await request.json() as CustomerType;
   const data = await sBase.insert(customers_types).values({ ...customer_type });
 
   return Response.json({

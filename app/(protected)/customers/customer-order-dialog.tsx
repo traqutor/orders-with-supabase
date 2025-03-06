@@ -10,8 +10,8 @@ import * as Form from '@radix-ui/react-form';
 import { useRouter } from 'next/navigation';
 import SelectStatus from '@/components/ui/Form/select-status';
 import { Customer, Order } from '@/lib/db/schema';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
 import { postData } from '@/utils/helpers';
+import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 
 
 interface CustomerOrderCreateDialogProps {
@@ -49,15 +49,15 @@ const ClientOrderDialog: React.FC<CustomerOrderCreateDialogProps> = React.memo((
     event.preventDefault();
     event.stopPropagation();
 
-    const { error } = await postData<Order>({
+    const response = await postData<Order>({
       url: `/api/orders`, data: {
         ...formData,
         id: v4()
       }
     });
 
-    if (error) {
-      throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
+    if (response.status !== 'success') {
+      throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
     }
 
     onToggleOpen(customer);

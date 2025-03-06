@@ -1,16 +1,19 @@
-import { orders } from '@/lib/db/schema';
-import { sBase } from '@/lib/db/db';
+import { NextRequest } from 'next/server';
+import { getOrders } from '@/lib/db/orders_queries';
 
 
-export async function GET() {
-  const data = await sBase
-    .select()
-    .from(orders)
-    .orderBy(orders.seq);
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const offsetPage = Number(searchParams.get('offset')) || 1;
+  const queryText = searchParams.get('query') || '';
+
+  const { orders } = await getOrders({ offsetPage, queryText });
 
   return Response.json({
     status: 'success',
     code: 200,
-    data: data
+    data: orders
   });
 }
+
+

@@ -5,20 +5,13 @@ import { Section } from '@/app/(protected)/settings/section';
 import { StatusPill } from '@/components/ui/status_pill';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useOrdersStatuses } from '@/lib/db/useOrdersStatuses';
+import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
-import { Tables } from '@/types_db';
+import { OrderStatus } from '@/lib/db/schema';
 
-import {
-  deleteOrderStatus as onDelete,
-  postOrderStatus as onPost,
-  putOrderStatus as onPut
-} from '@/lib/db/orders_statuses';
 
-type LocalItem = Tables<'orders_statuses'>
-
-const EMPTY_ITEM: LocalItem = {
+const EMPTY_ITEM: OrderStatus = {
   id: '',
   color_hex: '',
   title: ''
@@ -27,15 +20,21 @@ const EMPTY_ITEM: LocalItem = {
 
 export function SectionOrdersStatuses() {
 
-  const { ordersStatuses: items, fetchOrdersStatuses: onFetch } = useOrdersStatuses();
-  const [formData, setFormData] = useState<LocalItem>({ ...EMPTY_ITEM });
+  const {
+    ordersStatuses,
+    fetchOrdersStatuses,
+    createOrderStatus,
+    updateOrderStatus,
+    deleteOrderStatus
+  } = useOrdersStatuses();
+  const [formData, setFormData] = useState<OrderStatus>({ ...EMPTY_ITEM });
 
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    const key = name as keyof LocalItem;
+    const key = name as keyof OrderStatus;
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -49,16 +48,16 @@ export function SectionOrdersStatuses() {
 
     if (formData)
       if (formData.id === 'new') {
-        await onPost({ ...formData, id: v4() });
+        await createOrderStatus({ ...formData, id: v4() });
       } else {
-        await onPut({ ...formData });
+        await updateOrderStatus({ ...formData });
       }
 
-    await onFetch();
+    await fetchOrdersStatuses();
     setFormData({ ...EMPTY_ITEM });
   };
 
-  const handleClick = (item: LocalItem) => {
+  const handleClick = (item: OrderStatus) => {
     setFormData(item);
   };
 
@@ -73,7 +72,7 @@ export function SectionOrdersStatuses() {
 
   const handleDelete = async () => {
     if (formData.id !== '') {
-      await onDelete(formData);
+      await deleteOrderStatus(formData);
       handleCancel();
     }
   };
@@ -84,7 +83,7 @@ export function SectionOrdersStatuses() {
 
       <div className="flex-col p-2 items-center">
         <div className="flex flex-wrap gap-2">
-          {items.map(b =>
+          {ordersStatuses.map(b =>
             <StatusPill
               onClick={() => handleClick(b)}
               key={b.id}

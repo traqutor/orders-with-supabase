@@ -3,36 +3,29 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
-import {
-  Clock,
-  FilePlus,
-  IdCardIcon,
-  LucidePlus,
-  MailIcon,
-  PackagePlusIcon,
-  PhoneIcon,
-  UserCircle2
-} from 'lucide-react';
+import { Clock, FilePlus, IdCardIcon, MailIcon, PackagePlusIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
-import { Tables } from '@/types_db';
 import { v4 } from 'uuid';
-import { putOrder } from '@/lib/db/orders_queries';
 import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
-import { getInvoiceByInvoiceId, postInvoice } from '@/lib/db/invoices_queries';
 import InvoiceDialog from '@/app/(protected)/order/invoice-dialog';
 import { getShipmentByShipmentId, postShipment } from '@/lib/db/shipment_queries';
 import ShipmentDialog from '@/app/(protected)/order/shipment-dialog';
 import { getFormatedDate } from '@/utils/time';
 import { useRouter } from 'next/navigation';
+import { Invoice, Shipment } from '@/lib/db/schema';
+import { useInvoices } from '@/lib/client/useInvoices';
+import { useOrders } from '@/lib/client/useOrders';
 
 
 export function InvoiceContentTab({ order }: any) {
 
-
-  const [invoice, setInvoice] = useState<Tables<'invoices'>>();
-  const [shipment, setShipment] = useState<Tables<'shipments'>>();
+  const [invoice, setInvoice] = useState<Invoice>();
+  const [shipment, setShipment] = useState<Shipment>();
   const router = useRouter();
+
+  const { fetchInvoice, createInvoice } = useInvoices();
+  const { updateOrder } = useOrders();
 
   useEffect(() => {
     getInvoice().then();
@@ -44,10 +37,9 @@ export function InvoiceContentTab({ order }: any) {
       return;
     }
 
-    const { data, error } = await getInvoiceByInvoiceId(order.invoice_id);
-    if (error) throw new Error(`Get Service for Order Service Id ${order.service_id} error:`, error);
+    const invoice = await fetchInvoice(order.invoice_id);
 
-    setInvoice(data);
+    setInvoice(invoice);
   };
 
   const getShipment = async () => {
@@ -62,7 +54,7 @@ export function InvoiceContentTab({ order }: any) {
   };
 
   const handleAddInvoice = async () => {
-    const payload: Tables<'invoices'> = {
+    const payload: Invoice = {
       id: v4(),
       address: order.address,
       invoice_number: '',
@@ -80,26 +72,24 @@ export function InvoiceContentTab({ order }: any) {
       email: order.name
     };
 
-    const { data, error } = await postInvoice(payload);
+    const invoice = await createInvoice(payload);
 
-    if (error) throw new Error(`Create Invoice for ${payload} error:`, error);
 
-    const { error: orderError } = await putOrder(
+    await updateOrder(
       {
         ...mapOrderToFormData(order),
-        invoice_id: data.id
+        invoice_id: invoice.id
       }
     );
 
-    if (orderError) throw new Error(`Update Order for Invoice Id ${data.id} error:`, orderError);
 
-    setInvoice(data);
+    setInvoice(invoice);
 
     router.refresh();
   };
 
   const handleAddShipment = async () => {
-    const payload: Tables<'shipments'> = {
+    const payload: Shipment = {
       id: v4(),
       address: order.address,
       due_at: new Date().toISOString(),
@@ -112,14 +102,13 @@ export function InvoiceContentTab({ order }: any) {
 
     if (error) throw new Error(`Create Shipment for ${payload} error:`, error);
 
-    const { error: orderError } = await putOrder(
+    await updateOrder(
       {
         ...mapOrderToFormData(order),
         shipment_id: data.id
       }
     );
 
-    if (orderError) throw new Error(`Update Order for Shipment Id ${data.id} error:`, orderError);
 
     setShipment(data);
   };
@@ -235,7 +224,7 @@ export function InvoiceContentTab({ order }: any) {
         </Card> :
         <div>
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleAddInvoice}>
-            <FilePlus className="h-5 w-5 min-h-5 min-w-5"/>
+            <FilePlus className="h-5 w-5 min-h-5 min-w-5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Dodaj Fakturę
             </span>

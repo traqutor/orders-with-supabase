@@ -3,11 +3,9 @@
 import { CheckIcon, Save } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React, { useState } from 'react';
-import { Tables } from '@/types_db';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
 import * as Checkbox from '@radix-ui/react-checkbox';
-
-type OrderPosition = Tables<'orders_positions'>
+import { OrderPosition } from '@/lib/db/schema';
 
 export function PositionRow(props: {
                               position: OrderPosition,
@@ -39,7 +37,6 @@ export function PositionRow(props: {
       [name]: value === '' ? null : value
     }));
     setIsChanged(true);
-    onUpdatePosition(formData);
   };
 
   const handleOptimaChange = (value: boolean) => {
@@ -60,7 +57,7 @@ export function PositionRow(props: {
         <input
           type="text"
           name="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={handleChange}
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         />
@@ -129,7 +126,7 @@ export function PositionRow(props: {
           <Checkbox.Root onCheckedChange={handleOptimaChange}
                          className="flex size-[18px] appearance-none items-center justify-center rounded bg-white shadow-[0_2px_10px]  outline-none hover:bg-green-50 focus:shadow-[0_0_0_2px_black]"
                          defaultChecked={false}
-                         checked={formData.is_optima}
+                         checked={formData.is_optima || false}
           >
             <Checkbox.Indicator className="CheckboxIndicator">
               <CheckIcon className="h-4" />

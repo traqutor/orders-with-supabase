@@ -2,7 +2,7 @@
 
 import { Check, ChevronDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useCustomers } from '@/lib/db/useCustomers';
+import { useCustomers } from '@/lib/client/useCustomers';
 
 import * as Popover from '@radix-ui/react-popover';
 import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';

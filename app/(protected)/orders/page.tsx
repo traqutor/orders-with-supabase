@@ -1,26 +1,24 @@
 import { OrdersTable } from './orders-table';
 import { getOrders } from '@/lib/db/orders_queries';
 
+
 export default async function OrdersPage(
   props: {
-    searchParams: Promise<{ q: string; offset: string }>;
+    searchParams: Promise<{ query: string; offset: string }>;
   }
 ) {
 
   const searchParams = await props.searchParams;
-  const search = searchParams.q ?? '';
-  const offset = searchParams.offset ?? 0;
+  const offsetPage = Number(searchParams.offset) || 1;
+  const queryText = searchParams.query;
 
 
-  const { orders, newOffset, totalOrdersCounter } = await getOrders(
-    search,
-    Number(offset)
-  );
+  const { orders, totalOrdersCounter } = await getOrders({ offsetPage, queryText });
 
   return (
     <OrdersTable
       orders={orders}
-      offset={newOffset ?? 0}
+      offset={offsetPage}
       totalProducts={totalOrdersCounter}
     />
   );

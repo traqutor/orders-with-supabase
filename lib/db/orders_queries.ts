@@ -74,14 +74,15 @@ function buildQuery<T extends PgSelect>(qb: T, params: qParams) {
 async function getDistinctOrdersIds(params: qParams): Promise<string[]> {
 
   let query = sBase
-    .select()
+    .selectDistinctOn([orders.seq],{id: orders.id})
     .from(orders)
+    .leftJoin(pinned_orders, eq(orders.id, pinned_orders.order_id))
     .orderBy(desc(orders.seq))
     .$dynamic();
 
   query = buildQuery(query, params);
 
-  const ordersIds: Order [] = await (query);
+  const ordersIds = await (query);
 
   return ordersIds.map(o => o.id);
 }
@@ -186,4 +187,75 @@ const getOrders = async ({ offsetPage, queryText, pinnedUserId, statusId }: {
 };
 
 
-export { getOrders };
+const getOrder = async ( orderId:string): Promise<OrderItem> => {
+
+  let query = sBase
+    .select({
+      orders,
+      pinned_orders,
+      orders_statuses,
+      orders_actions,
+      actions,
+      customers
+    })
+    .from(orders)
+    .leftJoin(pinned_orders, eq(orders.id, pinned_orders.order_id))
+    .leftJoin(orders_statuses, eq(orders.status_id, orders_statuses.id))
+    .leftJoin(orders_actions, eq(orders.id, orders_actions.order_id))
+    .leftJoin(actions, eq(orders_actions.action_id, actions.id))
+    .leftJoin(customers, eq(orders.customer_id, customers.id))
+    .where(eq(orders.id, orderId))
+
+
+
+  const data = await (query);
+
+
+  // Finally rebuild query result to proper OrderItem array
+  const ordersMap = new Map();
+
+  data.forEach((row) => {
+
+    if (!ordersMap.has(row.orders.id)) {
+      ordersMap.set(row.orders.id, {
+        ...row.orders,
+        status: { ...row.orders_statuses },
+        customer: { ...row.customers },
+        orders_actions: new Map(),
+        pinned_users: new Map()
+      });
+    }
+
+
+    if (row.orders_actions?.order_id) {
+      if (!ordersMap.get(row.orders.id).orders_actions.has(row.orders_actions.action_id)) {
+        ordersMap.get(row.orders.id).orders_actions.set(row.orders_actions.action_id, {
+          ...row.orders_actions,
+          action: { ...row.actions }
+        });
+      }
+    }
+
+    if (row.pinned_orders?.order_id) {
+      if (!ordersMap.get(row.orders.id).pinned_users.has(row.pinned_orders.user_id)) {
+        ordersMap.get(row.orders.id).pinned_users.set(row.pinned_orders.user_id, {
+          ...row.pinned_orders
+        });
+      }
+    }
+
+  });
+
+  const items: OrderItem[] = Array.from(ordersMap.values());
+
+  const ordersItems = items.map((o) => {
+      const pinned: PinnedOrder[] = o.pinned_users ? [...o.pinned_users.values()] : [];
+      const actions: OrderActionItem[] = [...o.orders_actions.values()];
+      return { ...o, pinned_users: pinned, orders_actions: actions };
+    }
+  );
+
+  return ordersItems[0] ;
+};
+
+export { getOrders, getOrder };

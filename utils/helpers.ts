@@ -41,7 +41,7 @@ export const getData = async <T>(
 };
 
 export const postData = async <T>(
-  { url, data }: { url: string; data?: T }) : Promise<apiRequestResponse<T>> => {
+  { url, data }: { url: string; data: T }) : Promise<apiRequestResponse<T>> => {
 
   const res = await fetch(url, {
     method: 'POST',

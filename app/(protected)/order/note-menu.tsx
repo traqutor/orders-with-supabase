@@ -1,22 +1,22 @@
 'use client';
 
+import React from 'react';
 import * as Menubar from '@radix-ui/react-menubar';
 import { EditIcon, MoreVertical, Paperclip, PinIcon } from 'lucide-react';
-import React from 'react';
-import { Tables } from '@/types_db';
-import { deleteNote, putNote } from '@/lib/db/notes';
 import { useRouter } from 'next/navigation';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
 import NoteDialog from '@/app/(protected)/order/note-dialog';
-import { createClient } from '@/utils/supabase/client';
+import { Note } from '@/lib/db/schema';
+import { useNotes } from '@/lib/client/useNotes';
 
 export const NoteMenu = (
   props: {
-    note: Tables<'notes'>,
+    note: Note,
     onAttachmentChange: () => void,
   }) => {
 
   const router = useRouter();
+  const { updateNote, deleteNote } = useNotes();
 
   const { note, onAttachmentChange } = props;
 
@@ -24,14 +24,10 @@ export const NoteMenu = (
 
     event.preventDefault();
 
-    const { error } = await putNote({
+    await updateNote({
       ...note,
       pin: !note.pin
     });
-
-    if (error) {
-      throw new Error(`Pin note error: ${JSON.stringify(error)}`);
-    }
 
     router.refresh();
 
@@ -40,46 +36,30 @@ export const NoteMenu = (
 
   const handleEdit = async (event: Event) => {
     event.preventDefault();
-    const { error } = await putNote({
+    await updateNote({
       ...note
     });
 
-    if (error) {
-      throw new Error(`Edit note error: ${JSON.stringify(error)}`);
-    }
-
     router.refresh();
-
   };
 
 
   const handleDelete = async () => {
-    const { error } = await deleteNote({
+    await deleteNote({
       ...note
     });
 
-    if (error) {
-      throw new Error(`Delete note error: ${JSON.stringify(error)}`);
-    }
 
     router.refresh();
   };
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const supabase = createClient();
 
     const { files } = event.target;
 
     if (!files || !files.length) return false;
 
-    const { error } = await supabase
-      .storage
-      .from('attachments')
-      .upload(`private/${note.id}/${files[0].name}`, files[0]);
 
-    if (error) {
-      throw new Error(`Upload file error: ${JSON.stringify(error)}`);
-    }
 
     onAttachmentChange();
   };

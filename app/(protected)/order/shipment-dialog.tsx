@@ -2,41 +2,37 @@
 
 import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Edit2, Package, SaveIcon, XIcon } from 'lucide-react';
+import { Package, SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as Form from '@/components/ui/form';
-
-import { Tables } from '@/types_db';
+import { Shipment } from '@/lib/db/schema';
+import { useShipments } from '@/lib/client/useShipments';
 import { toInputDate, toInputDateTime } from '@/utils/time';
-import { putShipment } from '@/lib/db/shipment_queries';
 
 
 interface ShipmentDialogProps {
-  shipment: Tables<'shipments'>;
+  shipment: Shipment;
   fetchDataOnSubmit: () => void;
 }
 
 const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fetchDataOnSubmit }) => {
 
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState<Tables<'shipments'>>(shipment);
+  const [formData, setFormData] = useState<Shipment>(shipment);
+  const { updateShipment } = useShipments();
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { error } = await putShipment({
+    await updateShipment({
       ...formData,
       id: shipment.id
     });
 
-    if (error) {
-      console.error(`Update Invoice with payload: ${formData} error`, error);
-      return;
-    } else {
-      fetchDataOnSubmit();
-      setOpen(false);
-    }
+
+    fetchDataOnSubmit();
+    setOpen(false);
   };
 
 
@@ -44,7 +40,7 @@ const ShipmentDialog: React.FC<ShipmentDialogProps> = React.memo(({ shipment, fe
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    const key = name as keyof Tables<'shipments'>;
+    const key = name as keyof Shipment;
 
     if (type === 'date') {
       const d = toInputDateTime(value);

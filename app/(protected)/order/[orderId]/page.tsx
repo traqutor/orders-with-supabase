@@ -14,8 +14,8 @@ import OrderStatusComponent from '@/components/order/order-status-component';
 import PinButton from '@/app/(protected)/order/pin-button';
 import { redirect } from 'next/navigation';
 import { sBase } from '@/lib/db/db';
-import { Order, orders, profiles } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm/sql/expressions/conditions';
+import { Order, profiles } from '@/lib/db/schema';
+import { getOrder, OrderItem } from '@/lib/db/orders_queries';
 
 
 export default async function OrderPage(
@@ -34,12 +34,8 @@ export default async function OrderPage(
 
   const { orderId } = await props.params;
 
-  const response = await sBase
-    .select()
-    .from(orders)
-    .where(eq(orders.id, orderId));
 
-  const order: Order = response[0];
+  const order: OrderItem = await getOrder(orderId);
 
   return (
     <Tabs defaultValue="contact">
@@ -64,6 +60,7 @@ export default async function OrderPage(
       </div>
       <div
         className="mt-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+        {order &&
         <Card className="flex">
           <div className="flex-auto w-8/12">
 
@@ -115,7 +112,7 @@ export default async function OrderPage(
               <NotesList orderId={orderId} />
             </div>
           </div>
-        </Card>
+        </Card>}
       </div>
 
     </Tabs>

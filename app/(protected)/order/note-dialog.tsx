@@ -1,26 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Form from '@radix-ui/react-form';
 import { SaveIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tables } from '@/types_db';
-import { useRouter } from 'next/navigation';
-import { postNote } from '@/lib/db/notes';
+import { Note } from '@/lib/db/schema';
+import { useNotes } from '@/lib/client/useNotes';
 
 type ButtonProps = React.HTMLProps<HTMLButtonElement>
 
 const NoteDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
-  { orderId: string, note?: Tables<'notes'> }>(
+  { orderId: string, note?: Note }>(
   (props, ref) => {
     const { orderId, note } = props;
 
     const [open, setOpen] = useState(false);
-
+    const { createNote } = useNotes();
 
     const [message, setMessage] = useState(Object.assign({}, note).message || '');
-    const [pin, setPin] = useState(false);
     const router = useRouter();
 
 
@@ -28,24 +28,19 @@ const NoteDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
       event.preventDefault();
       event.preventDefault();
 
-      const payload = { ...note } as Tables<'notes'>;
+      const payload = { ...note } as Note;
 
 
-      const { error } = await postNote({
+      await createNote({
         ...payload,
         order_id: orderId,
         message,
-        pin
+        pin: false
       });
 
 
-      if (error) {
-        console.error('error', error);
-        return;
-      } else {
-        setOpen(false);
-        router.push(`/order/${orderId}`);
-      }
+      router.push(`/order/${orderId}`);
+
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

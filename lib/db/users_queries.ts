@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/client';
-import { Profile } from '@/lib/db/schema';
+import { NewProfile, Profile } from '@/lib/db/schema';
 
 const db = createClient();
 
@@ -13,28 +13,10 @@ const getProfiles = async () => {
 };
 
 
-const postProfile = async (payload: {
-  email: string,
-  password: string,
-  first_name: string,
-  last_name: string,
-  phone: string
-}) => {
+const postProfile = async (payload: NewProfile) => {
 
 
-  return db.auth.signUp(
-    {
-      email: payload.email,
-      password: payload.password,
-      options: {
-        data: {
-          first_name: payload.first_name,
-          last_name: payload.last_name,
-          phone_number: payload.phone
-        }
-      }
-    }
-  );
+  console.log('postProfile', payload);
 
 
 };

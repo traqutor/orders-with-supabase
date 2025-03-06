@@ -72,7 +72,7 @@ export function OrdersTable({
           <div className="text-xs text-muted-foreground">
             Widoczne {' '}
             <strong>
-              {Math.max(0, Math.min((offset - 1) * productsPerPage, totalProducts) + 1)}-{offset * productsPerPage}
+              {Math.max(0, Math.min((offset - 1) * productsPerPage, totalProducts) + 1)}-{Math.min(offset * productsPerPage, totalProducts)}
             </strong>{' '}
             z <strong>{totalProducts}</strong> zamówień
           </div>
@@ -93,7 +93,7 @@ export function OrdersTable({
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset*productsPerPage > totalProducts}
+              disabled={offset * productsPerPage > totalProducts}
             >
               Dalej
               <ChevronRight className="ml-2 h-4 w-4" />

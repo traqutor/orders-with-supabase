@@ -7,15 +7,16 @@ import { Clock, FilePlus, IdCardIcon, MailIcon, PackagePlusIcon, PhoneIcon, User
 import { Button } from '@/components/ui/button';
 import { PositionsTable } from '@/app/(protected)/order/positions-table';
 import { v4 } from 'uuid';
-import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
+
 import InvoiceDialog from '@/app/(protected)/order/invoice-dialog';
-import { getShipmentByShipmentId, postShipment } from '@/lib/db/shipment_queries';
+
 import ShipmentDialog from '@/app/(protected)/order/shipment-dialog';
 import { getFormatedDate } from '@/utils/time';
 import { useRouter } from 'next/navigation';
 import { Invoice, Shipment } from '@/lib/db/schema';
 import { useInvoices } from '@/lib/client/useInvoices';
 import { useOrders } from '@/lib/client/useOrders';
+import { useShipments } from '@/lib/client/useShipments';
 
 
 export function InvoiceContentTab({ order }: any) {
@@ -25,11 +26,12 @@ export function InvoiceContentTab({ order }: any) {
   const router = useRouter();
 
   const { fetchInvoice, createInvoice } = useInvoices();
+  const { fetchShipment, updateShipment, deleteShipment, createShipment } = useShipments();
   const { updateOrder } = useOrders();
 
   useEffect(() => {
-    getInvoice().then();
-    getShipment().then();
+    getInvoice();
+    getShipment();
   }, []);
 
   const getInvoice = async () => {
@@ -47,10 +49,9 @@ export function InvoiceContentTab({ order }: any) {
       return;
     }
 
-    const { data, error } = await getShipmentByShipmentId(order.shipment_id);
-    if (error) throw new Error(`Get Shipment for Order Shipment Id ${order.shipment_id} error:`, error);
+    const data = await fetchShipment(order.shipment_id);
 
-    setShipment(data);
+    setShipment(data[0]);
   };
 
   const handleAddInvoice = async () => {
@@ -74,16 +75,15 @@ export function InvoiceContentTab({ order }: any) {
 
     const invoice = await createInvoice(payload);
 
-
     await updateOrder(
       {
-        ...mapOrderToFormData(order),
-        invoice_id: invoice.id
+        ...order,
+        invoice_id: invoice[0].id
       }
     );
 
 
-    setInvoice(invoice);
+    setInvoice(invoice[0]);
 
     router.refresh();
   };
@@ -98,19 +98,18 @@ export function InvoiceContentTab({ order }: any) {
       phone: order.phone
     };
 
-    const { data, error } = await postShipment(payload);
+    const data = await createShipment(payload);
 
-    if (error) throw new Error(`Create Shipment for ${payload} error:`, error);
 
     await updateOrder(
       {
-        ...mapOrderToFormData(order),
-        shipment_id: data.id
+        ...order,
+        shipment_id: data[0].id
       }
     );
 
 
-    setShipment(data);
+    setShipment(data[0]);
   };
 
   return (

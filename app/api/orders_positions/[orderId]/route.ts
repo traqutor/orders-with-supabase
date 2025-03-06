@@ -10,7 +10,8 @@ export async function GET(request: Request,
   const data = await sBase
     .select()
     .from(orders_positions)
-    .where(eq(orders_positions.order_id, orderId));
+    .where(eq(orders_positions.order_id, orderId))
+    .orderBy(orders_positions.order_id);
 
   return Response.json({
     status: 'success',

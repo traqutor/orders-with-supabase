@@ -11,7 +11,7 @@ import { v4 } from 'uuid';
 
 export const actions = pgTable('actions', {
   id: text('id').primaryKey(),
-  title: text(),
+  title: text().notNull(),
   color_hex: text(),
   icon_name: text(),
   note_info: text(),
@@ -20,6 +20,20 @@ export const actions = pgTable('actions', {
 
 export type NewAction = typeof actions.$inferInsert;
 export type Action = typeof actions.$inferSelect;
+
+
+/**
+ *  Notes Attachments
+ **/
+
+export const notes_attachments = pgTable('notes_attachments', {
+  id: text('id').primaryKey().default(v4()),
+  name: text().notNull(),
+  mimetype: text().notNull(),
+  note_id: text().notNull(),
+});
+export type NewNoteAttachment = typeof notes_attachments.$inferInsert;
+export type NoteAttachment = typeof notes_attachments.$inferSelect;
 
 /**
  * Labels
@@ -58,6 +72,7 @@ export type Label = typeof labels.$inferSelect;
  * Notes
  */
 export const notes = pgTable('notes', {
+  id: text().primaryKey().default(v4()),
   created_at: text(),
   created_by: text(),
   message: text(),
@@ -65,7 +80,6 @@ export const notes = pgTable('notes', {
   bg_color: text(),
   text_color: text(),
   pin: boolean(),
-  id: text().primaryKey(),
   is_system: text(),
   seq: integer()
 });
@@ -77,7 +91,7 @@ export type Note = typeof notes.$inferSelect;
  * Shipments
  */
 export const shipments = pgTable('shipments', {
-  id: text().primaryKey(),
+  id: text().primaryKey().default(v4()),
   contact: text(),
   phone: text(),
   email: text(),
@@ -132,11 +146,14 @@ export type ServicePosition = typeof services_positions.$inferSelect;
  * Profiles *
  */
 export const profiles = pgTable('profiles', {
-  id: text().primaryKey(),
-  full_name: text(),
+  id: text().primaryKey().default(v4()),
+  first_name: text(),
   avatar_url: text(),
   is_disabled: boolean(),
-  email: text()
+  email: text(),
+  phone: text(),
+  last_name: text(),
+  hash: text(),
 });
 
 export type NewProfile = typeof profiles.$inferInsert;
@@ -217,7 +234,7 @@ export type OrderAction = typeof orders_actions.$inferSelect;
  * Orders Actions
  **/
 export const orders = pgTable('orders', {
-  id: text().primaryKey(),
+  id: text().primaryKey().default(v4()),
   created_at: text(),
   created_by: text(),
   title: text(),

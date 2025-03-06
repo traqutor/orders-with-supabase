@@ -5,16 +5,20 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import { ServiceRow } from '@/app/(protected)/order/service-row';
 
 import { Button } from '@/components/ui/button';
-import { File, LucidePlus } from 'lucide-react';
+import { LucidePlus } from 'lucide-react';
 import { NewServicePosition, ServicePosition } from '@/lib/db/schema';
 import { useServicesPositions } from '@/lib/client/useServicesPositions';
-
 
 
 export function ServiceTable({ serviceId }: { serviceId: string }) {
 
   const [positions, setPositions] = useState<ServicePosition[]>();
-  const { fetchServicePositions, updateServicePosition, deleteServicePosition, createServicePosition} = useServicesPositions();
+  const {
+    fetchServicePositions,
+    updateServicePosition,
+    deleteServicePosition,
+    createServicePosition
+  } = useServicesPositions();
 
   useEffect(() => {
     getServicePositions().then();
@@ -22,7 +26,6 @@ export function ServiceTable({ serviceId }: { serviceId: string }) {
 
   const getServicePositions = async () => {
     const data = await fetchServicePositions(serviceId);
-    console.log(data);
     setPositions(data);
   };
 

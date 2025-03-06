@@ -1,79 +1,50 @@
 'use client';
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { DeleteIcon, File, PinIcon } from 'lucide-react';
-import { Tables } from '@/types_db';
 import { DateTime } from 'luxon';
 import cn from 'clsx';
 import { useRouter } from 'next/navigation';
 import { NoteMenu } from '@/app/(protected)/order/note-menu';
-import { putNote } from '@/lib/db/notes';
 import NoteDialog from '@/app/(protected)/order/note-dialog';
 import AvatarProfile from '@/components/profile/avatar-profile';
-import { createClient } from '@/utils/supabase/client';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
+import { Note, NoteAttachment } from '@/lib/db/schema';
+import { useNotes } from '@/lib/client/useNotes';
+import { useNotesAttachments } from '@/lib/client/useNotesAttachments';
 
-
-type Attachment = { id: string, name: string, mimetype: string };
-
-const Note = (
+const NoteComponent = (
   props:
-  { note: Tables<'notes'> }) => {
-  const supabase = createClient();
+  { note: Note }) => {
   const { note: item } = props;
+  const [attachments, setAttachments] = useState<NoteAttachment[]>();
   const router = useRouter();
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-
-  useEffect(() => {
-    getNoteAttachments().then();
-  }, [item]);
+  const { updateNote } = useNotes();
+  const {
+    fetchNotesAttachments,
+    updateNoteAttachment,
+    deleteNoteAttachment,
+    createNoteAttachment
+  } = useNotesAttachments();
 
   const handlePin = async () => {
-    const { error } = await putNote({
+    await updateNote({
       ...item,
       pin: !item.pin
     });
-
-    if (error) {
-      throw new Error(`Pin note error ${JSON.stringify(error)}`);
-    }
 
     router.refresh();
   };
 
   const getNoteAttachments = async () => {
-
-    const { data, error } = await supabase
-      .storage
-      .from('attachments')
-      .list(`private/${item.id}/`);
-
-    if (error) {
-      throw new Error(`Getting note attachments error ${JSON.stringify(error)}`);
-    }
-
-    if (data.length > 0) {
-      setAttachments(data?.map(attachment => {
-        return {
-          id: attachment.id,
-          name: attachment.name,
-          mimetype: attachment.metadata.mimetype
-        };
-      }));
-    }
+    const attachments = await fetchNotesAttachments(item.id);
+    setAttachments(attachments);
   };
 
-  const handleDownloadFile = async (attachment: Attachment) => {
-    const { data, error } = await supabase
-      .storage
-      .from('attachments')
-      .download(`private/${item.id}/${attachment.name}`);
+  const handleDownloadFile = async (attachment: NoteAttachment) => {
 
-    if (error) {
-      throw new Error(`Getting note attachments error ${JSON.stringify(error)}`);
-    }
 
-    const url = URL.createObjectURL(data);
+    const url = '';
 
     // Create an anchor element and trigger a download
     const a = document.createElement('a');
@@ -88,8 +59,8 @@ const Note = (
 
   };
 
-  const handleDeleteNotesAttachments = async (attachments: Attachment[]) => {
-    await supabase.storage.from('attachments').remove([...attachments.map(a => `private/${item.id}/${a.name}`)]);
+  const handleDeleteNotesAttachments = async (attachments: NoteAttachment[]) => {
+
     await getNoteAttachments();
   };
 
@@ -127,7 +98,7 @@ const Note = (
                   <span>Dodał:</span>
                   <AvatarProfile profileId={item.created_by} />
                 </div>
-                <span>{DateTime.fromISO(item.created_at).toFormat('dd-MM-yyyy hh:mm')}</span>
+                <span>{DateTime.fromISO(item.created_at || '').toFormat('dd-MM-yyyy hh:mm')}</span>
               </div>
               <div>
                 {item &&
@@ -141,7 +112,7 @@ const Note = (
           </div>
         </div>
 
-        {attachments.length > 0 && (
+        {attachments && (
           <ul className={'flex flex-col w-full mt-7'}>
             {attachments.map(attachment => (
               <li
@@ -152,7 +123,7 @@ const Note = (
                   onClick={() => handleDownloadFile(attachment)}
                   className="flex justify-start items-center  w-[200px] gap-2">
                   <span className="w-[24px]">
-                  {attachment.mimetype.includes('image') ?
+                  {attachment.mime_type?.includes('image') ?
                     <img
                       className={'h-5 w-5 rounded-sm inline-flex'}
                       src={`https://grokxcrznknfvpnzpmuk.supabase.co/storage/v1/object/public/attachments/private/${item.id}/${attachment.name}`}
@@ -184,4 +155,4 @@ const Note = (
   );
 };
 
-export default Note;
+export default NoteComponent;

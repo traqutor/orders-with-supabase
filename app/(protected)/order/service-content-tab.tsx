@@ -52,7 +52,6 @@ export function ServiceContentTab({ order }: any) {
     const serviceData = await createService(payload);
 
     if (serviceData) {
-      console.log(serviceData);
       await updateOrder(
         {
           ...order,

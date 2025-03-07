@@ -1,7 +1,7 @@
 'use client';
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
-import { Label, useLabels } from '@/lib/client/useLabels';
+import { useLabels } from '@/lib/client/useLabels';
 import { Section } from '@/app/(protected)/settings/section';
 
 import { StatusPill } from '@/components/ui/status_pill';
@@ -9,11 +9,12 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
+import { Label } from '@/lib/db/schema';
 
 export function SectionLabels() {
 
   const [item, setItem] = useState<Label>();
-  const { labels, createLabel, deleteLabel, getLabels, updateLabel } = useLabels();
+  const { labels, createLabel, deleteLabel, fetchLabels, updateLabel } = useLabels();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
@@ -26,7 +27,7 @@ export function SectionLabels() {
         await updateLabel({ ...item });
       }
 
-    await getLabels();
+    await fetchLabels();
     setItem(undefined);
   };
 
@@ -49,7 +50,7 @@ export function SectionLabels() {
   const handleDelete = async () => {
     if (item) {
       await deleteLabel(item);
-      await getLabels();
+      await fetchLabels();
       setItem(undefined);
     }
   };

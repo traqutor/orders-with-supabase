@@ -1,10 +1,9 @@
-import { NewService, NewServicePosition, services, services_positions } from '@/lib/db/schema';
+import { NewService, services } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
-import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
 
 export async function POST(request: Request) {
-  const service = await request.json() as NewService
+  const service = await request.json() as NewService;
 
   const data = await sBase
     .insert(services)

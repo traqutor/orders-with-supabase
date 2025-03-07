@@ -123,7 +123,7 @@ const NoteComponent = (
                   onClick={() => handleDownloadFile(attachment)}
                   className="flex justify-start items-center  w-[200px] gap-2">
                   <span className="w-[24px]">
-                  {attachment.mime_type?.includes('image') ?
+                  {attachment.mimetype?.includes('image') ?
                     <img
                       className={'h-5 w-5 rounded-sm inline-flex'}
                       src={`https://grokxcrznknfvpnzpmuk.supabase.co/storage/v1/object/public/attachments/private/${item.id}/${attachment.name}`}

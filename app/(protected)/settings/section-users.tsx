@@ -76,6 +76,10 @@ export function SectionUsers() {
     await fetchProfiles();
   };
 
+  const handleFormInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...EMPTY_PROFILE });
+  }
 
   return (
     <Section title="Użytkownicy"
@@ -220,8 +224,8 @@ export function SectionUsers() {
               id="email"
               type="text"
               name="email"
-              value={formData.email}
-              onChange={handleUserChange}
+              value={formData.email || ''}
+              onChange={handleChange}
               placeholder="Email"
               className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
@@ -236,8 +240,8 @@ export function SectionUsers() {
               id="password"
               type="password"
               name="password"
-              value={formData.hash}
-              onChange={handleUserChange}
+              value={formData.hash || ""}
+              onChange={handleChange}
               placeholder="Hasło"
               className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
@@ -253,8 +257,8 @@ export function SectionUsers() {
               id="first_name"
               type="text"
               name="first_name"
-              value={formData.first_name}
-              onChange={handleUserChange}
+              value={formData.first_name || ''}
+              onChange={handleChange}
               placeholder="Imie"
               className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
@@ -269,8 +273,8 @@ export function SectionUsers() {
               id="last_name"
               type="text"
               name="last_name"
-              value={formData.last_name}
-              onChange={handleUserChange}
+              value={formData.last_name || ''}
+              onChange={handleChange}
               placeholder="Nazwisko"
               className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
@@ -285,8 +289,8 @@ export function SectionUsers() {
               id="phone"
               type="text"
               name="phone"
-              value={formData.phone}
-              onChange={handleUserChange}
+              value={formData.phone || ''}
+              onChange={handleChange}
               placeholder="Telefon"
               className="flex min-h-min w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />

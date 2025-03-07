@@ -9,7 +9,7 @@ import * as Form from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
 import { RadioGroup, RadioGroupIndicator, RadioGroupItem } from '@radix-ui/react-radio-group';
 import { Customer } from '@/lib/db/schema';
-import { postData, putData } from '@/utils/helpers';
+import { useCustomers } from '@/lib/client/useCustomers';
 
 
 interface CustomerCreateDialogProps {
@@ -57,6 +57,7 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [formData, setFormData] = useState<Customer>();
+    const { createCustomer, updateCustomer } = useCustomers();
 
 
     useEffect(() => {
@@ -114,11 +115,7 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React
           id: customer.id
         };
 
-        const { error } = await putData<Customer>({ url: `/api/customers/${c.id}`, data: c });
-
-        if (error) {
-          throw new Error(`Update customer with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
-        }
+        await updateCustomer(c);
 
         handleUpdateCustomer(c);
 
@@ -128,11 +125,7 @@ const CustomerCreateDialog: React.FC<CustomerCreateDialogProps> = React
           id: v4()
         };
 
-        const { error } = await postData<Customer>({ url: '/api/customers', data: c });
-
-        if (error) {
-          throw new Error(`Create customer with payload: ${JSON.stringify(formData)} error ${JSON.stringify(error)}`);
-        }
+        await createCustomer(c);
 
         handleUpdateCustomer(c);
       }

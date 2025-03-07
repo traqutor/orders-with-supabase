@@ -2,11 +2,7 @@ import { CheckIcon, Hammer, Save } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React, { useState } from 'react';
 import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
-import { Tables } from '@/types_db';
-import { cn } from '@/lib/utils';
-
-type ServicePosition = Tables<'services_positions'>
-
+import { ServicePosition } from '@/lib/db/schema';
 
 export function ServiceRow(props: {
   position: ServicePosition,
@@ -20,7 +16,7 @@ export function ServiceRow(props: {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev: ServicePosition) => ({
       ...prev,
       [name]: value
     }));

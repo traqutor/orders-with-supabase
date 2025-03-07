@@ -8,7 +8,7 @@ import { User } from 'lucide-react';
 import { useProfiles } from '@/lib/client/useProfiles';
 import { Profile } from '@/lib/db/schema';
 
-const AvatarProfile = (props: { profileId: string | null }) => {
+const AvatarProfile = (props: { profileId?: string | null }) => {
 
   const { fetchProfile } = useProfiles();
   const [user, setUser] = React.useState<Profile | null>();

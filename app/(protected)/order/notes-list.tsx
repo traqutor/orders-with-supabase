@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Tables } from '@/types_db';
-import Note from '@/app/(protected)/order/note';
+import NoteComponent from '@/app/(protected)/order/note';
+import { Note } from '@/lib/db/schema';
 
 const getNotes = async (orderId: string) => {
   const db = createClient();
@@ -30,9 +30,9 @@ const NotesList = async (
   return (
     <div>
 
-      {data?.map((item: Tables<'notes'>) => (
+      {data?.map((item: Note) => (
 
-        <Note key={item.id} note={item} />
+        <NoteComponent key={item.id} note={item} />
       ))}
     </div>
   );

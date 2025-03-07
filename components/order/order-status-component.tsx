@@ -5,7 +5,6 @@ import { Check, ChevronDown } from 'lucide-react';
 import { StatusPill } from '@/components/ui/status_pill';
 import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import * as Select from '@radix-ui/react-select';
-import { mapOrderToFormData } from '@/app/(protected)/order/order-dialog';
 import { useRouter } from 'next/navigation';
 import { Order, OrderStatus } from '@/lib/db/schema';
 import { useOrders } from '@/lib/client/useOrders';
@@ -33,7 +32,7 @@ const OrderStatusComponent = (props: { order: Order }) => {
 
     const updateOrder = async (status: OrderStatus) => {
       await putOrder({
-        ...mapOrderToFormData(order),
+        ...order,
         status_id: status.id
       });
     };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
-import { Invoice, NewInvoice } from '@/lib/db/schema';
+import { Invoice, NewInvoice, NewShipment, Shipment } from '@/lib/db/schema';
 
 
 export function useInvoices() {
@@ -18,12 +18,12 @@ export function useInvoices() {
     return response.data[0];
   };
 
-  const createInvoice = async (payload: NewInvoice) => {
+  const createInvoice = async (payload: NewInvoice): Promise<Invoice[]> => {
     const response = await postData({ url, data: payload });
 
     if (response.status !== 'success') throw new Error(`Create Invoice: ${payload} Error: ${JSON.stringify(response)}`);
 
-    return response.data;
+    return response.data as unknown as Invoice[];
   };
 
 

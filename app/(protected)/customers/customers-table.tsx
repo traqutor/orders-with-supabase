@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { PRODUCTS_PER_PAGE } from '@/lib/utils';
 import { CustomerRow } from '@/app/(protected)/customers/customer-row';
 import { getData } from '@/utils/helpers';
-import { CustomerItem } from '@/app/api/customers/route';
+import { CustomerItem } from '@/app/api/dashboard/customers/route';
 import { Customer } from '@/lib/db/schema';
 import ClientOrderDialog from '@/app/(protected)/customers/customer-order-dialog';
 
@@ -18,17 +18,17 @@ import ClientOrderDialog from '@/app/(protected)/customers/customer-order-dialog
 export function CustomersTable() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [customers, setCustomers] = useState<CustomerItem[]>([]);
+  const [customers, setCustomers] = useState<CustomerItem[] | undefined>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>();
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState<number | undefined>(0);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
 
 
   const productsPerPage = PRODUCTS_PER_PAGE;
   const query = searchParams.get('query');
   const offset = Number(searchParams.get('offset')) || 1;
-  const url = query ? `api/customers?offset=${offset}&query=${query}` : `api/customers?offset=${offset}`;
-  const urlCounter = query ? `api/customers?counter=true&query=${query}` : `api/customers?counter=true`;
+  const url = query ? `api/dashboard/customers?offset=${offset}&query=${query}` : `api/dashboard/customers?offset=${offset}`;
+  const urlCounter = query ? `api/dashboard/customers?counter=true&query=${query}` : `api/dashboard/customers?counter=true`;
   const nextUrl = query ? `?offset=${offset + 1}&query=${query}` : `?offset=${offset + 1}`;
 
 
@@ -37,7 +37,7 @@ export function CustomersTable() {
       setCustomers(data);
     });
     getData<CustomerItem[]>({ url: urlCounter }).then((response) => {
-      setTotal(response.data.length);
+      setTotal(response.data?.length);
     });
   }, [offset, query]);
 
@@ -85,7 +85,7 @@ export function CustomersTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map(cus => (
+            {customers?.map(cus => (
               <CustomerRow key={cus.customers.id} customer={cus} onToggleEditDialog={handleToggleEditDialog} />
             ))}
           </TableBody>
@@ -96,9 +96,9 @@ export function CustomersTable() {
           <div className="text-xs text-muted-foreground">
             Lista{' '}
             <strong>
-              {Math.max(0, Math.min(offset - productsPerPage, total) + 1)}-{offset}
+              {Math.max(0, Math.min(offset - productsPerPage, (total || 0)) + 1)}-{offset}
             </strong>{' '}
-            z <strong>{total}</strong> klientów
+            z <strong>{(total || 0)}</strong> klientów
           </div>
           <div className="flex">
             <Button
@@ -118,7 +118,7 @@ export function CustomersTable() {
               variant="ghost"
               size="sm"
               type="submit"
-              disabled={offset > total}
+              disabled={offset > (total || 0)}
             >
               Dalej
               <ChevronRight className="ml-2 h-4 w-4" />

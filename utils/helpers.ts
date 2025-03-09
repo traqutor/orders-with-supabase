@@ -23,14 +23,24 @@ export const getURL = (path: string = '') => {
 };
 
 
-export interface apiRequestResponse<T> {
-  code: number;
-  data: T;
-  status: string;
+export type Token = {token: string}
+
+export const takeOneUniqueOrThrow = <T extends any[]>(values: T): T[number] => {
+  console.log('takeOneUniqueOrThrow', values);
+
+  if (Array.isArray(values) && values.length !== 1) throw new Error('Found non unique or not existent value');
+  return values[0];
+};
+
+export interface ApiRequestResponse<T> {
+  status?: number;
+  message?: string,
+  error?: string,
+  data?: T
 }
 
 export const getData = async <T>(
-  { url }: { url: string; }): Promise<apiRequestResponse<T>> => {
+  { url }: { url: string; }): Promise<ApiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'GET',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -41,7 +51,7 @@ export const getData = async <T>(
 };
 
 export const postData = async <T>(
-  { url, data }: { url: string; data: T }) : Promise<apiRequestResponse<T>> => {
+  { url, data }: { url: string; data: T }): Promise<ApiRequestResponse<T>> => {
 
   const res = await fetch(url, {
     method: 'POST',
@@ -60,7 +70,7 @@ export const putData = async <T>({
                                  }: {
   url: string;
   data?: T
-}): Promise<apiRequestResponse<T>> => {
+}): Promise<ApiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'PUT',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -77,7 +87,7 @@ export const deleteData = async <T>({
                                     }: {
   url: string;
   data?: T
-}) : Promise<apiRequestResponse<T>> => {
+}): Promise<ApiRequestResponse<T>> => {
   const res = await fetch(url, {
     method: 'DELETE',
     headers: new Headers({ 'Content-Type': 'application/json' }),

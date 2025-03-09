@@ -50,13 +50,13 @@ const ClientOrderDialog: React.FC<CustomerOrderCreateDialogProps> = React.memo((
     event.stopPropagation();
 
     const response = await postData<Order>({
-      url: `/api/orders`, data: {
+      url: `/api/dashboard/orders`, data: {
         ...formData,
         id: v4()
       }
     });
 
-    if (response.status !== 'success') {
+    if (response.error) {
       throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
     }
 

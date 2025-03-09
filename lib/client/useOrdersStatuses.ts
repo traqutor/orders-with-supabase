@@ -4,7 +4,7 @@ import { deleteData, getData, postData, putData } from '@/utils/helpers';
 
 
 export function useOrdersStatuses() {
-  const url = '/api/orders_statuses';
+  const url = '/api/dashboard/orders_statuses';
   const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export function useOrdersStatuses() {
   const fetchOrdersStatuses = async (): Promise<OrderStatus[]> => {
     const response = await getData<OrderStatus[]>({ url });
 
-    if (response.status !== 'success') throw new Error(`Get list of Orders Statuses error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Get list of Orders Statuses error: ${JSON.stringify(response)}`);
 
     setOrdersStatuses(response.data);
 
@@ -24,7 +24,7 @@ export function useOrdersStatuses() {
   const createOrderStatus = async (payload: NewOrderStatus) => {
     const response = await postData({ url, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Create OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Create OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -32,7 +32,7 @@ export function useOrdersStatuses() {
   const updateOrderStatus = async (payload: OrderStatus) => {
     const response = await putData({ url, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Update OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Update OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -40,7 +40,7 @@ export function useOrdersStatuses() {
   const deleteOrderStatus = async (payload: OrderStatus) => {
     const response = await deleteData({ url, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Delete OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Delete OrderStatus: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };

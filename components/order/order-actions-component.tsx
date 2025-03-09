@@ -8,20 +8,20 @@ import ConfirmDialog from '@/components/ui/Dialog/confirm-dialog';
 import { ActionPill } from '@/components/ui/action_pill';
 import { Action, NewOrderAction, OrderAction } from '@/lib/db/schema';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
-import { OrderActionItem } from '@/app/api/orders_actions/[orderId]/route';
+import { OrderActionItem } from '@/app/api/dashboard/orders_actions/[orderId]/route';
 
 
 const OrderActionsComponent = (props: { orderId: string }) => {
 
     const { orderId } = props;
-    const [actions, setActions] = useState<Action[]>([]);
-    const [orderActions, setOrderActions] = useState<OrderActionItem[]>([]);
+    const [actions, setActions] = useState<Action[] | undefined>([]);
+    const [orderActions, setOrderActions] = useState<OrderActionItem[] | undefined>([]);
     const [isLoading, setIsLoading] = useState<boolean>();
 
 
     const getActions = () => {
       setIsLoading(true);
-      getData<Action[]>({ url: '/api/actions' }).then((response) => {
+      getData<Action[]>({ url: '/api/dashboard/actions' }).then((response) => {
         setActions(response.data);
       }).finally(() => {
         setIsLoading(false);
@@ -30,7 +30,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
 
     const getOrderActions = () => {
       setIsLoading(true);
-      getData<OrderActionItem[]>({ url: `/api/orders_actions/${orderId}` }).then((response) => {
+      getData<OrderActionItem[]>({ url: `/api/dashboard/orders_actions/${orderId}` }).then((response) => {
         setOrderActions(response.data);
       }).finally(() => {
         setIsLoading(false);
@@ -41,7 +41,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
       setIsLoading(true);
 
       putData<OrderAction>({
-        url: `/api/orders_actions/${orderId}/${action.id}`,
+        url: `/api/dashboard/orders_actions/${orderId}/${action.id}`,
         data: { ...action, performed: !action.performed }
       }).then(() => {
         getOrderActions();
@@ -55,10 +55,10 @@ const OrderActionsComponent = (props: { orderId: string }) => {
       setIsLoading(true);
       if (isSelected) {
 
-        const selected = orderActions.find((o) => o.orders_actions.action_id === action.id);
+        const selected = orderActions?.find((o) => o.orders_actions.action_id === action.id);
 
         deleteData<OrderAction>({
-          url: `/api/orders_actions/${orderId}/${selected?.orders_actions.id}`
+          url: `/api/dashboard/orders_actions/${orderId}/${selected?.orders_actions.id}`
         }).then(() => {
           getOrderActions();
         }).finally(() => {
@@ -66,7 +66,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
         });
       } else {
         postData<NewOrderAction>({
-          url: `/api/orders_actions/${orderId}`,
+          url: `/api/dashboard/orders_actions/${orderId}`,
           data: {
             order_id: orderId,
             action_id: action.id,
@@ -112,8 +112,8 @@ const OrderActionsComponent = (props: { orderId: string }) => {
 
               <div className="flex flex-wrap flex-auto gap-1 p-2">
                 <ul className="flex-col w-full">
-                  {actions.map((a: Action) => {
-                      const isSelected = orderActions.some((o) => o.orders_actions.action_id === a.id);
+                  {actions?.map((a: Action) => {
+                      const isSelected = orderActions?.some((o) => o.orders_actions.action_id === a.id) || false;
                       return <li key={a.id}
                                  className="h-12 px-2 cursor-pointer w-full rounded items-center inline-flex hover:bg-muted"
                                  onClick={() => !isLoading && handleToggleAction(a, isSelected)}
@@ -145,7 +145,7 @@ const OrderActionsComponent = (props: { orderId: string }) => {
         <div className="flex flex-wrap flex-auto gap-1 pt-1 ml-2">
 
 
-          {orderActions.map(({ orders_actions: o, actions: a }) =>
+          {orderActions?.map(({ orders_actions: o, actions: a }) =>
 
             <div key={a.id}>
 

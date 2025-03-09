@@ -4,7 +4,7 @@ import { Profile, NewProfile } from '@/lib/db/schema';
 
 
 export function useProfiles() {
-  const url = '/api/profiles';
+  const url = '/api/dashboard/profiles';
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
 
@@ -17,7 +17,7 @@ export function useProfiles() {
   const fetchProfile = async (profileId: string): Promise<Profile> => {
     const response = await getData<Profile[]>({ url });
 
-    if (response.status !== 'success') throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
 
     setProfiles(response.data);
 
@@ -27,7 +27,7 @@ export function useProfiles() {
   const fetchProfiles = async (): Promise<Profile[]> => {
     const response = await getData<Profile[]>({ url });
 
-    if (response.status !== 'success') throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
 
     setProfiles(response.data);
 
@@ -37,7 +37,7 @@ export function useProfiles() {
   const createProfile = async (profile: NewProfile) => {
     const response = await postData({ url, data: profile });
 
-    if (response.status !== 'success') throw new Error(`Create Profile: ${profile} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Create Profile: ${profile} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -45,7 +45,7 @@ export function useProfiles() {
   const updateProfile = async (profile: Profile) => {
     const response = await putData({ url: `${url}/${profile.id}`, data: profile });
 
-    if (response.status !== 'success') throw new Error(`Update Profile: ${profile} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Update Profile: ${profile} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -53,7 +53,7 @@ export function useProfiles() {
   const deleteProfile = async (profile: Profile) => {
     const response = await deleteData({ url: `${url}/${profile.id}`, data: profile });
 
-    if (response.status !== 'success') throw new Error(`Delete Profile: ${profile} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Delete Profile: ${profile} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };

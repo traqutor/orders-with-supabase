@@ -2,7 +2,7 @@ import { notes_attachments, NewNoteAttachment  } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 
 /**
- * GET list of NoteAttachment url: /api/notes_attachments
+ * GET list of NoteAttachment url: /api/dashboard/notes_attachments
  */
 
 export async function GET() {
@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 /**
- * POST new NoteAttachment url: /api/notes_attachments, {data: NoteAttachment}
+ * POST new NoteAttachment url: /api/dashboard/notes_attachments, {data: NoteAttachment}
  */
 
 export async function POST(request: Request) {

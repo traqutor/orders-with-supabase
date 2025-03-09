@@ -2,7 +2,7 @@ import { actions, NewAction } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 
 /**
- * GET list of Actions url: /api/actions
+ * GET list of Actions url: /api/dashboard/actions
  */
 
 export async function GET() {
@@ -18,7 +18,7 @@ export async function GET() {
 }
 
 /**
- * POST new Action url: /api/actions, {data: Action}
+ * POST new Action url: /api/dashboard/actions, {data: Action}
  */
 
 export async function POST(request: Request) {

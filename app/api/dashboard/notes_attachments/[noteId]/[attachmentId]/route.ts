@@ -4,7 +4,7 @@ import { NoteAttachment, notes_attachments } from '@/lib/db/schema';
 
 
 /**
- * GET url: /api/notes_attachments/:attachmentId
+ * GET url: /api/dashboard/notes_attachments/:attachmentId
  */
 
 export async function GET(_: Request,
@@ -24,7 +24,7 @@ export async function GET(_: Request,
 
 
 /**
- * PUT url: /api/notes_attachments/:attachmentId, {data: NoteAttachment}
+ * PUT url: /api/dashboard/notes_attachments/:attachmentId, {data: NoteAttachment}
  */
 
 export async function PUT(request: Request,
@@ -45,7 +45,7 @@ export async function PUT(request: Request,
 
 
 /**
- * DELETE url: /api/notes_attachments/:attachmentId
+ * DELETE url: /api/dashboard/notes_attachments/:attachmentId
  */
 
 export async function DELETE(_: Request,

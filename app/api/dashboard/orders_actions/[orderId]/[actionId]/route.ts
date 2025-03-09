@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
 
 /**
- * GET url: /api/orders_actions/:orderId/:actionId
+ * GET url: /api/dashboard/orders_actions/:orderId/:actionId
  */
 
 export async function GET(request: Request,
@@ -24,7 +24,7 @@ export async function GET(request: Request,
 
 
 /**
- * PUT url: /api/orders_actions/:orderId/:actionId, {data: OrderAction}
+ * PUT url: /api/dashboard/orders_actions/:orderId/:actionId, {data: OrderAction}
  */
 
 export async function PUT(request: Request,
@@ -46,7 +46,7 @@ export async function PUT(request: Request,
 }
 
 /**
- * DELETE url: /api/orders_actions/:orderId/:actionId
+ * DELETE url: /api/dashboard/orders_actions/:orderId/:actionId
  */
 
 export async function DELETE(request: Request,

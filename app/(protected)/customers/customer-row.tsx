@@ -9,7 +9,7 @@ import { MoreHorizontal, PackagePlusIcon, User } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import React from 'react';
 import Link from 'next/link';
-import { CustomerItem } from '@/app/api/customers/route';
+import { CustomerItem } from '@/app/api/dashboard/customers/route';
 import { Customer } from '@/lib/db/schema';
 
 

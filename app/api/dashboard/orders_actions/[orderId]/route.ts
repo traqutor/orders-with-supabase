@@ -8,7 +8,7 @@ export type OrderActionItem = {
 }
 
 /**
- * GET list of Order's Actions url: /api/orders_actions/:orderId
+ * GET list of Order's Actions url: /api/dashboard/orders_actions/:orderId
  */
 
 export async function GET(request: Request,
@@ -29,7 +29,7 @@ export async function GET(request: Request,
 }
 
 /**
- * POST new Order's Action url: /api/orders_actions/:orderId/:actionId, {data: Action}
+ * POST new Order's Action url: /api/dashboard/orders_actions/:orderId/:actionId, {data: Action}
  */
 
 export async function POST(request: Request,

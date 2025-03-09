@@ -3,13 +3,13 @@ import { NewService, Service } from '@/lib/db/schema';
 
 
 export function useServices() {
-  const url = '/api/services';
+  const url = '/api/dashboard/services';
 
 
   const fetchService = async (serviceId: string): Promise<Service[]> => {
     const response = await getData<Service[]>({ url: `${url}/${serviceId}` });
 
-    if (response.status !== 'success') throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -17,7 +17,7 @@ export function useServices() {
   const createService = async (payload: NewService): Promise<Service[]> => {
     const response = await postData({ url, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Create Service: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Create Service: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data as Service[];
   };
@@ -25,7 +25,7 @@ export function useServices() {
   const updateService = async (payload: Service) => {
     const response = await putData({ url: `${url}/${payload.id}`, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Update Service: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Update Service: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };
@@ -33,7 +33,7 @@ export function useServices() {
   const deleteService = async (payload: Service) => {
     const response = await deleteData({ url: `${url}/${payload.id}`, data: payload });
 
-    if (response.status !== 'success') throw new Error(`Delete Service: ${payload} Error: ${JSON.stringify(response)}`);
+    if (response.error) throw new Error(`Delete Service: ${payload} Error: ${JSON.stringify(response)}`);
 
     return response.data;
   };

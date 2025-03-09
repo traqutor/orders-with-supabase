@@ -1,9 +1,34 @@
-import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
+import { AnyPgColumn, boolean, pgTable, text, date, uniqueIndex } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core/columns/integer';
 import { sql } from 'drizzle-orm';
 import { v4 } from 'uuid';
+import { SQL } from 'drizzle-orm/sql/sql';
 
 
+/**
+ * users *
+ */
+export const users = pgTable('users', {
+    id: text().primaryKey().default(v4()),
+    email: text().notNull(),
+    password: text().notNull(),
+    created_at: date(),
+  },
+  (table) => [
+    uniqueIndex('emailUniqueIndex').on(lower(table.email))
+  ]
+);
+
+export type NewUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
+
+
+// custom lower function
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(
+  ${email}
+  )`;
+}
 
 /**
  * Actions
@@ -30,7 +55,7 @@ export const notes_attachments = pgTable('notes_attachments', {
   id: text('id').primaryKey().default(v4()),
   name: text().notNull(),
   mimetype: text().notNull(),
-  note_id: text().notNull(),
+  note_id: text().notNull()
 });
 export type NewNoteAttachment = typeof notes_attachments.$inferInsert;
 export type NoteAttachment = typeof notes_attachments.$inferSelect;
@@ -153,7 +178,7 @@ export const profiles = pgTable('profiles', {
   email: text(),
   phone: text(),
   last_name: text(),
-  hash: text(),
+  hash: text()
 });
 
 export type NewProfile = typeof profiles.$inferInsert;
@@ -220,10 +245,11 @@ export type OrderLabel = typeof orders_labels.$inferSelect;
  **/
 
 export const orders_actions = pgTable('orders_actions', {
-  id: integer("id").primaryKey().default(sql`nextval('orders_actions_id_seq')`),
+  id: integer('id').primaryKey().default(sql`nextval
+  ('orders_actions_id_seq')`),
   order_id: text().primaryKey(),
   action_id: text().primaryKey(),
-  performed: boolean(),
+  performed: boolean()
 });
 
 export type NewOrderAction = typeof orders_actions.$inferInsert;

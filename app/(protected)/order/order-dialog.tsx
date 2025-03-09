@@ -11,7 +11,7 @@ import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import SelectStatus from '@/components/ui/Form/select-status';
 import { SelectCustomer } from '@/components/ui/Form/select-customer';
 import { getData, postData, putData } from '@/utils/helpers';
-import { CustomerItem } from '@/app/api/customers/route';
+import { CustomerItem } from '@/app/api/dashboard/customers/route';
 import { Customer, Order } from '@/lib/db/schema';
 
 
@@ -62,26 +62,26 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
     if (order?.id) {
 
       const response = await putData<Order>({
-        url: `/api/orders/${order.id}`, data: {
+        url: `/api/dashboard/orders/${order.id}`, data: {
           ...formData,
           id: order.id
         }
       });
 
-      if (response.status !== 'success') {
+      if (response.error) {
         throw new Error(`Update order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
       }
 
     } else {
 
       const response = await postData<Order>({
-        url: `/api/orders`, data: {
+        url: `/api/dashboard/orders`, data: {
           ...formData,
           id: v4()
         }
       });
 
-      if (response.status !== 'success') {
+      if (response.error) {
         throw new Error(`Create order with payload: ${JSON.stringify(formData)} error ${JSON.stringify(response)}`);
       }
 
@@ -106,7 +106,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
 
   const handleCustomerIdChange = async (value: string) => {
 
-    const { data } = await getData<CustomerItem[]>({ url: '/api/customers?counter' });
+    const { data } = await getData<CustomerItem[]>({ url: '/api/dashboard/customers?counter' });
 
     if (data) {
 

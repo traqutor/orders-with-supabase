@@ -3,7 +3,6 @@ export { default } from 'next-auth/middleware';
 
 export const config = {
   matcher: [
-    '/protected',
     /*
      * Match all request paths except:
      * - _next/static (static files)

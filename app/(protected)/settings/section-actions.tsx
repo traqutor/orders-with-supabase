@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
 
@@ -23,9 +23,13 @@ const EMPTY_ACTION: Action | NewAction = {
 
 export function SectionActions() {
 
-  const { actions, createAction, updateAction, deleteAction, fetchActions } = useActions();
+  const [actions, setActions] = useState<Action[]>([]);
+  const { createAction, updateAction, deleteAction, fetchActions } = useActions();
   const [formData, setFormData] = useState<Action | NewAction>({ ...EMPTY_ACTION });
 
+  useEffect(() => {
+    fetchActions().then(response => setActions(response));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

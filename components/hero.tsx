@@ -2,7 +2,7 @@ import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function Header() {
+export default function Hero() {
   return (
     <div className="flex flex-col gap-8 items-center">
       <div className="flex gap-8 justify-center items-center">
@@ -34,11 +34,9 @@ export default function Header() {
       <div className="flex gap-2">
 
         <Button asChild size="sm" variant={'outline'}>
-          <Link href="/sign-in">Sign in</Link>
+          <Link href="/orders">Do zamówień</Link>
         </Button>
-        {/*<Button asChild size="sm" variant={'default'}>
-          <Link href="/sign-up">Sign up</Link>
-        </Button>*/}
+
       </div>
 
     </div>

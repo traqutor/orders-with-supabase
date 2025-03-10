@@ -1,5 +1,4 @@
 'use client';
-import { useSession } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,20 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import LogoutButton from '@/app/(protected)/logout-button';
 import AvatarProfile from '@/components/profile/avatar-profile';
 
 
-export  function HeaderUser() {
-  const { update, data, status} = useSession();
-
-  console.log('HeaderUser', status);
-  console.log('HeaderUser', update);
-  console.log('HeaderUser', data);
-
-
+export function HeaderUser() {
 
   return (
     <div className="flex gap-6 ">
@@ -44,15 +35,11 @@ export  function HeaderUser() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          {data?.user ? (
-            <DropdownMenuItem>
-              <LogoutButton />
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem>
-              <Link href="/sign-in">Sign In</Link>
-            </DropdownMenuItem>
-          )}
+
+          <DropdownMenuItem>
+            <LogoutButton />
+          </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -10,6 +10,7 @@ export function useLabels() {
 
     if (response.error) throw new Error(`Get list of Labels Error: ${JSON.stringify(response)}`);
 
+    return response.data as Label[];
 
   };
 

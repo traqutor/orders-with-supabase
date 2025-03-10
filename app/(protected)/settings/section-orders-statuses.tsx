@@ -3,7 +3,7 @@ import { Plus, SaveIcon } from 'lucide-react';
 import { v4 } from 'uuid';
 import { Section } from '@/app/(protected)/settings/section';
 import { StatusPill } from '@/components/ui/status_pill';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 import { COLOR_OPTIONS } from '@/lib/utils';
@@ -20,15 +20,19 @@ const EMPTY_ITEM: OrderStatus = {
 
 export function SectionOrdersStatuses() {
 
+  const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
   const {
-    ordersStatuses,
     fetchOrdersStatuses,
     createOrderStatus,
     updateOrderStatus,
     deleteOrderStatus
   } = useOrdersStatuses();
-  const [formData, setFormData] = useState<OrderStatus>({ ...EMPTY_ITEM });
 
+  useEffect(() => {
+    fetchOrdersStatuses().then(response => setOrdersStatuses(response));
+  }, []);
+
+  const [formData, setFormData] = useState<OrderStatus>({ ...EMPTY_ITEM });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

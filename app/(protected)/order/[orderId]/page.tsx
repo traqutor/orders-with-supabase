@@ -12,9 +12,8 @@ import { Button } from '@/components/ui/button';
 import OrderActionsComponent from '@/components/order/order-actions-component';
 import OrderStatusComponent from '@/components/order/order-status-component';
 import PinButton from '@/app/(protected)/order/pin-button';
-import { redirect } from 'next/navigation';
 import { sBase } from '@/lib/db/db';
-import { Order, profiles } from '@/lib/db/schema';
+import { profiles } from '@/lib/db/schema';
 import { getOrder, OrderItem } from '@/lib/db/orders_queries';
 
 
@@ -27,10 +26,6 @@ export default async function OrderPage(
   const user = await sBase
     .select()
     .from(profiles);
-
-  if (!user) {
-    return redirect('/sign-in');
-  }
 
   const { orderId } = await props.params;
 

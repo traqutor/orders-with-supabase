@@ -1,6 +1,7 @@
 import { Order, orders } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
+import { takeOneUniqueOrThrow } from '@/utils/helpers';
 
 
 export async function GET(request: Request,
@@ -9,7 +10,7 @@ export async function GET(request: Request,
   const data = await sBase
     .select()
     .from(orders)
-    .where(eq(orders.id, orderId));
+    .where(eq(orders.id, orderId)).then(takeOneUniqueOrThrow);
 
   return Response.json({
     status: 'success',

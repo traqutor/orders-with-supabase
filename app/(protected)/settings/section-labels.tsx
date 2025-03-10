@@ -5,16 +5,20 @@ import { useLabels } from '@/lib/client/useLabels';
 import { Section } from '@/app/(protected)/settings/section';
 
 import { StatusPill } from '@/components/ui/status_pill';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { COLOR_OPTIONS } from '@/lib/utils';
 import * as Form from '@radix-ui/react-form';
 import { Label } from '@/lib/db/schema';
 
 export function SectionLabels() {
-
+  const [labels, setLabels] = useState<Label[]>([]);
   const [item, setItem] = useState<Label>();
-  const { labels, createLabel, deleteLabel, fetchLabels, updateLabel } = useLabels();
+  const { createLabel, deleteLabel, fetchLabels, updateLabel } = useLabels();
+
+  useEffect(() => {
+    fetchLabels().then(response => setLabels(response));
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 

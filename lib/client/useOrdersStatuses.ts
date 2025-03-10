@@ -1,24 +1,18 @@
-import { useEffect, useState } from 'react';
 import { NewOrderStatus, OrderStatus } from '@/lib/db/schema';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
 
 
 export function useOrdersStatuses() {
   const url = '/api/dashboard/orders_statuses';
-  const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
 
-  useEffect(() => {
-    fetchOrdersStatuses();
-  }, []);
 
-  const fetchOrdersStatuses = async (): Promise<OrderStatus[]> => {
+  const fetchOrdersStatuses = async () => {
     const response = await getData<OrderStatus[]>({ url });
 
     if (response.error) throw new Error(`Get list of Orders Statuses error: ${JSON.stringify(response)}`);
 
-    setOrdersStatuses(response.data);
 
-    return response.data;
+    return response.data as OrderStatus[];
   };
 
   const createOrderStatus = async (payload: NewOrderStatus) => {
@@ -47,12 +41,10 @@ export function useOrdersStatuses() {
 
 
   return {
-
-    ordersStatuses,
     createOrderStatus,
     deleteOrderStatus,
     fetchOrdersStatuses,
-    updateOrderStatus,
+    updateOrderStatus
   };
 
 }

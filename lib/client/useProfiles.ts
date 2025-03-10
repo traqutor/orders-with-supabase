@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
-import { Profile, NewProfile } from '@/lib/db/schema';
+import { NewProfile, Profile } from '@/lib/db/schema';
 
 
 export function useProfiles() {
@@ -14,24 +14,22 @@ export function useProfiles() {
   }, []);
 
 
-  const fetchProfile = async (profileId: string): Promise<Profile> => {
-    const response = await getData<Profile[]>({ url });
+  const fetchProfile = async (profileId: string) => {
+    const response = await getData<Profile>({ url: `${url}/${profileId}` });
 
     if (response.error) throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
 
-    setProfiles(response.data);
-
-    return response.data[0];
+    return response.data as Profile;
   };
 
-  const fetchProfiles = async (): Promise<Profile[]> => {
+  const fetchProfiles = async () => {
     const response = await getData<Profile[]>({ url });
 
     if (response.error) throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
 
-    setProfiles(response.data);
+    setProfiles(response.data as Profile[]);
 
-    return response.data;
+    return response.data as Profile[];
   };
 
   const createProfile = async (profile: NewProfile) => {

@@ -11,7 +11,7 @@ export function useActions() {
 
     if (response.error) throw new Error(`Get list of Actions Error: ${JSON.stringify(response)}`);
     
-    return response.data;
+    return response.data as Action[];
   };
 
   const createAction = async (action: NewAction) => {

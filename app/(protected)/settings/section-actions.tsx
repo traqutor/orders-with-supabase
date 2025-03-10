@@ -219,6 +219,6 @@ export function SectionActions() {
     </Section>
   );
 
-};
+}
 
 

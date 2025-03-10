@@ -1,5 +1,7 @@
 'use client';
 import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
+
 import Link from 'next/link';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -13,24 +15,19 @@ export default function LoginForm() {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const res = await fetch('/api/dashboard/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: formData.get('email'),
-        password: formData.get('password')
-      }),
-      headers: { 'Content-Type': 'application/json' }
+
+    const result = await signIn('credentials', {
+      redirect: false,
+      email: formData.get('email'),
+      password: formData.get('password')
     });
 
-    if (!res.ok) {
-      setMessage({ error: 'Invalid credentials' });
-    } else {
-      window.location.href = '/orders'; // Redirect after successful login
-    }
+    console.log(result);
+
   }
 
-
   return (
+
     <form className="flex-1 flex flex-col min-w-64" onSubmit={handleSubmit}>
       <h1 className="text-2xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
@@ -56,12 +53,7 @@ export default function LoginForm() {
 
         <FormMessage message={message} />
 
-        <Link
-          className="text-xs text-foreground underline"
-          href="/forgot-password"
-        >
-          Forgot Password?
-        </Link>
+
       </div>
     </form>);
 }

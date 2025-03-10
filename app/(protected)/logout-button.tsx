@@ -1,19 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import { signOut } from 'next-auth/react';
 
 const LogoutButton = () => {
-  const supabase = createClient();
-
-  const router = useRouter();
 
   const signOutAction = async () => {
-    await supabase.auth.signOut();
-    return router.push('/sign-in');
+    console.log('signOut clicked');
+    await signOut();
   };
-
 
   return (
     <button onClick={signOutAction}> Wyloguj</button>
@@ -22,3 +17,4 @@ const LogoutButton = () => {
 };
 
 export default LogoutButton;
+

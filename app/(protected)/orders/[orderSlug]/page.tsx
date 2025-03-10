@@ -1,6 +1,5 @@
 import { OrdersTable } from '@/app/(protected)/orders/orders-table';
 import React from 'react';
-import { createClient } from '@/utils/supabase/server';
 import { getOrders } from '@/lib/db/orders_queries';
 
 export default async function OrdersPage(
@@ -11,9 +10,6 @@ export default async function OrdersPage(
 ) {
 
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return {};
 
   const searchParams = await props.searchParams;
   const search = searchParams.query ?? '';
@@ -24,7 +20,7 @@ export default async function OrdersPage(
   const { orders, totalOrdersCounter } = await getOrders({
     queryText: search,
     offsetPage: offsetPage,
-    pinnedUserId: orderStatusId === 'pinned' ? user.id : undefined,
+    pinnedUserId: orderStatusId === 'pinned' ? 'user.id' : undefined,
     statusId: orderStatusId === 'pinned' ? undefined : orderStatusId
   });
 

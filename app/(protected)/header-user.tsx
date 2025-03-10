@@ -1,3 +1,6 @@
+'use client';
+import { useSession } from 'next-auth/react'
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,18 +11,18 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import { createClient } from '@/utils/supabase/server';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import LogoutButton from '@/app/(protected)/logout-button';
 import AvatarProfile from '@/components/profile/avatar-profile';
 
 
-export async function HeaderUser() {
-  const supabase = await createClient();
+export  function HeaderUser() {
+  const { update, data, status} = useSession();
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  console.log('HeaderUser', status);
+  console.log('HeaderUser', update);
+  console.log('HeaderUser', data);
+
 
 
   return (
@@ -32,7 +35,7 @@ export async function HeaderUser() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <AvatarProfile profileId={user?.id} />
+            <AvatarProfile profileId={''} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -41,7 +44,7 @@ export async function HeaderUser() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          {user ? (
+          {data?.user ? (
             <DropdownMenuItem>
               <LogoutButton />
             </DropdownMenuItem>

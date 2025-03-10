@@ -1,42 +1,28 @@
-import { createClient } from '@/utils/supabase/client';
-import { NewProfile, Profile } from '@/lib/db/schema';
+import { NewProfile, Profile, profiles } from '@/lib/db/schema';
+import { sBase } from '@/lib/db/db';
+import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
-const db = createClient();
 
 const getProfiles = async () => {
-
-
-  return db
-    .from('profiles')
-    .select(`*`)
-    .eq('is_disabled', false);
+  return sBase.select()
+    .from(profiles);
 };
 
 
 const postProfile = async (payload: NewProfile) => {
-
-
-  console.log('postProfile', payload);
-
-
+  return sBase.insert(profiles)
+    .values({ ...payload });
 };
 
 const putProfile = async (payload: Profile) => {
-
-  return db
-    .from('profiles')
-    .update(payload)
-    .eq('id', payload.id)
-    .select();
+  return sBase.update(profiles)
+    .set({ ...payload })
+    .where(eq(profiles.id, payload.id));
 };
 
 const deleteProfile = async (payload: Profile) => {
-
-  return db
-    .from('profiles')
-    .update({ ...payload, is_disabled: true })
-    .eq('id', payload.id)
-    .select();
+  return sBase.delete(profiles)
+    .where(eq(profiles.id, payload.id));
 };
 
 export { getProfiles, postProfile, putProfile, deleteProfile };

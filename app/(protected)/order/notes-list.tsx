@@ -1,18 +1,15 @@
-
 import React from 'react';
-import { createClient } from '@/utils/supabase/client';
+
 import NoteComponent from '@/app/(protected)/order/note';
-import { Note } from '@/lib/db/schema';
+import { Note, notes } from '@/lib/db/schema';
+import { sBase } from '@/lib/db/db';
+import { eq } from 'drizzle-orm/sql/expressions/conditions';
 
 const getNotes = async (orderId: string) => {
-  const db = createClient();
-
-  return db
-    .from('notes')
-    .select()
-    .eq('order_id', orderId)
-    .order('pin', { ascending: false })
-    .order('created_at', { ascending: false });
+  return sBase.select()
+    .from(notes)
+    .where(eq(notes.order_id, orderId))
+    .orderBy(notes.pin, notes.created_at);
 };
 
 
@@ -22,16 +19,13 @@ const NotesList = async (
 
   const { orderId } = props;
 
-  const { data, error } = await getNotes(orderId);
+  const data = await getNotes(orderId);
 
-
-  if (error) throw new Error(`Get list of Notes with order_id: ${orderId}  error:`, error);
 
   return (
     <div>
 
       {data?.map((item: Note) => (
-
         <NoteComponent key={item.id} note={item} />
       ))}
     </div>

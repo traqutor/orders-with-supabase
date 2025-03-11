@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDownIcon } from 'lucide-react';
 import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
@@ -16,11 +16,14 @@ interface SelectFieldProps {
 
 const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required, onChange }) => {
 
-  const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
-  const [selected, setSelected] = React.useState<OrderStatus>();
+  const { fetchOrdersStatuses } = useOrdersStatuses();
+  const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>();
+  const [selected, setSelected] = useState<OrderStatus>();
+
+
 
   const handleChange = (event: string) => {
-    const option = ordersStatuses.find((option) => option.id === event);
+    const option = ordersStatuses?.find((option) => option.id === event);
 
     if (!option) return null;
 
@@ -30,13 +33,11 @@ const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required
 
   useEffect(() => {
     fetchOrdersStatuses().then((response) => {
+      setOrdersStatuses(response);
       const option = response.find((option) => option.id === value);
       setSelected(option || response[0]);
     });
 
-    return () => {
-      console.log('OrdersStatuses clean up', ordersStatuses);
-    };
   }, []);
 
   return (
@@ -63,7 +64,7 @@ const SelectStatus: React.FC<SelectFieldProps> = ({ label, name, value, required
       <Select.Portal>
         <Select.Content className="bg-card border py-2 border-input rounded-md shadow-lg">
           <Select.Viewport>
-            {ordersStatuses.map((orderStatus) => (
+            {ordersStatuses?.map((orderStatus) => (
               <Select.Item key={orderStatus.id} value={orderStatus.id}
                            className="relative flex h-[32px] hover:bg-green-50 select-none items-center rounded-[3px] pl-[25px] pr-[35px] text-[13px] leading-none text-muted-foreground data-[disabled]:pointer-events-none data-[disabled]:text-grey-300 data-[highlighted]:text-green-900 data-[highlighted]:outline-none">
                 <Select.ItemText>

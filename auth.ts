@@ -10,7 +10,6 @@ export async function hashPassword(password: string) {
   return hash(password, 10);
 }
 
-
 export async function verifyPassword(password: string, hashedPassword: string) {
   return compare(password, hashedPassword);
 }
@@ -48,7 +47,16 @@ export const config = {
 
         return { id, email };
       }
-    })] //  your config
+    })],
+  callbacks: {
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.sub
+      }
+    })
+  }//  your config
 } satisfies NextAuthOptions;
 
 // Use it in server contexts

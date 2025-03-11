@@ -1,4 +1,4 @@
-import { AnyPgColumn, boolean, pgTable, text, date, uniqueIndex } from 'drizzle-orm/pg-core';
+import { AnyPgColumn, boolean, pgTable, uuid, text, date, uniqueIndex } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core/columns/integer';
 import { sql } from 'drizzle-orm';
 import { v4 } from 'uuid';
@@ -9,7 +9,7 @@ import { SQL } from 'drizzle-orm/sql/sql';
  * users *
  */
 export const users = pgTable('users', {
-    id: text().primaryKey().default(v4()),
+    id: uuid().primaryKey().default(v4()),
     email: text().notNull(),
     password: text().notNull(),
     created_at: date(),
@@ -55,7 +55,7 @@ export const notes_attachments = pgTable('notes_attachments', {
   id: text('id').primaryKey().default(v4()),
   name: text().notNull(),
   mimetype: text().notNull(),
-  note_id: text().notNull()
+  note_id: uuid().notNull()
 });
 export type NewNoteAttachment = typeof notes_attachments.$inferInsert;
 export type NoteAttachment = typeof notes_attachments.$inferSelect;
@@ -65,7 +65,7 @@ export type NoteAttachment = typeof notes_attachments.$inferSelect;
  **/
 
 export const customers = pgTable('customers', {
-  id: text().primaryKey(),
+  id: uuid().primaryKey(),
   name: text(),
   description: text(),
   nip: text(),
@@ -83,7 +83,7 @@ export type Customer = typeof customers.$inferSelect;
  **/
 
 export const labels = pgTable('labels', {
-  id: text().primaryKey(),
+  id: uuid().primaryKey(),
   title: text(),
   color_hex: text(),
   icon_name: text()
@@ -97,11 +97,11 @@ export type Label = typeof labels.$inferSelect;
  * Notes
  */
 export const notes = pgTable('notes', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   created_at: text(),
   created_by: text(),
   message: text(),
-  order_id: text().primaryKey(),
+  order_id: uuid().primaryKey(),
   bg_color: text(),
   text_color: text(),
   pin: boolean(),
@@ -116,7 +116,7 @@ export type Note = typeof notes.$inferSelect;
  * Shipments
  */
 export const shipments = pgTable('shipments', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   contact: text(),
   phone: text(),
   email: text(),
@@ -132,7 +132,7 @@ export type Shipment = typeof shipments.$inferSelect;
  * Services *
  */
 export const services = pgTable('services', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   description: text(),
   location: text(),
   start_at: text(),
@@ -152,7 +152,7 @@ export type Service = typeof services.$inferSelect;
  * Services *
  */
 export const services_positions = pgTable('services_positions', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   service_id: text(),
   description: text(),
   vehicle_vin: text(),
@@ -171,14 +171,13 @@ export type ServicePosition = typeof services_positions.$inferSelect;
  * Profiles *
  */
 export const profiles = pgTable('profiles', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   first_name: text(),
   avatar_url: text(),
   is_disabled: boolean(),
   email: text(),
   phone: text(),
   last_name: text(),
-  hash: text()
 });
 
 export type NewProfile = typeof profiles.$inferInsert;
@@ -189,7 +188,7 @@ export type Profile = typeof profiles.$inferSelect;
  * Pinned Orders *
  */
 export const pinned_orders = pgTable('pinned_orders', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   user_id: text(),
   order_id: text()
 });
@@ -201,7 +200,7 @@ export type PinnedOrder = typeof pinned_orders.$inferSelect;
  * Order Statuses
  **/
 export const orders_statuses = pgTable('orders_statuses', {
-  id: text().primaryKey(),
+  id: uuid().primaryKey(),
   title: text(),
   color_hex: text()
 });
@@ -213,8 +212,8 @@ export type OrderStatus = typeof orders_statuses.$inferSelect;
  * Orders Positions
  **/
 export const orders_positions = pgTable('orders_positions', {
-  id: text().primaryKey(),
-  order_id: text().primaryKey(),
+  id: uuid().primaryKey(),
+  order_id: uuid().primaryKey(),
   description: text(),
   position_type: text(),
   quantity: integer(),
@@ -232,7 +231,7 @@ export type OrderPosition = typeof orders_positions.$inferSelect;
  * Orders Labels
  **/
 export const orders_labels = pgTable('orders_labels', {
-  id: text().primaryKey(),
+  id: uuid().primaryKey(),
   order_id: text()
 });
 
@@ -247,8 +246,8 @@ export type OrderLabel = typeof orders_labels.$inferSelect;
 export const orders_actions = pgTable('orders_actions', {
   id: integer('id').primaryKey().default(sql`nextval
   ('orders_actions_id_seq')`),
-  order_id: text().primaryKey(),
-  action_id: text().primaryKey(),
+  order_id: uuid().primaryKey(),
+  action_id: uuid().primaryKey(),
   performed: boolean()
 });
 
@@ -260,7 +259,7 @@ export type OrderAction = typeof orders_actions.$inferSelect;
  * Orders Actions
  **/
 export const orders = pgTable('orders', {
-  id: text().primaryKey().default(v4()),
+  id: uuid().primaryKey().default(v4()),
   created_at: text(),
   created_by: text(),
   title: text(),
@@ -290,7 +289,7 @@ export type Order = typeof orders.$inferSelect;
  * Invoices
  **/
 export const invoices = pgTable('invoices', {
-  id: text().primaryKey(),
+  id: uuid().primaryKey(),
   invoice_number: text(),
   description: text(),
   total_amount: integer(),

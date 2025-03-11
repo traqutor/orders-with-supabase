@@ -12,7 +12,7 @@ import SelectStatus from '@/components/ui/Form/select-status';
 import { SelectCustomer } from '@/components/ui/Form/select-customer';
 import { getData, postData, putData } from '@/utils/helpers';
 import { CustomerItem } from '@/app/api/dashboard/customers/route';
-import { Customer, Order } from '@/lib/db/schema';
+import { Customer, Order, OrderStatus } from '@/lib/db/schema';
 
 
 interface OrderCreateDialogProps {
@@ -22,15 +22,15 @@ interface OrderCreateDialogProps {
 }
 
 
-
 const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   { triggerButton: TriggerButton, order, selectedCustomer }) => {
 
   const [open, setOpen] = useState(false);
+  const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
 
   const router = useRouter();
 
-  const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
+  const { fetchOrdersStatuses } = useOrdersStatuses();
   const [formData, setFormData] = useState<Order>(order || {} as Order);
 
   const computedIsEdit = useMemo(() => {
@@ -38,7 +38,7 @@ const OrderDialog: React.FC<OrderCreateDialogProps> = React.memo((
   }, [order]);
 
   useEffect(() => {
-    fetchOrdersStatuses().then();
+    fetchOrdersStatuses().then(response => setOrdersStatuses(response));
   }, []);
 
   useEffect(() => {

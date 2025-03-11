@@ -15,7 +15,8 @@ const OrderStatusComponent = (props: { order: Order }) => {
 
     const router = useRouter();
     const [selected, setSelected] = useState<OrderStatus>();
-    const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
+    const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
+    const { fetchOrdersStatuses } = useOrdersStatuses();
     const { updateOrder: putOrder } = useOrders();
 
     const handleChange = (event: string) => {
@@ -39,6 +40,7 @@ const OrderStatusComponent = (props: { order: Order }) => {
 
     useEffect(() => {
       fetchOrdersStatuses().then((response) => {
+        setOrdersStatuses(response);
         const option = response.find((option) => option.id === order.status_id);
         setSelected(option || response[0]);
       });

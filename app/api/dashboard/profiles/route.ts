@@ -1,8 +1,6 @@
 import { NewProfile, profiles } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 
-
-
 export async function GET() {
 
   const data = await sBase.select().from(profiles);

@@ -5,6 +5,8 @@ type DateTimeConvertible = string | Date | DateTime | number | null;
 export function toDateTimeObject(spec: DateTimeConvertible | undefined): DateTime | null {
   if (spec instanceof DateTime) {
     return spec.setLocale('pl-PL');
+  } else if (typeof spec === 'string' && spec.includes('+')) {
+    return DateTime.fromJSDate(new Date(spec)).setLocale('pl-PL');
   } else if (typeof spec === 'string') {
     return DateTime.fromISO(spec).setLocale('pl-PL');
   } else if (typeof spec === 'number') {
@@ -47,7 +49,8 @@ export const getFormatedDateTime = (dateTime?: DateTimeConvertible): string => {
  * @param dateTime
  */
 export const getFormatedDate = (dateTime?: DateTimeConvertible): string => {
+  console.log(dateTime);
   const dt = toDateTimeObject(dateTime);
-
-  return dt ? dt.toLocaleString() : '';
+  console.log(dt);
+  return dt ? dt.toFormat('dd-MM-yyyy ').toUpperCase() : '';
 };

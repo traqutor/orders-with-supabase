@@ -12,9 +12,12 @@ import {
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import LogoutButton from '@/app/(protected)/logout-button';
 import AvatarProfile from '@/components/profile/avatar-profile';
+import { useSession } from 'next-auth/react';
 
 
 export function HeaderUser() {
+  const { data: session } = useSession();
+
 
   return (
     <div className="flex gap-6 ">
@@ -26,7 +29,7 @@ export function HeaderUser() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <AvatarProfile profileId={''} />
+            <AvatarProfile profileId={session?.user?.id || ''} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

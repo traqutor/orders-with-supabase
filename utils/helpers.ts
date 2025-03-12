@@ -26,8 +26,6 @@ export const getURL = (path: string = '') => {
 export type Token = {token: string}
 
 export const takeOneUniqueOrThrow = <T extends any[]>(values: T): T[number] => {
-  console.log('takeOneUniqueOrThrow', values);
-
   if (Array.isArray(values) && values.length !== 1) throw new Error('Found non unique or not existent value');
   return values[0];
 };

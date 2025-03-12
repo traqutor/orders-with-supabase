@@ -49,8 +49,6 @@ export const getFormatedDateTime = (dateTime?: DateTimeConvertible): string => {
  * @param dateTime
  */
 export const getFormatedDate = (dateTime?: DateTimeConvertible): string => {
-  console.log(dateTime);
   const dt = toDateTimeObject(dateTime);
-  console.log(dt);
   return dt ? dt.toFormat('dd-MM-yyyy ').toUpperCase() : '';
 };

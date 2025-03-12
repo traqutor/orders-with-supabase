@@ -8,18 +8,24 @@ import { User } from 'lucide-react';
 import { useProfiles } from '@/lib/client/useProfiles';
 import { Profile } from '@/lib/db/schema';
 
-const AvatarProfile = (props: { profileId?: string | null }) => {
+const AvatarProfile = (props: { profileId: string }) => {
 
+  const { profileId } = props;
+  const [user, setUser] = React.useState<Profile>();
+  const [fullName, setFullName] = React.useState<string>('');
+  const [abr, setAbr] = React.useState<string>('');
   const { fetchProfile } = useProfiles();
-  const [user, setUser] = React.useState<Profile | null>();
+
 
   useEffect(() => {
-    if (!props.profileId) return;
+    if (!profileId) return;
 
-    fetchProfile(props.profileId).then((profile: Profile) => {
+    fetchProfile(profileId).then((profile: Profile) => {
       setUser(profile);
+      setFullName(`${profile.first_name} ${profile.last_name}`);
+      setAbr(`${((profile.first_name || '')?.charAt(0) + (profile.last_name || '')?.charAt(0))}`);
     });
-  }, []);
+  }, [profileId]);
 
   return (
     <Tooltip.Provider>
@@ -32,10 +38,10 @@ const AvatarProfile = (props: { profileId?: string | null }) => {
                 <Avatar.Image
                   className="size-full rounded-[inherit] object-cover"
                   src={`https://grokxcrznknfvpnzpmuk.supabase.co/storage/v1/object/public/avatars/${user.avatar_url}`}
-                  alt={user.first_name?.substring(0, 2)}
+                  alt={abr}
                 /> : <Avatar.Fallback
                   className="leading-1 flex size-full items-center justify-center text-[10px] font-medium bg-gray-300 text-violet-800 dark:bg-violet-800 dark:text-gray-300">
-                  {user.first_name?.substring(0, 2)}
+                  {abr}
                 </Avatar.Fallback>}
             </Avatar.Root>
             :
@@ -51,7 +57,7 @@ const AvatarProfile = (props: { profileId?: string | null }) => {
         </Tooltip.Trigger>
 
         <Tooltip.Content side="top" className="bg-card border px-2 py-1 rounded-md text-xs">
-          {user ? user.first_name : 'Nie rozpoznany'}
+          {fullName}
           <Tooltip.Arrow />
         </Tooltip.Content>
 

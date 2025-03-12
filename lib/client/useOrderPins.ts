@@ -16,7 +16,7 @@ export function useOrderPins() {
 
 
   const unPinOrder = async (payload: PinnedOrder) => {
-    const response = await deleteData({ url, data: payload });
+    const response = await deleteData({ url: `${url}/${payload.user_id}/${payload.id}`, data: payload });
 
     if (response.error) throw new Error(`Delete Pin: ${payload} Error: ${JSON.stringify(response)}`);
 

@@ -23,12 +23,7 @@ export default async function OrderPage(
   }
 ) {
 
-  const user = await sBase
-    .select()
-    .from(profiles);
-
   const { orderId } = await props.params;
-
 
   const order: OrderItem = await getOrder(orderId);
 
@@ -63,7 +58,7 @@ export default async function OrderPage(
             <CardHeader>
               <div className="flex justify-start items-center gap-2">
 
-                <PinButton order={order} userId={user[0].id} />
+                <PinButton order={order} />
 
                 <CardTitle>{order.title}</CardTitle>
               </div>

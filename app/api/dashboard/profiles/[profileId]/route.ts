@@ -1,6 +1,7 @@
 import { Profile, profiles } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
+import { takeOneUniqueOrThrow } from '@/utils/helpers';
 
 
 export async function GET(request: Request,
@@ -12,7 +13,7 @@ export async function GET(request: Request,
   const data = await sBase
     .select()
     .from(profiles)
-    .where(eq(profiles.id, profileId));
+    .where(eq(profiles.id, profileId)).then(takeOneUniqueOrThrow);
 
   return Response.json({
     status: 'success',

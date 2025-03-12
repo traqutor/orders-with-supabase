@@ -236,7 +236,7 @@ const getOrder = async ( orderId:string): Promise<OrderItem> => {
       }
     }
 
-    if (row.pinned_orders?.order_id) {
+    if (row.pinned_orders?.user_id) {
       if (!ordersMap.get(row.orders.id).pinned_users.has(row.pinned_orders.user_id)) {
         ordersMap.get(row.orders.id).pinned_users.set(row.pinned_orders.user_id, {
           ...row.pinned_orders

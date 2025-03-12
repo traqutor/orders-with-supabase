@@ -7,7 +7,11 @@ export async function PUT(request: Request,
                           { params }: { params: Promise<{ noteId: string }> }) {
   const noteId = (await params).noteId;
   const note = await request.json() as Note;
-  const data = await sBase.update(notes).set({ ...note, id: noteId }).where(eq(notes.id, noteId));
+
+  const data = await sBase
+    .update(notes)
+    .set({ ...note, id: noteId })
+    .where(eq(notes.id, noteId));
 
   return Response.json({
     status: 'success',

@@ -11,13 +11,13 @@ export function useNotes() {
 
     if (response.error) throw new Error(`Get list of Notes Error: ${JSON.stringify(response)}`);
 
-    return response.data;
+    return response.data as Note[];
   };
 
   const createNote = async (payload: NewNote) => {
     const response = await postData({
       url: `${url}/${payload.order_id}`,
-      data: { ...payload, created_by: '649b8b37-f00b-4e19-a94c-2e29006bd15d' }
+      data: { ...payload }
     });
 
     if (response.error) throw new Error(`Create Note: ${payload} Error: ${JSON.stringify(response)}`);

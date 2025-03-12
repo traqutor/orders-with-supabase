@@ -1,6 +1,9 @@
 import { NewNote, notes } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { asc, desc } from 'drizzle-orm/sql/expressions/select';
 
 
 export async function GET(request: Request,
@@ -10,7 +13,7 @@ export async function GET(request: Request,
     .select()
     .from(notes)
     .where(eq(notes.order_id, orderId))
-    .orderBy(notes.seq);
+    .orderBy(desc(notes.pin), desc(notes.seq));
 
   return Response.json({
     status: 'success',
@@ -21,9 +24,20 @@ export async function GET(request: Request,
 
 export async function POST(request: Request,
                            { params }: { params: Promise<{ orderId: string }> }) {
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    Response.json({ status: 'error', code: 401, message: 'You must be logged in.' });
+    return;
+  }
+
   const orderId = (await params).orderId;
   const note = await request.json() as NewNote;
-  const data = await sBase.insert(notes).values({ ...note, order_id: orderId });
+  const data = await sBase
+    .insert(notes)
+    .values({ ...note, order_id: orderId, created_by: session.user.id })
+    .returning();
 
   return Response.json({
     status: 'success',

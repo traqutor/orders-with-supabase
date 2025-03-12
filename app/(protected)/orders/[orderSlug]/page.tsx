@@ -13,8 +13,6 @@ export async function getOrdersHandler({ offsetPage, queryText, pinned, statusId
 }) {
   const session = await getServerSession(authOptions);
 
-  console.log('session:', session);
-
   if (!session) {
     return {
       orders: [], totalOrdersCounter: 0

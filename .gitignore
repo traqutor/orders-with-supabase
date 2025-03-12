@@ -26,6 +26,9 @@
 .idea
 supabase/.temp
 
+# uloaded files
+public/uploads/*
+
 # debug
 npm-debug.log*
 yarn-debug.log*

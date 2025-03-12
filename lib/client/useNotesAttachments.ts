@@ -1,37 +1,38 @@
-import { deleteData, getData, postData, putData } from '@/utils/helpers';
-import { NewNoteAttachment, NoteAttachment } from '@/lib/db/schema';
+import { deleteData, getData } from '@/utils/helpers';
+import { NoteAttachment, NoteAttachmentUploadItem } from '@/lib/db/schema';
 
+
+export type UploadNoteAttachment = {
+  noteId: string,
+  formData: FormData;
+}
 
 export function useNotesAttachments() {
   const url = '/api/dashboard/notes_attachments';
 
-  const fetchNotesAttachments = async (notesId: string): Promise<NoteAttachment[]> => {
-    const response = await getData<NoteAttachment[]>({ url: `${url}/${notesId}` });
+  const fetchNotesAttachments = async (notesId: string) => {
+    const response = await getData<NoteAttachmentUploadItem[]>({ url: `${url}/${notesId}` });
 
     if (response.error) throw new Error(`Get list of NotesAttachments dor NoteId: ${notesId}  Error: ${JSON.stringify(response)}`);
 
-
     return response.data;
   };
 
-  const createNoteAttachment = async (payload: NewNoteAttachment) => {
-    const response = await postData({ url, data: payload });
+  const uploadNoteAttachment = async (noteId: string, formData: FormData) => {
+    const response = await fetch(`${url}/${noteId}`, {
+      method: 'POST',
+      body: formData
+    });
 
-    if (response.error) throw new Error(`Create NoteAttachment: ${payload} Error: ${JSON.stringify(response)}`);
+    const data = await response.json();
 
-    return response.data;
-  };
+    if (data.error) throw new Error(`Create NoteAttachment: ${noteId} Error: ${JSON.stringify(data)}`);
 
-  const updateNoteAttachment = async (payload: NoteAttachment) => {
-    const response = await putData({ url: `${url}/${payload.note_id}/${payload.id}`, data: payload });
-
-    if (response.error) throw new Error(`Update NoteAttachment: ${payload} Error: ${JSON.stringify(response)}`);
-
-    return response.data;
+    return data;
   };
 
   const deleteNoteAttachment = async (payload: NoteAttachment) => {
-    const response = await deleteData({ url: `${url}/${payload.note_id}/${payload.id}`, data: payload });
+    const response = await deleteData({ url: `${url}/${payload.note_id}/${payload.upload_id}`, data: payload });
 
     if (response.error) throw new Error(`Delete NoteAttachment: ${payload} Error: ${JSON.stringify(response)}`);
 
@@ -40,10 +41,9 @@ export function useNotesAttachments() {
 
 
   return {
-    createNoteAttachment,
     deleteNoteAttachment,
     fetchNotesAttachments,
-    updateNoteAttachment
+    uploadNoteAttachment
   };
 
 }

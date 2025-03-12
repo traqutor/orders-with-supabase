@@ -38,8 +38,8 @@ const NoteDialog = React.forwardRef<HTMLButtonElement, ButtonProps &
         pin: false
       });
 
-
-      router.push(`/order/${orderId}`);
+      setOpen(false);
+      router.refresh();
 
     };
 

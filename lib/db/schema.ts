@@ -1,4 +1,4 @@
-import { AnyPgColumn, boolean, pgTable, uuid, text, date, uniqueIndex } from 'drizzle-orm/pg-core';
+import { AnyPgColumn, boolean, date, pgTable, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core/columns/integer';
 import { sql } from 'drizzle-orm';
 import { v4 } from 'uuid';
@@ -12,7 +12,7 @@ export const users = pgTable('users', {
     id: uuid().primaryKey().default(v4()),
     email: text().notNull(),
     password: text().notNull(),
-    created_at: date(),
+    created_at: date()
   },
   (table) => [
     uniqueIndex('emailUniqueIndex').on(lower(table.email))
@@ -52,13 +52,13 @@ export type Action = typeof actions.$inferSelect;
  **/
 
 export const notes_attachments = pgTable('notes_attachments', {
-  id: text('id').primaryKey().default(v4()),
-  name: text().notNull(),
-  mimetype: text().notNull(),
+  id: uuid('id').primaryKey().default(v4()),
+  upload_id: uuid().notNull(),
   note_id: uuid().notNull()
 });
 export type NewNoteAttachment = typeof notes_attachments.$inferInsert;
 export type NoteAttachment = typeof notes_attachments.$inferSelect;
+export type NoteAttachmentUploadItem = { notes_attachments: NoteAttachment, uploads: Upload | null }
 
 /**
  * Labels
@@ -98,15 +98,15 @@ export type Label = typeof labels.$inferSelect;
  */
 export const notes = pgTable('notes', {
   id: uuid().primaryKey().default(v4()),
-  created_at: text(),
-  created_by: text(),
-  message: text(),
+  created_at: text().notNull(),
+  created_by: text().notNull(),
+  message: text().notNull(),
   order_id: uuid().primaryKey(),
   bg_color: text(),
   text_color: text(),
   pin: boolean(),
   is_system: text(),
-  seq: integer()
+  seq: integer().notNull()
 });
 
 export type NewNote = typeof notes.$inferInsert;
@@ -177,7 +177,7 @@ export const profiles = pgTable('profiles', {
   is_disabled: boolean(),
   email: text(),
   phone: text(),
-  last_name: text(),
+  last_name: text()
 });
 
 export type NewProfile = typeof profiles.$inferInsert;
@@ -323,7 +323,14 @@ export type CustomerType = typeof customers_types.$inferSelect;
 
 
 /**
- * Customers list item response
- */
+ *  Uploads
+ **/
 
-export type CustomersGetResponseData = { customers: Customer, customers_types: CustomerType }
+export const uploads = pgTable('uploads', {
+  id: uuid('id').primaryKey(),
+  name: text().notNull(),
+  mimetype: text().notNull(),
+  url: text().notNull()
+});
+export type NewUpload = typeof uploads.$inferInsert;
+export type Upload = typeof uploads.$inferSelect;

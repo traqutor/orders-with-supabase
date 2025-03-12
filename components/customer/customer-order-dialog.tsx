@@ -9,7 +9,7 @@ import * as Form from '@radix-ui/react-form';
 
 import { useRouter } from 'next/navigation';
 import SelectStatus from '@/components/ui/Form/select-status';
-import { Customer, Order } from '@/lib/db/schema';
+import { Customer, Order, OrderStatus } from '@/lib/db/schema';
 import { postData } from '@/utils/helpers';
 import { useOrdersStatuses } from '@/lib/client/useOrdersStatuses';
 
@@ -24,9 +24,10 @@ interface CustomerOrderCreateDialogProps {
 const ClientOrderDialog: React.FC<CustomerOrderCreateDialogProps> = React.memo((
   { isOpen, customer, onToggleOpen }) => {
 
+  const [ordersStatuses, setOrdersStatuses] = useState<OrderStatus[]>([]);
   const router = useRouter();
   const [formData, setFormData] = useState<Order>({} as Order);
-  const { ordersStatuses, fetchOrdersStatuses } = useOrdersStatuses();
+  const { fetchOrdersStatuses } = useOrdersStatuses();
 
   useEffect(() => {
     if (customer) {
@@ -36,7 +37,8 @@ const ClientOrderDialog: React.FC<CustomerOrderCreateDialogProps> = React.memo((
 
 
   useEffect(() => {
-    fetchOrdersStatuses();
+    fetchOrdersStatuses()
+      .then(response => setOrdersStatuses(response));
   }, []);
 
   useEffect(() => {

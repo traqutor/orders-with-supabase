@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
-import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
+import CustomerCreateDialog from '@/components/customer/customer-create-dialog';
 
 const title = 'Zamówienia';
 

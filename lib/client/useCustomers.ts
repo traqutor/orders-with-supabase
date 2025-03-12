@@ -8,11 +8,6 @@ export function useCustomers() {
   const url = '/api/dashboard/customers';
   const [customers, setCustomers] = useState<CustomerItem[] | undefined>([]);
 
-  useEffect(() => {
-    fetchCustomers();
-
-  }, []);
-
   const fetchCustomers = async (): Promise<CustomerItem[]> => {
     const response = await getData<CustomerItem[]>({ url });
 

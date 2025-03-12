@@ -1,9 +1,9 @@
-import Providers from './providers';
+import Providers from '../../lib/providers';
 import { NavSide } from '@/app/(protected)/nav-side';
 import { NavMobile } from '@/app/(protected)/nav-mobile';
-import { HeaderUser } from '@/app/(protected)/header-user';
+import { HeaderUser } from '@/components/header-user';
 import React from 'react';
-import { OmniSearch } from '@/app/(protected)/omniSearch';
+import { OmniSearch } from '@/components/omniSearch';
 
 
 export default function protectedLayout({

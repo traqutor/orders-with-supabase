@@ -1,21 +1,18 @@
-import { useState } from 'react';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
 import { NewOrderPosition, OrderPosition } from '@/lib/db/schema';
 
 
 export function useOrdersPositions() {
   const url = '/api/dashboard/orders_positions';
-  const [items, setItems] = useState<OrderPosition[]>([]);
 
 
   const fetchOrderPositions = async (orderId: string) => {
     const response = await getData<OrderPosition[]>({ url: `${url}/${orderId}` });
 
-    if (response.error) throw new Error(`Get list of OrderPositions Error: ${JSON.stringify(response)}`);
+    if (!response.data || response.error) throw new Error(`Get list of OrderPositions Error: ${JSON.stringify(response)}`);
 
-    setItems(response.data);
 
-    return response.data;
+    return response.data as OrderPosition[];
   };
 
   const createOrderPosition = async (payload: NewOrderPosition) => {
@@ -45,7 +42,6 @@ export function useOrdersPositions() {
 
 
   return {
-    orderPositions: items,
     createOrderPosition,
     fetchOrderPositions,
     deleteOrderPosition,

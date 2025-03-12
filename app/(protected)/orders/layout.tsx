@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PinIcon, PlusCircle } from 'lucide-react';
-import OrderDialog from '@/app/(protected)/order/order-dialog';
+import OrderDialog from '@/components/order/order-dialog';
 import { orders_statuses, OrderStatus } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 
@@ -47,12 +47,6 @@ export default async function Layout(
         </TabsList>
 
         <div className="ml-11 flex items-center gap-2 pr-2">
-          {/*<Button size="sm" variant="outline" disabled className="h-8 gap-1">
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>*/}
 
           <OrderDialog triggerButton={<Button size="sm" className="h-8 gap-1">
             <PlusCircle className="h-3.5 w-3.5" />

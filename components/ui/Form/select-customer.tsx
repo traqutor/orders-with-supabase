@@ -5,8 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useCustomers } from '@/lib/client/useCustomers';
 
 import * as Popover from '@radix-ui/react-popover';
-import CustomerCreateDialog from '@/app/(protected)/customers/customer-create-dialog';
+import CustomerCreateDialog from '@/components/customer/customer-create-dialog';
 import { Customer } from '@/lib/db/schema';
+import { CustomerItem } from '@/app/api/dashboard/customers/route';
 
 
 export interface SelectCustomerProps {
@@ -19,7 +20,8 @@ export interface SelectCustomerProps {
 
 export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, onSelectItemAction }) => {
 
-  const { customers, fetchCustomers } = useCustomers();
+  const [customers, setCustomers] = useState<CustomerItem[]>([]);
+  const { fetchCustomers } = useCustomers();
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = React.useState<Customer>();
@@ -29,13 +31,14 @@ export const SelectCustomer: React.FC<SelectCustomerProps> = ({ label, value, on
   );
 
   useEffect(() => {
-    fetchCustomers().then();
+    fetchCustomers().then(response => setCustomers({ ...response }));
   }, []);
 
   useEffect(() => {
     if (value) {
       fetchCustomers().then((response) => {
         if (response) {
+          setCustomers({ ...response })
           const c = response.find((option) => option.customers.id === value);
           setSelected(c?.customers);
         }

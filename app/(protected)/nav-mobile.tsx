@@ -1,8 +1,8 @@
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { LineChart, Package, Package2, PanelLeft, ShoppingCart, Users2 } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@/components/logo';
+import { LineChart, PanelLeft, ShoppingCart, Users2 } from 'lucide-react';
 
 
 export function NavMobile() {
@@ -31,26 +31,13 @@ export function NavMobile() {
             <ShoppingCart className="h-5 w-5" />
             Orders
           </Link>
-          <Link
-            href="/calendar"
-            className="flex items-center gap-4 px-2.5 text-foreground"
-          >
-            <Package className="h-5 w-5" />
-            Calendar
-          </Link>
+
           <Link
             href="/customers"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Users2 className="h-5 w-5" />
             Customers
-          </Link>
-          <Link
-            href="/analytics"
-            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-          >
-            <LineChart className="h-5 w-5" />
-            Analytics
           </Link>
 
           <Link

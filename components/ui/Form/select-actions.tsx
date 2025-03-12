@@ -1,8 +1,9 @@
-'use strict';
+'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useActions } from '@/lib/client/useActions';
 import { MultiSelect } from '@/components/ui/Form/select-multi';
+import { Action } from '@/lib/db/schema';
 
 
 interface SelectFieldProps {
@@ -15,24 +16,26 @@ interface SelectFieldProps {
 
 const SelectActions: React.FC<SelectFieldProps> = ({ label, value, onChange }) => {
 
-  const { actions, fetchActions } = useActions();
+  const [actions, setActions] = useState<Action[]>();
+  const { fetchActions } = useActions();
 
   const handleChange = (event: string[]) => {
-    const options = actions.filter((option) => event.some(o => option.id === o));
+    const options = actions?.filter((option) =>
+      event.some(o => option.id === o));
 
-    if (!options.length) return null;
+    if (!options?.length) return null;
 
     onChange(options.map((i) => i.id || ''));
   };
 
   useEffect(() => {
-    fetchActions();
+    fetchActions().then(response => setActions(response));
 
   }, []);
 
   return (
     <MultiSelect
-      options={actions.map((action) => ({ label: action.title || 'Label', value: action.id || '' }))}
+      options={actions?.map((action) => ({ label: action.title || 'Label', value: action.id || '' })) || []}
       onValueChange={handleChange}
       placeholder={label}
       variant="inverted"

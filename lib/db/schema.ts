@@ -77,6 +77,8 @@ export const customers = pgTable('customers', {
 });
 
 export type Customer = typeof customers.$inferSelect;
+export type CustomerItem = { customers: Customer, customers_types: CustomerType };
+
 
 /**
  * Labels
@@ -314,8 +316,7 @@ export type Invoice = typeof invoices.$inferSelect;
  **/
 export const customers_types = pgTable('customers_types', {
   id: integer().primaryKey(),
-  type_name: text()
-
+  type_name: text().notNull()
 });
 
 export type NewCustomerType = typeof customers_types.$inferInsert;

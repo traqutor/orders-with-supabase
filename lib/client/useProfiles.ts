@@ -1,18 +1,9 @@
-import { useEffect, useState } from 'react';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
 import { NewProfile, Profile } from '@/lib/db/schema';
 
 
 export function useProfiles() {
   const url = '/api/dashboard/profiles';
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-
-
-  useEffect(() => {
-    fetchProfiles().then();
-
-  }, []);
-
 
   const fetchProfile = async (profileId: string) => {
     const response = await getData<Profile>({ url: `${url}/${profileId}` });
@@ -26,8 +17,6 @@ export function useProfiles() {
     const response = await getData<Profile[]>({ url });
 
     if (response.error) throw new Error(`Get list of Profiles Error: ${JSON.stringify(response)}`);
-
-    setProfiles(response.data as Profile[]);
 
     return response.data as Profile[];
   };
@@ -58,7 +47,6 @@ export function useProfiles() {
 
 
   return {
-    profiles,
     createProfile,
     deleteProfile,
     fetchProfiles,

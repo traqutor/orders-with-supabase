@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
 import { Clock, FilePlus, IdCardIcon, MailIcon, PackagePlusIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PositionsTable } from '@/app/(protected)/order/positions-table';
+import { PositionsTable } from '@/components/order/positions-table';
 import { v4 } from 'uuid';
 
-import InvoiceDialog from '@/app/(protected)/order/invoice-dialog';
+import InvoiceDialog from '@/components/invoice/invoice-dialog';
 
-import ShipmentDialog from '@/app/(protected)/order/shipment-dialog';
+import ShipmentDialog from '@/components/shipment/shipment-dialog';
 import { getFormatedDate } from '@/utils/time';
 import { useRouter } from 'next/navigation';
 import { Invoice, Shipment } from '@/lib/db/schema';
@@ -26,12 +26,12 @@ export function InvoiceContentTab({ order }: any) {
   const router = useRouter();
 
   const { fetchInvoice, createInvoice } = useInvoices();
-  const { fetchShipment, updateShipment, deleteShipment, createShipment } = useShipments();
+  const { fetchShipment, createShipment } = useShipments();
   const { updateOrder } = useOrders();
 
   useEffect(() => {
-    getInvoice();
-    getShipment();
+    getInvoice().then(response => setInvoice(response));
+    getShipment().then(response => setShipment(response));
   }, []);
 
   const getInvoice = async () => {
@@ -39,9 +39,9 @@ export function InvoiceContentTab({ order }: any) {
       return;
     }
 
-    const invoice = await fetchInvoice(order.invoice_id);
+    return await fetchInvoice(order.invoice_id);
 
-    setInvoice(invoice);
+
   };
 
   const getShipment = async () => {
@@ -49,9 +49,7 @@ export function InvoiceContentTab({ order }: any) {
       return;
     }
 
-    const data = await fetchShipment(order.shipment_id);
-
-    setShipment(data[0]);
+    return await fetchShipment(order.shipment_id);
   };
 
   const handleAddInvoice = async () => {
@@ -113,7 +111,7 @@ export function InvoiceContentTab({ order }: any) {
   };
 
   return (
-    <div>
+    <Suspense>
       {invoice ?
         <Card>
           <CardHeader>
@@ -229,6 +227,6 @@ export function InvoiceContentTab({ order }: any) {
             </span>
           </Button>
         </div>}
-    </div>
+    </Suspense>
   );
 }

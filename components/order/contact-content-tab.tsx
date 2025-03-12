@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, CardDescription, CardHeader } from '@/components/ui/card';
 import { ListItem } from '@/components/ui/list-item';
 import { Edit2, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
-import { PositionsTable } from '@/app/(protected)/order/positions-table';
-import OrderDialog from '@/app/(protected)/order/order-dialog';
+import { PositionsTable } from '@/components/order/positions-table';
+import OrderDialog from '@/components/order/order-dialog';
 import { Button } from '@/components/ui/button';
 
 

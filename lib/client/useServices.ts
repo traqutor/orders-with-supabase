@@ -6,12 +6,12 @@ export function useServices() {
   const url = '/api/dashboard/services';
 
 
-  const fetchService = async (serviceId: string): Promise<Service[]> => {
+  const fetchService = async (serviceId: string) => {
     const response = await getData<Service[]>({ url: `${url}/${serviceId}` });
 
-    if (response.error) throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
+    if (!response.data || response.error) throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
 
-    return response.data;
+    return response.data as Service[];
   };
 
   const createService = async (payload: NewService): Promise<Service[]> => {

@@ -8,7 +8,6 @@ const getProfiles = async () => {
     .from(profiles);
 };
 
-
 const postProfile = async (payload: NewProfile) => {
   return sBase.insert(profiles)
     .values({ ...payload });

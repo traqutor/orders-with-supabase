@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ServiceRow } from '@/app/(protected)/order/service-row';
+import { ServiceRow } from '@/components/service/service-row';
 
 import { Button } from '@/components/ui/button';
 import { LucidePlus } from 'lucide-react';

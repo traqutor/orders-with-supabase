@@ -6,7 +6,7 @@ export function useOrdersStatuses() {
   const url = '/api/dashboard/orders_statuses';
 
 
-  const fetchOrdersStatuses = async () => {
+  const fetchOrdersStatuses = async (): Promise<OrderStatus[]> => {
     const response = await getData<OrderStatus[]>({ url });
 
     if (response.error) throw new Error(`Get list of Orders Statuses error: ${JSON.stringify(response)}`);

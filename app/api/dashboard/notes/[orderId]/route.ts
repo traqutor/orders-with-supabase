@@ -2,7 +2,6 @@ import { NewNote, notes } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { asc, desc } from 'drizzle-orm/sql/expressions/select';
 
 
@@ -25,7 +24,9 @@ export async function GET(request: Request,
 export async function POST(request: Request,
                            { params }: { params: Promise<{ orderId: string }> }) {
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(
+
+  );
 
   if (!session) {
     Response.json({ status: 'error', code: 401, message: 'You must be logged in.' });

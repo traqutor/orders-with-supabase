@@ -1,6 +1,6 @@
 import React from 'react';
 
-import NoteComponent from '@/app/(protected)/order/note';
+import NoteComponent from '@/components/note/note';
 import { Note, notes } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { eq } from 'drizzle-orm/sql/expressions/conditions';

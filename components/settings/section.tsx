@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Suspense } from 'react';
 
 export function Section({
                                   title, description,
@@ -12,6 +13,7 @@ export function Section({
 }>) {
 
   return (
+    <Suspense>
     <Card className='w-full'>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
@@ -23,5 +25,6 @@ export function Section({
         {children}
       </CardContent>
     </Card>
+    </Suspense>
   );
 }

@@ -6,12 +6,12 @@ export function useShipments() {
   const url = '/api/dashboard/shipments';
 
 
-  const fetchShipment = async (shipmentId: string): Promise<Shipment[]> => {
+  const fetchShipment = async (shipmentId: string) => {
     const response = await getData<Shipment[]>({ url: `${url}/${shipmentId}` });
 
-    if (response.error) throw new Error(`Get list of Shipments Error: ${JSON.stringify(response)}`);
+    if (!response.data || response.error) throw new Error(`Get list of Shipments Error: ${JSON.stringify(response)}`);
 
-    return response.data;
+    return (response.data[0]) as Shipment;
   };
 
   const createShipment = async (payload: NewShipment): Promise<Shipment[]> => {

@@ -5,13 +5,12 @@ import { NewServicePosition, ServicePosition } from '@/lib/db/schema';
 export function useServicesPositions() {
   const url = '/api/dashboard/services';
 
-
   const fetchServicePositions = async (serviceId: string): Promise<ServicePosition[]> => {
     const response = await getData<ServicePosition[]>({ url: `${url}/${serviceId}/positions` });
 
-    if (response.error) throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
+    if (!response.data || response.error) throw new Error(`Get list of Services Error: ${JSON.stringify(response)}`);
 
-    return response.data;
+    return response.data as ServicePosition[];
   };
 
   const createServicePosition = async (payload: NewServicePosition): Promise<ServicePosition[]> => {

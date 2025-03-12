@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { ThemeSwitcher } from '@/components/theme-switcher';
-import LogoutButton from '@/app/(protected)/logout-button';
+import LogoutButton from '@/components/logout-button';
 import AvatarProfile from '@/components/profile/avatar-profile';
 import { useSession } from 'next-auth/react';
 

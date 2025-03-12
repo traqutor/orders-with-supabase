@@ -1,21 +1,17 @@
-import { useState } from 'react';
 import { deleteData, getData, postData, putData } from '@/utils/helpers';
-import { Invoice, NewInvoice, NewShipment, Shipment } from '@/lib/db/schema';
+import { Invoice, NewInvoice } from '@/lib/db/schema';
 
 
 export function useInvoices() {
   const url = '/api/dashboard/invoices';
-  const [items, setItems] = useState<Invoice[]>([]);
-
 
   const fetchInvoice = async (invoiceId: string) => {
     const response = await getData<Invoice[]>({ url: `${url}/${invoiceId}` });
 
-    if (response.error) throw new Error(`Get list of Invoices Error: ${JSON.stringify(response)}`);
+    if (!response.data || response.error) throw new Error(`Get list of Invoices Error: ${JSON.stringify(response)}`);
 
-    setItems(response.data);
 
-    return response.data[0];
+    return response.data[0] as Invoice;
   };
 
   const createInvoice = async (payload: NewInvoice): Promise<Invoice[]> => {
@@ -45,7 +41,6 @@ export function useInvoices() {
 
 
   return {
-    invoices: items,
     createInvoice,
     fetchInvoice,
     deleteInvoice,

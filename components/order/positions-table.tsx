@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
-import { PositionRow } from '@/app/(protected)/order/position-row';
+import { PositionRow } from '@/components/order/position-row';
 import { Button } from '@/components/ui/button';
 import { LucidePlus } from 'lucide-react';
 import { v4 } from 'uuid';

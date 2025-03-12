@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 
 import { Calendar, LucidePlus, MailIcon, PhoneIcon, UserCircle2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
-import { ServiceTable } from '@/app/(protected)/order/service-table';
+import { ServiceTable } from '@/components/service/service-table';
 import { Button } from '@/components/ui/button';
-import ServiceDialog from '@/app/(protected)/order/service-dialog';
+import ServiceDialog from '@/components/service/service-dialog';
 import { ListItem } from '@/components/ui/list-item';
 import { getFormatedDateTime } from '@/utils/time';
 import { NewService, Service } from '@/lib/db/schema';

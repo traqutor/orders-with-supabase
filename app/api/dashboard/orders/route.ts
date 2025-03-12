@@ -3,11 +3,11 @@ import { getOrders } from '@/lib/db/orders_queries';
 import { NewOrder, orders } from '@/lib/db/schema';
 import { sBase } from '@/lib/db/db';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
 
 export async function GET(request: NextRequest) {
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session) {
     Response.json({ status: 'error', code: 401, message: 'You must be logged in.' });
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request) {
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session) {
     Response.json({ status: 'error', code: 401, message: 'You must be logged in.' });

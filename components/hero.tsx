@@ -16,7 +16,7 @@ export default function Hero() {
       </div>
 
       <p className="text-3xl lg:text-4xl leading-tight! mx-auto max-w-xs text-center">
-        Nowa aplikacja w {' '}
+         Aplikacja CRM
 
         <a
           href="https://ets-polska.pl"
